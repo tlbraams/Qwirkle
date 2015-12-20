@@ -15,13 +15,20 @@ public class Board {
 	 * The board will be stored as a Piece[][]. of 185*185 with start point being 91,91.
 	 * The board will most likely also store the stack of pieces that are available for drawing.
 	 */
-	
+	private int size;
 	private Piece[][] board;
 	private ArrayList<Piece> stack;
 	
 	// --------------- Constructors -----------------
 	public Board() {
+		size = DIM;
 		board = new Piece[DIM][DIM];
+		stack = new ArrayList<Piece>();
+		fillStack();
+	}
+	public Board(int dimension) {
+		size = dimension;
+		board = new Piece[dimension][dimension];
 		stack = new ArrayList<Piece>();
 		fillStack();
 	}
@@ -34,23 +41,27 @@ public class Board {
 	public Piece get(int row, int column) {
 		return board[row][column];
 	}
+	
+	public int getSize() {
+		return size;
+	}
 	// --------------- Commands ---------------------
 	public void setPiece(int row, int column, Piece piece) {
 		board[row][column] = piece;
 	}
 	
 	public void reset() {
-		for (int i = 0; i < DIM; i++) {
-			for (int j = 0; j < DIM; j++) {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
 				board[i][j] = null;
 			}
 		}
 	}
 	
 	public Piece[][] deepCopy() {
-		Piece[][] result = new Piece[DIM][DIM];
-		for (int i = 0; i < DIM; i++) {
-			for (int j = 0; j < DIM; j++) {
+		Piece[][] result = new Piece[size][size];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
 				result[i][j] = board[i][j];
 			}
 		}
@@ -71,6 +82,6 @@ public class Board {
 	}
 	
 	public Piece draw() {
-		return stack.get(0);
+		return stack.remove(0);
 	}
 }

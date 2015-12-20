@@ -21,14 +21,14 @@ public class BoardOutline {
 	/**
 	 * Returns a String[] with all the Strings needed to print a board with markings.
 	 */
-	public static String[] getEdges() {
+	public static String[] getEdges(Board b) {
 		String[] result = new String[4];
-		String topIndex = "  ";
-		String top = " " +(char)TOP_LEFT_CORNER;
-		String border = " " + (char)LEFT_CROSS;
-		String bottem = " " + (char)BOTTEM_LEFT_CORNER;
-		for (int i = 1; i < Board.DIM; i++) {
-			topIndex = i + " ";
+		String topIndex = "    ";
+		String top = "   " +(char)TOP_LEFT_CORNER;
+		String border = "   " + (char)LEFT_CROSS;
+		String bottem = "   " + (char)BOTTEM_LEFT_CORNER;
+		for (int i = 1; i < b.getSize(); i++) {
+			topIndex = topIndex + i + " ";
 			top = top + (char)HORIZONTAL_LINE + (char) TOP_CROSS;
 			border = border + (char)HORIZONTAL_LINE + (char)CROSS;
 			bottem = bottem + (char)HORIZONTAL_LINE + (char)BOTTEM_CROSS;

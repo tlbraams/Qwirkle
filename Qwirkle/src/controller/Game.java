@@ -27,6 +27,16 @@ public class Game {
 		}
 	}
 	
+	public Game(int boardSize, int playerCount, String[] playerNames, int[] playerAge){
+		board = new Board(boardSize);
+		view = new TUI(this);
+		this.playerCount = playerCount;
+		players = new Player[this.playerCount];
+		for(int i = 0; i < players.length; i++) {
+			players[i] = new HumanPlayer(playerNames[i], playerAge[i]);
+		}
+	}
+	
 	// -------------- Queries -----------------------
 	public Board getBoard() {
 		return board;
