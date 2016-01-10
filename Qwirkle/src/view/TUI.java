@@ -36,8 +36,8 @@ public class TUI {
 			}
 			
 			for (int j = 0; j < b.getSize(); j++) {
-				if(b.get(i, j) != null) {
-					row = row + (char)VERTICAL_LINE + b.get(i, j).getAnsiCode();
+				if(b.getCell(i, j) != null) {
+					row = row + (char)VERTICAL_LINE + b.getCell(i, j).getAnsiCode();
 				}
 				else row = row + (char)VERTICAL_LINE + " ";
 			}
@@ -45,13 +45,15 @@ public class TUI {
 			if(i == 0) {
 				System.out.println(ansi().render(edges[0]));
 				System.out.println(ansi().render(edges[1]));
+				System.out.println(ansi().render(edges[2]));
+				System.out.println(ansi().render(edges[3]));
 				System.out.println(ansi().render(row));
 			} else if(i == b.getSize() -1) {
-				System.out.println(ansi().render(edges[2]));
+				System.out.println(ansi().render(edges[4]));
 				System.out.println(ansi().render(row));
-				System.out.println(ansi().render(edges[3]));
+				System.out.println(ansi().render(edges[5]));
 			} else {
-				System.out.println(ansi().render(edges[2]));
+				System.out.println(ansi().render(edges[4]));
 				System.out.println(ansi().render(row));
 			}
 		}

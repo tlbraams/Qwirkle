@@ -7,7 +7,10 @@ import view.*;
 public class TestingBoardLayout {
 
 	public static void main(String[] args) {
-		Game game = new Game(21, 2, new String[]{"Tycho", "Stephan"}, new int[]{22,20});
+		Player[] players = new Player[2];
+		players[0] = new HumanPlayer("Tycho");
+		players[1] = new HumanPlayer("Jeroen");
+		Game game = new Game(21, 2, players);
 		Board board = game.getBoard();
 		TUI view = game.getView();
 		board.setPiece(10, 10, board.draw());

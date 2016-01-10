@@ -10,8 +10,10 @@ public class Piece {
 	
 	
 	// The possible colors of a piece.
+	// Red = R, Orange = O, Yellow = Y, Green = G, Blue = B, Purple = P
 	public enum Color {RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, DEFAULT};
 	// The possible shapes of a piece.
+	// Circle = o, Diamond = d, Square = s, Clubs = c, Spade = x, Heart = *;
 	public enum Shape {DIAMOND, SQUARE, SPADE, HEART, CLUBS, CIRCLE, BLOCKED};
 	
 	// The color and shape of this piece.
@@ -46,44 +48,44 @@ public class Piece {
 		String result = "";
 		switch(color) {
 		case RED:
-			result += "red ";
+			result += "R";
 			break;
 		case BLUE:
-			result += "blue ";
+			result += "B";
 			break;
 		case GREEN:
-			result += "green ";
+			result += "G";
 			break;
 		case ORANGE:
-			result += "orange ";
+			result += "O";
 			break;
 		case PURPLE:
-			result += "purple ";
+			result += "P";
 			break;
 		case YELLOW:
-			result += "yellow ";
+			result += "Y";
 			break;
 		default:
 			break;
 		}
 		switch(shape){
 		case CIRCLE:
-			result += "circle";
+			result += "o";
 			break;
 		case CLUBS:
-			result += "club";
+			result += "c";
 			break;
 		case DIAMOND:
-			result += "diamond";
+			result += "d";
 			break;
 		case HEART:
-			result += "heart";
+			result += "*";
 			break;
 		case SPADE:
-			result += "spade";
+			result += "x";
 			break;
 		case SQUARE:
-			result += "square";
+			result += "s";
 			break;
 		default:
 			break;
@@ -95,22 +97,22 @@ public class Piece {
 		String result = "";
 		switch(shape){
 		case CIRCLE:
-			result = "" + CIRCLE_CHAR;
+			result += CIRCLE_CHAR;
 			break;
 		case CLUBS:
-			result = "" + CLUB_CHAR;
+			result += CLUB_CHAR;
 			break;
 		case DIAMOND:
-			result = "" + DIAMOND_CHAR;
+			result += DIAMOND_CHAR;
 			break;
 		case HEART:
-			result = "" + HEART_CHAR;
+			result += HEART_CHAR;
 			break;
 		case SPADE:
-			result = "" + SPADE_CHAR;
+			result += SPADE_CHAR;
 			break;
 		case SQUARE:
-			result = "" + SQUARE_CHAR;
+			result += SQUARE_CHAR;
 			break;
 		default:
 			result = " ";
@@ -141,13 +143,14 @@ public class Piece {
 		
 		return result;
 	}
-	
+	// Form codes
 	public static final char DIAMOND_CHAR = (char) 4;
 	public static final char SQUARE_CHAR = (char) 254;
 	public static final char SPADE_CHAR = (char) 6;
 	public static final char CLUB_CHAR = (char) 5;
 	public static final char HEART_CHAR = (char) 3;
 	public static final char CIRCLE_CHAR = (char) 2;
+	// Color codes
 	public static final String ANSI_RESET = "\u001B[0m";
 	public static final String ANSI_BLACK = "\u001B[30m";
 	public static final String ANSI_RED = "\u001B[31;1m";
