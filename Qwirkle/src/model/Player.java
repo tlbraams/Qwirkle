@@ -1,5 +1,7 @@
 package model;
 
+import java.util.HashSet;
+
 public interface Player {
 
 	/**
@@ -13,5 +15,7 @@ public interface Player {
 	public void receive(Piece piece);
 	
 	public Move[] determineMove(Board board);
-
+	
+	public HashSet<Piece> getHand();
+	
 }

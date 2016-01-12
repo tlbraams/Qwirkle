@@ -11,7 +11,6 @@ public class TUI {
 	/**
 	 * The TUI class is used as the textual user interface.
 	 */
-	@SuppressWarnings("unused")
 	private Game control;
 	
 	public TUI(Game game) {
@@ -21,6 +20,10 @@ public class TUI {
 	
 	
 	// ------------ Commands ------------------------
+	
+	public void update() {
+		printBoard(control.getBoard());
+	}
 	
 	public void printBoard(Board b) {
 		AnsiConsole.systemInstall();

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.HashSet;
+
 public class NetworkPlayer implements Player {
 
 	/**
@@ -29,6 +31,12 @@ public class NetworkPlayer implements Player {
 	}
 
 	public Move[] determineMove(Board board) {
+		return null;
+	}
+
+	@Override
+	public HashSet<Piece> getHand() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
