@@ -43,7 +43,6 @@ public class HumanPlayer extends LocalPlayer {
 			while(cont) {
 				System.out.println("Please enter the piece you would like to trade and the coordinates where you would like to place it.");
 				Scanner line = new Scanner(System.in);
-				boolean wait = true;
 				try (Scanner scLine = new Scanner(line.next())) {
 					String input = scLine.next();
 					if (input.equals("Done")) {
@@ -52,8 +51,8 @@ public class HumanPlayer extends LocalPlayer {
 						boolean found = false;
 						for (Piece p : hand) {
 							if (p.toString().equals(input)) {
-								int row = line.nextInt();
-								int column = line.nextInt();
+								int row = requestRow();
+								int column = requestColumn();
 								if (board.isField(row, column) && board.isEmpty(row, column)) {
 									moves.add(new Place(p, row, column));
 								} else if(!board.isField(row, column)) {
@@ -124,11 +123,56 @@ public class HumanPlayer extends LocalPlayer {
 				if(scannerLine.hasNextInt()) {
 					result = scannerLine.nextInt();
 					intRead = true;
+				} else {
+					System.out.println(this.getName() + ": What would you like to do?");
+					System.out.println("Place tiles ................... 5");
+					System.out.println("Trade tiles ................... 6");
 				}
 			}
 		}
 		return result;
 	}
+	
+	
+	
+	/**
+	 * Requests row - coordinates from the player. 
+	 */
+	public int requestRow() {
+		System.out.println("In which row would you like to place your piece?");
+		int row = 0;
+		boolean rowRead = false;
+		Scanner line = new Scanner(System.in);
+		while(!rowRead) {
+			try(Scanner scannerLine = new Scanner(line.next())) {
+				if(scannerLine.hasNextInt()) {
+					row = scannerLine.nextInt();
+					rowRead = true;
+				}
+			}
+		}
+		return row;
+	}
+	
+	/**
+	 * Requests column coordinates from the player.
+	 */
+	public int requestColumn() {
+		System.out.println("In which column would you like to place your piece?");
+		int column = 0;
+		boolean columnRead = false;
+		Scanner line = new Scanner(System.in);
+		while(!columnRead) {
+			try(Scanner scannerLine = new Scanner(line.next())) {
+				if(scannerLine.hasNextInt()) {
+					column = scannerLine.nextInt();
+					columnRead = true;
+				}
+			}
+		}
+		return column;
+	}
+	
 	/**
 	 * How to handle kick/exit??.
 	 */

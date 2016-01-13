@@ -21,6 +21,7 @@ public class TUI {
 	
 	public void update() {
 		printBoard(control.getBoard());
+		printScore(control.getBoard());
 	}
 	
 	public void printBoard(Board b) {
@@ -46,5 +47,13 @@ public class TUI {
 			row = row + "|";
 			System.out.println(row);
 		}
+	}
+	
+	public void printScore(Board b) {
+		String result = "Scores:";
+		for(int i = 0; i < control.getPlayerCount(); i++) {
+			result += " player" + i + ": " + b.getScore(i);
+		}
+		System.out.println(result);
 	}
 }

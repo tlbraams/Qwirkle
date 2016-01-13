@@ -55,6 +55,10 @@ public class Game implements Runnable {
 		return view;
 	}
 	
+	public int getPlayerCount() {
+		return playerCount;
+	}
+	
 	public int findMaxScore(HashSet<Piece> hand) {
 		int max = 0;
 		for(Piece p : hand) {
@@ -153,6 +157,8 @@ public class Game implements Runnable {
 				moveCounter ++;
 				if(moves[0] instanceof Place) {
 					makeMove(moves, players[currentPlayerID]);
+					int score = getScore(moves);
+					board.addScore(currentPlayerID, score);
 				} else if (moves[0] instanceof Trade) {
 					tradePieces(moves, players[currentPlayerID]);
 				}
@@ -169,6 +175,7 @@ public class Game implements Runnable {
 			for(int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Place;
 			}
+			result = result && (isRow(moves) || isColumn(moves));
 			Board b = board.deepCopy();
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			for(Place p : places) {
@@ -262,6 +269,108 @@ public class Game implements Runnable {
 					} else {
 						result = false;
 					}
+				}
+			}
+		}
+		return result;
+	}
+	
+	public boolean isRow(Move[] moves) {
+		boolean result = true;
+		if(moves.length != 1) {
+			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
+			int minColumn = places[0].getColumn();
+			int maxColumn = minColumn;
+			for(int i = 1; i < places.length; i++) {
+				result = result && places[0].getRow() == places[i].getRow();
+				if (places[i].getColumn() < minColumn) {
+					minColumn = places[i].getColumn();
+				} else if (places[i].getColumn() > maxColumn) {
+					maxColumn = places[i].getColumn();
+				}
+			}
+			for(int i = minColumn; i <= maxColumn && result; i++) {
+				result = result && !board.isEmpty(places[0].getRow(), i);
+			}
+		}
+		
+		return result;
+	}
+	/**
+	 * Checks if moves (Places's) are in 1 straight line and if there are no gaps. 
+	 * @param moves
+	 * @return
+	 */
+	public boolean isColumn(Move[] moves) {
+		boolean result = true;
+		if(moves.length != 1) {
+			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
+			int minRow = places[0].getRow();
+			int maxRow = minRow;
+			// Check for straight line Place. 
+			for(int i = 1; i < places.length; i++) {
+				result = result && places[0].getColumn() == places[i].getColumn();
+				if (places[i].getRow() < minRow) {
+					minRow = places[i].getRow();
+				} else if (places[i].getRow() > maxRow) {
+					maxRow = places[i].getRow();
+				}
+			}
+			// Check for gaps. 
+			for(int i = minRow; i <= maxRow && result; i++) {
+				result = result && !board.isEmpty(i, places[0].getColumn());
+			}
+		}
+		return result;
+	}
+	
+	public int getScore(Move[] moves) {
+		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
+		int result = 0;
+		if(places.length == 1) {
+			int row = board.getRowLength(places[0].getRow(), places[0].getColumn());
+			int column = board.getColumnLength(places[0].getRow(), places[0].getColumn());
+			if (row > 1) {
+				result += row;
+				if(row == 6) {
+					result += row;
+				}
+			}
+			if (column > 1) {
+				result += column;
+				if(column == 6) {
+					result += column;
+				}
+			}
+		} else {
+			if (isRow(moves)) {
+				result = board.getRowLength(places[0].getRow(), places[0].getColumn());
+				if(result == 6) {
+					result += result;
+				}
+				for(int i = 0; i < places.length; i++) {
+					int column =  board.getColumnLength(places[i].getRow(), places[i].getColumn());
+					if (column > 1) {
+						result = result + column;
+					}
+					if(column == 6) {
+						result += column;
+					}
+				}
+			} else if (isColumn(moves)) {
+				result = board.getColumnLength(places[0].getRow(), places[0].getColumn());
+				if(result == 6) {
+					result += result;
+				}
+				for(int i = 0; i < places.length; i++) {
+					int row = board.getRowLength(places[i].getRow(), places[i].getColumn());
+					if (row > 1) {
+						result = result + row; 
+					}
+					if(row == 6) {
+						result += row;
+					}
+					
 				}
 			}
 		}
