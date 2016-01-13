@@ -44,4 +44,8 @@ public abstract class LocalPlayer implements Player {
 	public void receive(Piece piece) {
 		hand.add(piece);
 	}
+	
+	public void remove(Piece piece) {
+		hand.remove(piece);
+	}
 }

@@ -1,13 +1,11 @@
 package view;
 
-import org.fusesource.jansi.AnsiConsole;
-import static org.fusesource.jansi.Ansi.*;
+
 import model.*;
 import controller.*;
 
 public class TUI {
 
-	private static final int VERTICAL_LINE = 179;
 	/**
 	 * The TUI class is used as the textual user interface.
 	 */
@@ -26,9 +24,9 @@ public class TUI {
 	}
 	
 	public void printBoard(Board b) {
-		AnsiConsole.systemInstall();
-		String[] edges = BoardOutline.getEdges(b);
-		for (int i = 0; i < b.getSize(); i++) {
+		String edges = BoardOutline.getEdges(b);
+		System.out.println(edges);
+		for (int i = b.getMinRow(); i < b.getMaxRow(); i++) {
 			String row = "";
 			if (i < 10) {
 				row = "  " + i;
@@ -37,28 +35,16 @@ public class TUI {
 			} else {
 				row = "" + i;
 			}
-			
-			for (int j = 0; j < b.getSize(); j++) {
+			for (int j = b.getMinColumn(); j < b.getMaxColumn(); j++) {
 				if(b.getCell(i, j) != null) {
-					row = row + (char)VERTICAL_LINE + b.getCell(i, j).getAnsiCode();
+					row = row + "| " + b.getCell(i, j).toString();
 				}
-				else row = row + (char)VERTICAL_LINE + " ";
+				else {
+					row = row + "|   ";
+				}
 			}
-			row = row + (char)VERTICAL_LINE;
-			if(i == 0) {
-				System.out.println(ansi().render(edges[0]));
-				System.out.println(ansi().render(edges[1]));
-				System.out.println(ansi().render(edges[2]));
-				System.out.println(ansi().render(edges[3]));
-				System.out.println(ansi().render(row));
-			} else if(i == b.getSize() -1) {
-				System.out.println(ansi().render(edges[4]));
-				System.out.println(ansi().render(row));
-				System.out.println(ansi().render(edges[5]));
-			} else {
-				System.out.println(ansi().render(edges[4]));
-				System.out.println(ansi().render(row));
-			}
+			row = row + "|";
+			System.out.println(row);
 		}
 	}
 }

@@ -25,6 +25,7 @@ public class Board {
 	private int size;
 	private Piece[][] board;
 	private ArrayList<Piece> stack;
+	private int[] score;
 	
 	// --------------- Constructors -----------------
 	public Board() {
@@ -32,10 +33,11 @@ public class Board {
 		board = new Piece[DIM][DIM];
 		stack = new ArrayList<Piece>();
 		fillStack();
-		minRow = 85;
+		minRow = 86;
 		maxRow = 97;
 		minColumn = 85;
 		maxColumn = 97;
+		score = new int[4];
 	}
 	public Board(int dimension) {
 		size = dimension;
@@ -139,7 +141,15 @@ public class Board {
 		return result;
 	}
 	
+	public int getScore(int playerID) {
+		return score[playerID];
+	}
+	
 	// --------------- Commands ---------------------
+	
+	public void addScore(int playerID, int score) {
+		this.score[playerID] += score;
+	}
 	
 	public void setPiece(int row, int column, Piece piece) {
 		board[row][column] = piece;
@@ -158,11 +168,11 @@ public class Board {
 		}
 	}
 	
-	public Piece[][] deepCopy() {
-		Piece[][] result = new Piece[size][size];
+	public Board deepCopy() {
+		Board result = new Board();
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				result[i][j] = board[i][j];
+				result.setPiece(i, j, this.getCell(i, j));
 			}
 		}
 		return result;

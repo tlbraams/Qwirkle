@@ -34,9 +34,10 @@ public class NetworkPlayer implements Player {
 		return null;
 	}
 
-	@Override
 	public HashSet<Piece> getHand() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void remove(Piece piece) {
 	}
 }

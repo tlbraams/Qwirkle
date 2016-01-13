@@ -18,4 +18,6 @@ public interface Player {
 	
 	public HashSet<Piece> getHand();
 	
+	public void remove(Piece p);
+	
 }

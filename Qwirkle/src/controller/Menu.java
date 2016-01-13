@@ -18,8 +18,11 @@ public class Menu {
 	int playerCount;
 	int aiTime;
 	
+	public static void main(String[] args) {
+		new Menu().run();
+	}
 	
-	public void main(String[] args) {
+	public void run() {
 		players = new Player[4];
 		Scanner in = new Scanner(System.in);
 		Boolean running = true;
@@ -32,7 +35,7 @@ public class Menu {
 				registerNewPlayer();
 			} else if (line.equals("2")) {
 				if (playerCount > 1) {
-					(new Thread(new Game(playerCount, players, aiTime))).start();
+					new Game(playerCount, players, aiTime).run();
 					playerCount = 0;
 					players = new Player[4];
 				} else {
@@ -65,7 +68,6 @@ public class Menu {
 		} else {
 			System.out.println("Not a valid entry. Only integers are accepted.");
 		}
-		in.close();
 	}
 	
 	public void registerNewPlayer() {
@@ -86,12 +88,11 @@ public class Menu {
 				running = false;
 			}
 			if(playerCount == 4) {
-				(new Thread(new Game(playerCount, players, aiTime))).start();
+				new Game(playerCount, players, aiTime).run();
 				playerCount = 0;
 				players = new Player[4];
 			}
 
 		}
-		line.close();
 	}
 }
