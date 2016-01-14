@@ -20,4 +20,7 @@ public interface Player {
 	
 	public void remove(Piece p);
 	
+	public Move[] determineFirstMove(Board board);
+	
+	
 }

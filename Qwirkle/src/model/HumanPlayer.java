@@ -102,6 +102,10 @@ public class HumanPlayer extends LocalPlayer {
 		return result;
 	}
 	
+	public Move[] determineFirstMove(Board board) {
+		return null;
+	}
+	
 	
 	public void showHand() {
 		String result = "Your hand:";

@@ -33,6 +33,11 @@ public class NetworkPlayer implements Player {
 	public Move[] determineMove(Board board) {
 		return null;
 	}
+	
+	public Move[] determineFirstMove(Board board) {
+		return null;
+	}
+	
 
 	public HashSet<Piece> getHand() {
 		return null;

@@ -229,6 +229,22 @@ public class Game implements Runnable {
 		currentPlayerID = playerNumber;
 	}
 	
+	public void findFirstMove() {
+		Move[] moves = players[currentPlayerID].determineFirstMove(board);
+		if(validMove(moves, players[currentPlayerID])){
+			moveCounter ++;
+			if(moves[0] instanceof Place) {
+				makeMove(moves, players[currentPlayerID]);
+				int score = getScore(moves);
+				board.addScore(currentPlayerID, score);
+			} else if (moves[0] instanceof Trade) {
+				tradePieces(moves, players[currentPlayerID]);
+			}
+		}			
+		currentPlayerID = (currentPlayerID + 1) % playerCount;
+		view.update();
+	}
+	
 	public void playGame() {
 		for(int i = 0; i < playerCount; i++) {
 			for(int j = 0; j < 6; j++) {
@@ -240,6 +256,7 @@ public class Game implements Runnable {
 		moveCounter = 0;
 		boolean running = true;
 		view.update();
+		findFirstMove();
 		while (running) {
 			Move[] moves = players[currentPlayerID].determineMove(board);
 			if(validMove(moves, players[currentPlayerID])){
@@ -265,11 +282,11 @@ public class Game implements Runnable {
 				result = result && moves[i] instanceof Place;
 			}
 			Board b = board.deepCopy();
-			result = result && (isRow(moves, b) || isColumn(moves, b));
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			for(Place p : places) {
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
 				}
+			result = result && (isRow(moves, b) || isColumn(moves, b));
 			result = result && isValidRow(places, b);
 			result = result && isValidColumn(places, b);
 		} else if (moves[0] instanceof Trade) {
