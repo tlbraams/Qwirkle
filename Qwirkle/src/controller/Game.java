@@ -234,7 +234,7 @@ public class Game implements Runnable {
 		if(validMove(moves, players[currentPlayerID])){
 			moveCounter ++;
 			if(moves[0] instanceof Place) {
-				makeMove(moves, players[currentPlayerID]);
+				place(moves, players[currentPlayerID]);
 				int score = getScore(moves);
 				board.addScore(currentPlayerID, score);
 			} else if (moves[0] instanceof Trade) {
