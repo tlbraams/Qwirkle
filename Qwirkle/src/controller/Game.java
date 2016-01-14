@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import exceptions.*;
 import model.*;
 import view.TUI;
 
@@ -333,11 +334,15 @@ public class Game implements Runnable {
 				result = result && b.isEmpty(p.getRow(), p.getColumn());
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
 			}
-			result = result && (isRow(moves, b) || isColumn(moves, b));
-			result = result && isValidRow(places, b);
-			result = result && isValidColumn(places, b);
-			if(moveCounter > 0) {
-				result = result && isConnected(places);
+			try{
+				result = result && (isRow(moves, b) || isColumn(moves, b));
+				result = result && isValidRow(places, b);
+				result = result && isValidColumn(places, b);
+				if(moveCounter > 0) {
+					isConnected(places);
+				}
+			} catch(UnconnectedMoveException e) {
+				e.getInfo();
 			}
 		} else if (moves[0] instanceof Trade) {
 			for (int i = 1; i < moves.length; i++) {
@@ -480,7 +485,7 @@ public class Game implements Runnable {
 		return result;
 	}
 	
-	public boolean isConnected(Place[] places) {
+	public void isConnected(Place[] places) throws UnconnectedMoveException{
 		boolean result = false;
 		for(Place p: places) {
 			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
@@ -488,7 +493,9 @@ public class Game implements Runnable {
 					(!board.isEmpty(p.getRow(), p.getColumn() - 1)) ||
 					(!board.isEmpty(p.getRow(), p.getColumn() + 1)));
 		}
-		return result;
+		if(!result) {
+			throw new UnconnectedMoveException();
+		}
 	}
 
 	
