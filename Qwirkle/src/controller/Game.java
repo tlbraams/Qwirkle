@@ -153,8 +153,12 @@ public class Game implements Runnable {
 	// ----- Commands -----
 	
 	/**
-	 * Starts a Game. First it fills all Hands, and then finds the players that is allowed
-	 * to make a Move first. It prints the board on the System.Out and 
+	 * Starts and ends Game. At the beginning it fills all Hands, and then finds the players that is allowed
+	 * to make a Move first. It prints the board on the System.Out and executes the first Move.
+	 * 
+	 * During the Game it lets the Players makes Moves, checks them for validity and keeps the scores. 
+	 * 
+	 * When the Game has finished it stops the Game and displays the winner and scores. 
 	 */
 	public void playGame() {
 		// Fills the Hands of each Player with 6 Pieces. 
@@ -164,11 +168,13 @@ public class Game implements Runnable {
 				players[i].receive(piece);
 			}	
 		}
+		// Start the Game. 
 		findFirstPlayer();
-		boolean running = true;
 		view.update();
 		findFirstMove();
-		while (running) {
+		
+		// During the Game.
+		while (!endGame()) {
 			Move[] moves = players[currentPlayerID].determineMove(board);
 			if(validMove(moves, players[currentPlayerID])){
 				moveCounter ++;
@@ -183,9 +189,21 @@ public class Game implements Runnable {
 			currentPlayerID = (currentPlayerID + 1) % playerCount;
 			view.update();
 		}
-		
+		// Finishing the Game off. 
+		ending();
 	}
 	
+	/**
+	 * Displays the winner and scores of other players to the Player. 
+	 */
+	public void ending() {
+		System.out.println("The game has ended! " + players[isWinner()].getName() + "has won.");
+		System.out.println("The scores: ");
+		for (Player p: players) {
+			System.out.println(p.getName() + " : " + board.getScore(p.getID()));
+		}
+	}
+
 	/**
 	 * Welcomes the players and starts the game. 
 	 */
@@ -294,8 +312,17 @@ public class Game implements Runnable {
 		view.update();
 	}
 	
-	
-
+	/**
+	 * Tests if a given array of Moves contains only valid Moves. It tests if all the moves are of the same 
+	 * type, if a placing of Pieces is one straight row or column, and finally if the players makes Moves
+	 * with Pieces that are in its Hand. If any of the above conditions is violated, the turn is skipped. 
+	 * @param moves the Moves that the given Player wants to make. 
+	 * @param player the Player that wants to make the given Moves. 
+	 * @return true if the Moves are valid, false when invalid. 
+	 */
+	/*
+	 * 
+	 */
 	public boolean validMove(Move[] moves, Player player) {
 		boolean result = true;
 		if (moves[0] instanceof Place) {
