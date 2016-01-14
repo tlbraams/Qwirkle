@@ -7,12 +7,18 @@ import java.util.Set;
 import model.*;
 import view.TUI;
 
+/**
+ * Class for controlling a game ones it has started. It keeps the scores and 
+ * ends the game when the game has finished. The game is modelled in the model-package
+ * and the game communicates with players through the classes in "view". 
+ * 
+ * @author Tycho Braams & Jeroen Mulder
+ * @version $1.0
+ */
+
 public class Game implements Runnable {
 
-	/**
-	 * The game class will control the flow of a game using the Classes in the model package
-	 * and interacting with the user via the View Clas(ses) in the view package.
-	 */
+	// ----- Instance Variables -----
 	
 	private Board board;
 	private TUI view;
@@ -23,8 +29,24 @@ public class Game implements Runnable {
 	private int currentPlayerID;
 	private int moveCounter;
 	
-	// -------------- Constructor -------------------
-	public Game(int playerCount, Player[] players, int thinkTime){
+	// ----- Constructor -----
+	
+	/**
+	 * Creates a new Game object with a board of a default size (183 x 183).
+	 * 
+	 * @param playerCount	the amount of players participating in this Game. 
+	 * @param players 		the array with all players participating in this Game.
+	 * @param thinkTime 	the time in milliseconds that a computer player can take before making a Move. 
+	 */
+	/*
+	 * @requires 	playerCount < 5 && playerCount > 1;
+	 * 				players.length() < 5 && players.length() > 1;
+	 * 				thinkTime > 0;
+	 * @ensures		this.playerCount = playerCount;
+	 * 				// All players in players are now in players. 
+	 * 				this.thinkTime = aiTime;
+	 */
+	public Game(int playerCount, /* @NonNull */Player[] players, int thinkTime){
 		board = new Board();
 		view = new TUI(this);
 		this.playerCount = playerCount;
@@ -35,6 +57,22 @@ public class Game implements Runnable {
 		aiTime = thinkTime;
 	}
 	
+	/**
+	 * Creates a new Game object with a board of a variable size.
+	 * 
+	 * @param playerCount	the amount of players participating in this Game. 
+	 * @param players 		the array with all players participating in this Game.
+	 * @param thinkTime 	the time in milliseconds that a computer player can take before making a Move. 
+	 * @param boardSize		the length of the edges of the board that is to be played on.
+	 */
+	/*
+	 * @requires 	playerCount < 5 && playerCount > 1;
+	 * 				players.length() < 5 && players.length() > 1;
+	 * 				thinkTime > 0;
+	 * @ensures		this.playerCount = playerCount;
+	 * 				// All players in players are now in players. 
+	 * 				this.thinkTime = aiTime;
+	 */
 	public Game(int boardSize, int playerCount, Player[] players, int thinkTime){
 		board = new Board(boardSize);
 		view = new TUI(this);
@@ -46,26 +84,49 @@ public class Game implements Runnable {
 		aiTime = thinkTime;
 	}
 	
-	// -------------- Queries -----------------------
-	public Board getBoard() {
+	// ----- Queries -----
+	/**
+	 * Returns the Board object of this Game.
+	 */
+	/* @pure */public /* @NonNull*/ Board getBoard() {
 		return board;
 	}
 	
-	public TUI getView() {
+	/**
+	 * Returns a TUI object that is used to communicate with the player. 
+	 */
+	/* @pure */public /* @NonNull*/ TUI getView() {
 		return view;
 	}
 	
-	public int getPlayerCount() {
+	/**
+	 * Returns the amount of players that participate in this Game. 
+	 */
+	/* @pure */public /* @NonNull*/ int getPlayerCount() {
 		return playerCount;
 	}
 	
-	public int findMaxScore(HashSet<Piece> hand) {
+	/**
+	 * Returns the maximum amount of points of a given hand. 
+	 * This method is called for each Player at the beginning of this Game to 
+	 * determine which player is allowed to start the game. 
+	 * 
+	 * @param hand the Hand a player holds. 
+	 * @return the maximum amount of points one can get with the given Hand. 
+	 */
+	/* 
+	 * @requires	hand.size() == 6;
+	 * @ensures		\result <= 0 && \result < 7;
+	 */
+	/* @pure */public /* @NonNull*/ int findMaxScore(HashSet<Piece> hand) {
 		int max = 0;
 		for(Piece p : hand) {
 			Set<Piece> restHand = new HashSet<>(hand);
 			restHand.remove(p);
 			int color = 1;
 			int shape = 1;
+			
+			// Check if either the color or the shape of each rp matches that of p. If so, add to color or shape. 
 			for(Piece rp : restHand) {
 				if(rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
 					color++;
@@ -84,9 +145,11 @@ public class Game implements Runnable {
 	}
 	
 	
-	// --------------- Commands: -------------------------
+	// ----- Commands -----
 	
-	
+	/**
+	 * Welcomes the players and starts the game. 
+	 */
 	public void run() {
 		String welcome = "NAMES";
 		for(int i = 0; i < playerCount; i++) {
@@ -98,12 +161,20 @@ public class Game implements Runnable {
 	}
 	
 	/**
-	 * A given players makes the given valid moves. After making the moves,
-	 * the player removes these tiles from its hand and fills the hand up to 6 again. 
-	 * @param moves given moves
-	 * @param player given player
+	 * Places the Piece from a Player on the Board in the indicated cell.
+	 * After placing a Piece, it is removed from the Players hand and the Player 
+	 * gets a new Piece (if the Stack is not empty). 
+	 * 
+	 * @param moves the Moves that a Player wants to make.
+	 * @param player the Player who wants to make the Moves.
 	 */
-	public void makeMove(Move[] moves, Player player) {
+	/*
+	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
+	 *  			myArray[i] instanceof Place)
+     *           
+     *            
+	 */
+	public void place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		for(Place m: places) {
 			Piece piece = m.getPiece();
@@ -111,12 +182,30 @@ public class Game implements Runnable {
 			int row = m.getRow();
 			int column = m.getColumn();
 			board.setPiece(row, column, piece);
-			player.receive(board.draw());
+			if (!board.emptyStack()) {
+				player.receive(board.draw());
+			} else {
+				System.out.println("The stack is empty.");
+			}
 		}
 		board.setLastMadeMove(moveCounter);
 	}
 	
-	public void tradePieces(Move[] moves, Player player) {
+	/**
+	 * Trades the given Pieces in the Moves from a Player with random Pieces in the Stack.
+	 * The Pieces are removed from the Players Hand and added to the Stack. 
+	 * The Players Hand is refilled again to 6 Pieces (if the Stack is not empty). 
+	 * 
+	 * @param moves the Moves that a Player wants to make.
+	 * @param player the Player who wants to make the Moves.
+	 */
+	/*
+	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
+	 *  			myArray[i] instanceof Trade)
+     *           
+     *            
+	 */
+	public void tradePieces(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Piece[] pieces = new Piece[moves.length];
 		for(int i = 0; i < moves.length; i++) {
 			pieces[i] = moves[i].getPiece();
@@ -145,7 +234,7 @@ public class Game implements Runnable {
 		if(validMove(moves, players[currentPlayerID])){
 			moveCounter ++;
 			if(moves[0] instanceof Place) {
-				makeMove(moves, players[currentPlayerID]);
+				place(moves, players[currentPlayerID]);
 				int score = getScore(moves);
 				board.addScore(currentPlayerID, score);
 			} else if (moves[0] instanceof Trade) {
@@ -173,7 +262,7 @@ public class Game implements Runnable {
 			if(validMove(moves, players[currentPlayerID])){
 				moveCounter ++;
 				if(moves[0] instanceof Place) {
-					makeMove(moves, players[currentPlayerID]);
+					place(moves, players[currentPlayerID]);
 					int score = getScore(moves);
 					board.addScore(currentPlayerID, score);
 				} else if (moves[0] instanceof Trade) {
