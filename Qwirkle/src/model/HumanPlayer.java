@@ -75,24 +75,21 @@ public class HumanPlayer extends LocalPlayer {
 			while(cont) {
 				System.out.println("Please enter the piece you would like to trade.");
 				Scanner line = new Scanner(System.in);
-				boolean wait = true;
-				while(wait) {
-					try (Scanner scLine = new Scanner(line.next())) {
-						String input = scLine.next();
-						if (input.equals("Done")) {
-							cont = false;
-						} else {
-							boolean found = false;
-							for (Piece p : hand) {
-								if (p.toString().equals(input)) {
-									moves.add(new Trade(p));
-									found = true;
-								}
+				try (Scanner scLine = new Scanner(line.next())) {
+					String input = scLine.next();
+					if (input.equals("Done")) {
+						cont = false;
+					} else {
+						boolean found = false;
+						for (Piece p : hand) {
+							if (p.toString().equals(input)) {
+								moves.add(new Trade(p));
+								found = true;
 							}
-							if(!found) {
-								System.out.println("Not a piece in your hand");
-								//Possibly replace with exception.
-							}
+						}
+						if(!found) {
+							System.out.println("Not a piece in your hand");
+							//Possibly replace with exception.
 						}
 					}
 				}
@@ -103,7 +100,53 @@ public class HumanPlayer extends LocalPlayer {
 	}
 	
 	public Move[] determineFirstMove(Board board) {
-		return null;
+		showHand();
+		ArrayList<Move> moves = new ArrayList<Move>();
+		boolean cont = true;
+		boolean firstPiece = true;
+		while(cont) {
+			System.out.println("Please enter the piece you would like to place.");
+			Scanner line = new Scanner(System.in);
+			try (Scanner scLine = new Scanner(line.next())) {
+				String input = scLine.next();
+				if (input.equals("Done")) {
+					cont = false;
+				} else {
+					boolean found = false;
+					for (Piece p : hand) {
+						if (p.toString().equals(input)) {
+							int row;
+							if(firstPiece) {
+								row = 91;
+							} else {
+								row = requestRow();
+							}
+							int column;
+							if(firstPiece) {
+								column = 91;
+							} else {
+								column = requestColumn();
+							}
+							if (board.isField(row, column) && board.isEmpty(row, column)) {
+								moves.add(new Place(p, row, column));
+								firstPiece = false;
+							} else if(!board.isField(row, column)) {
+								System.out.println("Invalid Move exc");
+							} else if(!board.isEmpty(row, column)) {
+								System.out.println("Invalid Move exc");
+							}
+							found = true;
+						}
+					}
+					if(!found) {
+						System.out.println("Not a piece in your hand");
+						//Possibly replace with exception.
+					}
+				}
+			}
+		}
+		Move[] result = moves.toArray(new Move[moves.size()]);
+		return result;
 	}
 	
 	
