@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import exceptions.*;
 import model.*;
 import view.TUI;
 
@@ -195,7 +196,7 @@ public class Game implements Runnable {
 	 * Displays the winner and scores of other players to the Player. 
 	 */
 	public void ending() {
-		System.out.println("The game has ended! " + players[isWinner()].getName() + "has won.");
+		System.out.println("The game has ended! " + players[isWinner()].getName() + " has won.");
 		System.out.println("The scores: ");
 		for (Player p: players) {
 			System.out.println(p.getName() + " : " + board.getScore(p.getID()));
@@ -236,8 +237,6 @@ public class Game implements Runnable {
 			board.setPiece(row, column, piece);
 			if (!board.emptyStack()) {
 				player.receive(board.draw());
-			} else {
-				System.out.println("The stack is empty.");
 			}
 		}
 		board.setLastMadeMove(moveCounter);
@@ -336,14 +335,18 @@ public class Game implements Runnable {
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
 			}
 			
-			// Check if the Places create an uninterrupted row or column. 
-			result = result && (isRow(moves, b) || isColumn(moves, b));
-			
-			// Check if the uninterrupted row or column is valid. 
-			result = result && isValidRow(places, b);
-			result = result && isValidColumn(places, b);
-			if(moveCounter > 0) {
-				result = result && isConnected(places);
+			try{
+				// Check if the Places create an uninterrupted row or column. 
+				result = result && (isRow(moves, b) || isColumn(moves, b));
+				
+				// Check if the uninterrupted row or column is valid. 
+				result = result && isValidRow(places, b);
+				result = result && isValidColumn(places, b);
+				if(moveCounter > 0) {
+					isConnected(places);
+				}
+			} catch(UnconnectedMoveException e) {
+				e.getInfo();
 			}
 			
 		// Check if all Moves are of type Trade. 
@@ -509,7 +512,6 @@ public class Game implements Runnable {
 					maxRow = places[i].getRow();
 				}
 			}
-			
 			// Check for gaps. 
 			for(int i = minRow; i <= maxRow && result; i++) {
 				result = result && !b.isEmpty(i, places[0].getColumn());
@@ -517,16 +519,14 @@ public class Game implements Runnable {
 		}
 		return result;
 	}
-	
 	/**
 	 * Tests if every Place of places is connected to the another Piece.
 	 * @param places the Places to be made. 
-	 * @return true when the Places are connected to other Pieces, false when otherwise. 
 	 */
 	/*
 	 * @requires 	places.length < 7;
 	 */
-	public /* @NonNull */boolean isConnected(/* @NonNull */Place[] places) {
+	public void isConnected(/* @NonNull */Place[] places) throws UnconnectedMoveException{
 		boolean result = false;
 		for(Place p: places) {
 			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
@@ -534,7 +534,9 @@ public class Game implements Runnable {
 					(!board.isEmpty(p.getRow(), p.getColumn() - 1)) ||
 					(!board.isEmpty(p.getRow(), p.getColumn() + 1)));
 		}
-		return result;
+		if(!result) {
+			throw new UnconnectedMoveException();
+		}
 	}
 
 	/**
@@ -637,7 +639,9 @@ public class Game implements Runnable {
 		for (Player p: players) {
 			if(!emptyHand) {
 				emptyHand = p.getHand().size() == 0;
-				board.addScore(p.getID(), 6);
+				if (emptyHand) {
+					board.addScore(p.getID(), 6);
+				}
 			}
 		}
 		return (board.emptyStack() && emptyHand) || (board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
