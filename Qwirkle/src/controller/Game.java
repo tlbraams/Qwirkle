@@ -200,6 +200,7 @@ public class Game implements Runnable {
 			result = result && (isRow(moves, b) || isColumn(moves, b));
 			result = result && isValidRow(places, b);
 			result = result && isValidColumn(places, b);
+			result = result && isConnected(places);
 		} else if (moves[0] instanceof Trade) {
 			for (int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Trade;
@@ -340,6 +341,18 @@ public class Game implements Runnable {
 		}
 		return result;
 	}
+	
+	public boolean isConnected(Place[] places) {
+		boolean result = false;
+		for(Place p: places) {
+			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
+					(!board.isEmpty(p.getRow() + 1, p.getColumn())) ||
+					(!board.isEmpty(p.getRow(), p.getColumn() - 1)) ||
+					(!board.isEmpty(p.getRow(), p.getColumn() + 1)));
+		}
+		return result;
+	}
+
 	
 	public int getScore(Move[] moves) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);

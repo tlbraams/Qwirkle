@@ -12,13 +12,4 @@ public class Test {
 		System.out.println(i - (i/100)*100 - ((i/10)*10 - (i/100)*100));
 	}
 	
-	public boolean connected(Place[] places) {
-		boolean result = false;
-		for(Place p: places) {
-			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
-					(!board.isEmpty(p.getRow() + 1, p.getColumn())) ||
-					(!board.isEmpty(p.getRow(), p.getColumn() - 1)) ||
-					(!board.isEmpty(p.getRow(), p.getColumn() + 1)));
-		return result;
-	}
 }
