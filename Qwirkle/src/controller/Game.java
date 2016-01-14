@@ -578,7 +578,9 @@ public class Game implements Runnable {
 		for (Player p: players) {
 			if(!emptyHand) {
 				emptyHand = p.getHand().size() == 0;
-				board.addScore(p.getID(), 6);
+				if (emptyHand) {
+					board.addScore(p.getID(), 6);
+				}
 			}
 		}
 		return (board.emptyStack() && emptyHand) || (board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
