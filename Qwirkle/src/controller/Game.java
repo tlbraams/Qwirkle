@@ -55,6 +55,7 @@ public class Game implements Runnable {
 			this.players[i] = players[i];
 		}
 		aiTime = thinkTime;
+		moveCounter = 0;
 	}
 	
 	/**
@@ -82,11 +83,13 @@ public class Game implements Runnable {
 			this.players[i] = players[i];
 		}
 		aiTime = thinkTime;
+		moveCounter = 0;
 	}
 	
 	// ----- Queries -----
 	/**
 	 * Returns the Board object of this Game.
+	 * @return the Board object.
 	 */
 	/* @pure */public /* @NonNull*/ Board getBoard() {
 		return board;
@@ -94,6 +97,7 @@ public class Game implements Runnable {
 	
 	/**
 	 * Returns a TUI object that is used to communicate with the player. 
+	 * @return the TUI.
 	 */
 	/* @pure */public /* @NonNull*/ TUI getView() {
 		return view;
@@ -101,6 +105,7 @@ public class Game implements Runnable {
 	
 	/**
 	 * Returns the amount of players that participate in this Game. 
+	 * @return the amount of players in the game. 
 	 */
 	/* @pure */public /* @NonNull*/ int getPlayerCount() {
 		return playerCount;
@@ -148,6 +153,40 @@ public class Game implements Runnable {
 	// ----- Commands -----
 	
 	/**
+	 * Starts a Game. First it fills all Hands, and then finds the players that is allowed
+	 * to make a Move first. It prints the board on the System.Out and 
+	 */
+	public void playGame() {
+		// Fills the Hands of each Player with 6 Pieces. 
+		for(int i = 0; i < playerCount; i++) {
+			for(int j = 0; j < 6; j++) {
+				Piece piece = board.draw();
+				players[i].receive(piece);
+			}	
+		}
+		findFirstPlayer();
+		boolean running = true;
+		view.update();
+		findFirstMove();
+		while (running) {
+			Move[] moves = players[currentPlayerID].determineMove(board);
+			if(validMove(moves, players[currentPlayerID])){
+				moveCounter ++;
+				if(moves[0] instanceof Place) {
+					place(moves, players[currentPlayerID]);
+					int score = getScore(moves);
+					board.addScore(currentPlayerID, score);
+				} else if (moves[0] instanceof Trade) {
+					tradePieces(moves, players[currentPlayerID]);
+				}
+			}			
+			currentPlayerID = (currentPlayerID + 1) % playerCount;
+			view.update();
+		}
+		
+	}
+	
+	/**
 	 * Welcomes the players and starts the game. 
 	 */
 	public void run() {
@@ -170,9 +209,7 @@ public class Game implements Runnable {
 	 */
 	/*
 	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
-	 *  			myArray[i] instanceof Place)
-     *           
-     *            
+	 *  			myArray[i] instanceof Place)          
 	 */
 	public void place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
@@ -202,8 +239,6 @@ public class Game implements Runnable {
 	/*
 	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
 	 *  			myArray[i] instanceof Trade)
-     *           
-     *            
 	 */
 	public void tradePieces(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Piece[] pieces = new Piece[moves.length];
@@ -215,6 +250,16 @@ public class Game implements Runnable {
 		board.tradeReturn(pieces);
 	}
 	
+	/**
+	 * Finds the Player at the beginning of a Game that can make a Move first. 
+	 * The first Player is the Player that has the highest possible points in its Hand
+	 * at the beginning of the Game. When 2 players have the same maximum possible score, 
+	 * the Player who joined the Game the earliest is given the turn. 
+	 */
+	/*
+	 * @ensure		currentPlayerID < this.playerCount();
+	 * 				currentPlayerID > 0;
+	 */
 	public void findFirstPlayer() {
 		int maxScore = 0;
 		int playerNumber = 0;
@@ -229,51 +274,27 @@ public class Game implements Runnable {
 		currentPlayerID = playerNumber;
 	}
 	
+	/**
+	 * Requests the first Player for a Move and makes sure this is executed. 
+	 * After execution, the score of the first Player is raised, the moveCounter incremented, 
+	 * and the Board is printed. 
+	 */
+	/*
+	 * @ensure		moveCounter == 1;
+	 */
 	public void findFirstMove() {
 		Move[] moves = players[currentPlayerID].determineFirstMove(board);
 		if(validMove(moves, players[currentPlayerID])){
 			moveCounter ++;
-			if(moves[0] instanceof Place) {
-				makeMove(moves, players[currentPlayerID]);
-				int score = getScore(moves);
-				board.addScore(currentPlayerID, score);
-			} else if (moves[0] instanceof Trade) {
-				tradePieces(moves, players[currentPlayerID]);
-			}
+			place(moves, players[currentPlayerID]);
+			int score = getScore(moves);
+			board.addScore(currentPlayerID, score);
 		}			
 		currentPlayerID = (currentPlayerID + 1) % playerCount;
 		view.update();
 	}
 	
-	public void playGame() {
-		for(int i = 0; i < playerCount; i++) {
-			for(int j = 0; j < 6; j++) {
-				Piece piece = board.draw();
-				players[i].receive(piece);
-			}	
-		}
-		findFirstPlayer();
-		moveCounter = 0;
-		boolean running = true;
-		view.update();
-		findFirstMove();
-		while (running) {
-			Move[] moves = players[currentPlayerID].determineMove(board);
-			if(validMove(moves, players[currentPlayerID])){
-				moveCounter ++;
-				if(moves[0] instanceof Place) {
-					place(moves, players[currentPlayerID]);
-					int score = getScore(moves);
-					board.addScore(currentPlayerID, score);
-				} else if (moves[0] instanceof Trade) {
-					tradePieces(moves, players[currentPlayerID]);
-				}
-			}			
-			currentPlayerID = (currentPlayerID + 1) % playerCount;
-			view.update();
-		}
-		
-	}
+	
 
 	public boolean validMove(Move[] moves, Player player) {
 		boolean result = true;
