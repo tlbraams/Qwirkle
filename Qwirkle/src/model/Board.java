@@ -158,14 +158,14 @@ public class Board {
 	public void setPiece(int row, int column, Piece piece) {
 		board[row][column] = piece;
 		if (row < minRow) {
-			minRow = row;
+			minRow = row - 5;
 		} else if (row > maxRow) {
-			maxRow = row;
+			maxRow = row + 5;
 		}
 		if (column < minColumn) {
-			minColumn = column;
+			minColumn = column - 5;
 		} else if (column > maxColumn) {
-			maxColumn = column;
+			maxColumn = column + 5;
 		}
 	}
 	

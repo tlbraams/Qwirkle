@@ -200,7 +200,7 @@ public class Game implements Runnable {
 	 * Displays the winner and scores of other players to the Player. 
 	 */
 	public void ending() {
-		System.out.println("The game has ended! " + players[isWinner()].getName() + "has won.");
+		System.out.println("The game has ended! " + players[isWinner()].getName() + " has won.");
 		System.out.println("The scores: ");
 		for (Player p: players) {
 			System.out.println(p.getName() + " : " + board.getScore(p.getID()));
@@ -242,8 +242,6 @@ public class Game implements Runnable {
 			board.setPiece(row, column, piece);
 			if (!board.emptyStack()) {
 				player.receive(board.draw());
-			} else {
-				System.out.println("The stack is empty.");
 			}
 		}
 		board.setLastMadeMove(moveCounter);
@@ -649,7 +647,9 @@ public class Game implements Runnable {
 		for (Player p: players) {
 			if(!emptyHand) {
 				emptyHand = p.getHand().size() == 0;
-				board.addScore(p.getID(), 6);
+				if (emptyHand) {
+					board.addScore(p.getID(), 6);
+				}
 			}
 		}
 		return (board.emptyStack() && emptyHand) || (board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
