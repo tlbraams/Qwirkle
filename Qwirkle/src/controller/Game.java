@@ -175,8 +175,8 @@ public class Game implements Runnable {
 			for(int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Place;
 			}
-			result = result && (isRow(moves) || isColumn(moves));
 			Board b = board.deepCopy();
+			result = result && (isRow(moves, b) || isColumn(moves, b));
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			for(Place p : places) {
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
@@ -275,7 +275,7 @@ public class Game implements Runnable {
 		return result;
 	}
 	
-	public boolean isRow(Move[] moves) {
+	public boolean isRow(Move[] moves, Board b) {
 		boolean result = true;
 		if(moves.length != 1) {
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
@@ -290,7 +290,7 @@ public class Game implements Runnable {
 				}
 			}
 			for(int i = minColumn; i <= maxColumn && result; i++) {
-				result = result && !board.isEmpty(places[0].getRow(), i);
+				result = result && !b.isEmpty(places[0].getRow(), i);
 			}
 		}
 		
@@ -301,7 +301,7 @@ public class Game implements Runnable {
 	 * @param moves
 	 * @return
 	 */
-	public boolean isColumn(Move[] moves) {
+	public boolean isColumn(Move[] moves, Board b) {
 		boolean result = true;
 		if(moves.length != 1) {
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
@@ -318,7 +318,7 @@ public class Game implements Runnable {
 			}
 			// Check for gaps. 
 			for(int i = minRow; i <= maxRow && result; i++) {
-				result = result && !board.isEmpty(i, places[0].getColumn());
+				result = result && !b.isEmpty(i, places[0].getColumn());
 			}
 		}
 		return result;
@@ -343,7 +343,7 @@ public class Game implements Runnable {
 				}
 			}
 		} else {
-			if (isRow(moves)) {
+			if (isRow(moves, board)) {
 				result = board.getRowLength(places[0].getRow(), places[0].getColumn());
 				if(result == 6) {
 					result += result;
@@ -357,7 +357,7 @@ public class Game implements Runnable {
 						result += column;
 					}
 				}
-			} else if (isColumn(moves)) {
+			} else if (isColumn(moves, board)) {
 				result = board.getColumnLength(places[0].getRow(), places[0].getColumn());
 				if(result == 6) {
 					result += result;
@@ -375,5 +375,42 @@ public class Game implements Runnable {
 			}
 		}
 		return result;
+	}
+	
+	
+	/**
+	 * Returns the playerID of the player with the most points after a game has ended.
+	 * @return
+	 */
+	public int isWinner() {
+		int result = -1;
+		int maxScore = 0;
+		if(endGame()) {
+			for(Player p: players) {
+				if(board.getScore(p.getID()) > maxScore) {
+					result = p.getID();
+					maxScore = board.getScore(result);
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns true when the game has ended and false when not.
+	 * The game has ended when the pile is empty and one of the players does not have
+	 * any pieces in its hand. Also returns true if two rounds have passed without a move
+	 * being made.
+	 */
+	private boolean endGame() {
+		// Check if one player has an empty hand and remember that playerID/
+		boolean emptyHand = false;
+		for (Player p: players) {
+			if(!emptyHand) {
+				emptyHand = p.getHand().size() == 0;
+				board.addScore(p.getID(), 6);
+			}
+		}
+		return (board.emptyStack() && emptyHand) || (board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
 	}
 }

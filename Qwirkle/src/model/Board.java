@@ -145,6 +145,10 @@ public class Board {
 		return score[playerID];
 	}
 	
+	public boolean emptyStack() {
+		return stack.size() == 0;
+	}
+	
 	// --------------- Commands ---------------------
 	
 	public void addScore(int playerID, int score) {

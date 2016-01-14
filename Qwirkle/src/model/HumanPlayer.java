@@ -41,7 +41,7 @@ public class HumanPlayer extends LocalPlayer {
 		if (type == 5) {
 			boolean cont = true;
 			while(cont) {
-				System.out.println("Please enter the piece you would like to trade and the coordinates where you would like to place it.");
+				System.out.println("Please enter the piece you would like to place.");
 				Scanner line = new Scanner(System.in);
 				try (Scanner scLine = new Scanner(line.next())) {
 					String input = scLine.next();
