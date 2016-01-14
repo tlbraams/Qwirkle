@@ -289,7 +289,9 @@ public class Game implements Runnable {
 			result = result && (isRow(moves, b) || isColumn(moves, b));
 			result = result && isValidRow(places, b);
 			result = result && isValidColumn(places, b);
-			result = result && isConnected(places);
+			if(moveCounter > 1) {
+				result = result && isConnected(places);
+			}
 		} else if (moves[0] instanceof Trade) {
 			for (int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Trade;
