@@ -5,16 +5,20 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
+/**
+ * Class for modelling the board and the stack used by the Qwirkle game.
+ * The board will be stored as a Piece[][] of 183x183 with the starting point being 91,91.
+ * 
+ * @author Tycho Braams & Jeroen Mulder
+ * @version $1.0
+ */
 public class Board {
 
+	// ----- Constants -----
 	public static final int DIM = 183;
 	public static final int MAX_STACK_SIZE = 108;
 
-	/**
-	 * The class that models the board used by the Qwirkle game.
-	 * The board will be stored as a Piece[][]. of 185*185 with start point being 91,91.
-	 * The board will most likely also store the stack of pieces that are available for drawing.
-	 */
+	// ----- Instance Variables -----
 	private int minRow;
 	private int maxRow;
 	private int minColumn;
@@ -27,7 +31,11 @@ public class Board {
 	private ArrayList<Piece> stack;
 	private int[] score;
 	
-	// --------------- Constructors -----------------
+	// ----- Constructors -----
+	
+	/**
+	 * Creates a new Board object of default size (183 x 183).
+	 */
 	public Board() {
 		size = DIM;
 		board = new Piece[DIM][DIM];
@@ -39,6 +47,11 @@ public class Board {
 		maxColumn = 97;
 		score = new int[4];
 	}
+	
+	/**
+	 * Creates a new Board object of a size of length dimension.
+	 *  @param dimension the length of the edges of a Board. 
+	 */
 	public Board(int dimension) {
 		size = dimension;
 		board = new Piece[dimension][dimension];
@@ -50,54 +63,109 @@ public class Board {
 		maxColumn = size-1;
 	}
 	
-	// --------------- Queries ----------------------
-	public Piece[][] getBoard() {
+	// ----- Queries -----
+	/**
+	 * Returns the Board of this Game. 
+	 * @return the Board. 
+	 */
+	/* @pure */public /* @NonNull */Piece[][] getBoard() {
 		return board;
 	}
 	
-	public Piece getCell(int row, int column) {
+	/**
+	 * Returns the Piece in a given cell indicated by row and column. 
+	 * @return piece the Piece in the given cell. 
+	 */
+	/*
+	 * @requires 	row >= minRow && row <= maxRow;
+	 * 				column >= minColumn && column <= maxColumn;
+	 */
+	/* @pure */public Piece getCell(/* @NonNull */int row, /* @NonNull */int column) {
 		return board[row][column];
 	}
 	
-	public int getSize() {
+	/**
+	 * Returns the size of the edges of a Board. 
+	 * @return the size of a Board.
+	 */
+	/*
+	 * @ensures 	\result == maxRow;
+	 */
+	/* @pure */public /* @NonNullable */int getSize() {
 		return size;
 	}
 	
-	public boolean isEmpty(int row, int column) {
+	/**
+	 * Tests if a cell in the given row and column is empty. 
+	 * @param row the row of the cell.
+	 * @param column the column of the cell.
+	 * @return true if the cell is empty, false when occupied. 
+	 */
+	/* @pure */public /* @NonNull */boolean isEmpty(/* @NonNull */int row, /* @NonNull */int column) {
 		return board[row][column] == null;
 	}
-	  /**
-	   * Block toevoegen? 
-	   */
-	
+	 
 	/**
-	 * Returns true if the row and column refer to a valid cell on the <code>Board</code>.
+	 * Tests if the cell in the given row and column is on the <code>Board</code>.
+	 * @return true if the row and column refer to a valid cell on the board, false otherwise.
 	 */
-	public boolean isField(int row, int column) {
+	/*
+	 * @ensures 	\result == (0 <= row && row < size && 0 <= column && column < size);
+	 */
+	/* @pure */public /* @NonNull */boolean isField(/* @NonNull */int row, /* @NonNull */int column) {
 		return 0 <= row && row < size && 0 <= column && column < size;
 	}
 	
-	public int getLastMadeMove() {
+	/**
+	 * Returns when the last made Move was made. 
+	 * @return the last made Move. 
+	 */
+	/* @pure */public /* @NonNull */int getLastMadeMove() {
 		return lastMadeMove;
 	}
 	
-	public int getMinRow() {
+	/**
+	 * Returns the minimal size of the rows on the Board. 
+	 * @return the minimal row size of the Board. 
+	 */
+	/* @pure */public /* @NonNull */int getMinRow() {
 		return minRow;
 	}
 	
-	public int getMaxRow() {
+	/**
+	 * Returns the maximum size of the rows on the Board. 
+	 * @return the maximum row size of the Board. 
+	 */
+	/* @pure */public /* @NonNull */int getMaxRow() {
 		return maxRow;
 	}
 	
-	public int getMinColumn() {
+	/**
+	 * Returns the minimal size of the columns on the Board. 
+	 * @return the minimal column size of the Board. 
+	 */
+	/* @pure */public /* @NonNull */int getMinColumn() {
 		return minColumn;
 	}
 	
-	public int getMaxColumn() {
+	/**
+	 * Returns the maximum size of the columns on the Board. 
+	 * @return the maximum column size of the Board. 
+	 */	
+	/* @pure */public /* @NonNull */int getMaxColumn() {
 		return maxColumn;
 	}
 	
-	public int getRowLength(int row, int column) {
+	/**
+	 * Determines how long a row is given a certain cell, given by row and column. 
+	 * 
+	 *@return the length of a row.
+	 */
+	/*
+	 * @requires 	0 <= row && row < size && 0 <= column && column < size;
+	 * @ensures 	1 <= \result && 7 > \result;
+	 */
+	/* @pure */public /* @NonNull */int getRowLength(int row, int column) {
 		int result = 0;
 		Boolean isRow = true;
 		for(int i = column; isRow; i--) {
@@ -119,7 +187,7 @@ public class Board {
 		return result;
 	}
 	
-	public int getColumnLength(int row, int column) {
+	/* @pure */public /* @NonNull */int getColumnLength(int row, int column) {
 		int result = 0;
 		Boolean isColumn = true;
 		for(int i = row; isColumn; i--) {
@@ -141,15 +209,15 @@ public class Board {
 		return result;
 	}
 	
-	public int getScore(int playerID) {
+	/* @pure */public /* @NonNull */int getScore(int playerID) {
 		return score[playerID];
 	}
 	
-	public boolean emptyStack() {
+	/* @pure */public /* @NonNull */boolean emptyStack() {
 		return stack.size() == 0;
 	}
 	
-	// --------------- Commands ---------------------
+	// ----- Commands -----
 	
 	public void addScore(int playerID, int score) {
 		this.score[playerID] += score;

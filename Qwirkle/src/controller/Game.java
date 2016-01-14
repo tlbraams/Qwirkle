@@ -36,7 +36,6 @@ public class Game implements Runnable {
 	
 	/**
 	 * Creates a new Game object with a board of a default size (183 x 183).
-	 * 
 	 * @param playerCount	the amount of players participating in this Game. 
 	 * @param players 		the array with all players participating in this Game.
 	 * @param thinkTime 	the time in milliseconds that a computer player can take before making a Move. 
@@ -63,7 +62,6 @@ public class Game implements Runnable {
 	
 	/**
 	 * Creates a new Game object with a board of a variable size.
-	 * 
 	 * @param playerCount	the amount of players participating in this Game. 
 	 * @param players 		the array with all players participating in this Game.
 	 * @param thinkTime 	the time in milliseconds that a computer player can take before making a Move. 
@@ -118,7 +116,6 @@ public class Game implements Runnable {
 	 * Returns the maximum amount of points of a given hand. 
 	 * This method is called for each Player at the beginning of this Game to 
 	 * determine which player is allowed to start the game. 
-	 * 
 	 * @param hand the Hand a player holds. 
 	 * @return the maximum amount of points one can get with the given Hand. 
 	 */
@@ -158,10 +155,8 @@ public class Game implements Runnable {
 	/**
 	 * Starts and ends Game. At the beginning it fills all Hands, and then finds the players that is allowed
 	 * to make a Move first. It prints the board on the System.Out and executes the first Move.
-	 * 
-	 * During the Game it lets the Players makes Moves, checks them for validity and keeps the scores. 
-	 * 
-	 * When the Game has finished it stops the Game and displays the winner and scores. 
+	 * 	During the Game it lets the Players makes Moves, checks them for validity and keeps the scores. 
+	 * 	When the Game has finished it stops the Game and displays the winner and scores. 
 	 */
 	public void playGame() {
 		// Fills the Hands of each Player with 6 Pieces. 
@@ -224,7 +219,6 @@ public class Game implements Runnable {
 	 * Places the Piece from a Player on the Board in the indicated cell.
 	 * After placing a Piece, it is removed from the Players hand and the Player 
 	 * gets a new Piece (if the Stack is not empty). 
-	 * 
 	 * @param moves the Moves that a Player wants to make.
 	 * @param player the Player who wants to make the Moves.
 	 */
@@ -253,7 +247,6 @@ public class Game implements Runnable {
 	 * Trades the given Pieces in the Moves from a Player with random Pieces in the Stack.
 	 * The Pieces are removed from the Players Hand and added to the Stack. 
 	 * The Players Hand is refilled again to 6 Pieces (if the Stack is not empty). 
-	 * 
 	 * @param moves the Moves that a Player wants to make.
 	 * @param player the Player who wants to make the Moves.
 	 */
@@ -371,7 +364,6 @@ public class Game implements Runnable {
 	 * Tests if an array of Places on Board b is a valid row. 
 	 * It checks if the Places are connected to other Pieces of the Board and if 
 	 * the row it creates is valid. 
-	 * 
 	 * @param moves the array of Places that are to be made. 
 	 * @param b the board on which the Places are made. 
 	 * @return true is the Places are valid, false when not. 
@@ -409,7 +401,6 @@ public class Game implements Runnable {
 	 * Tests if an array of Places on Board b is a valid column. 
 	 * It checks if the Places are connected to other Pieces of the Board and if 
 	 * the column it creates is valid. 
-	 * 
 	 * @param moves the array of Places that are to be made. 
 	 * @param b the board on which the Places are made. 
 	 * @return true is the Places are valid, false when not. 
@@ -447,7 +438,6 @@ public class Game implements Runnable {
 	 * Tests if a connected Place is connected in a valid way. 
 	 * It is considered valid when either the color of the Pieces are the same 
 	 * or the shape of the Pieces are the same. 
-	 * 
 	 * @param piece the Piece that is placed on Board b.
 	 * @param b the Board. 
 	 * @param row the row number that the Piece is placed in. 
@@ -470,7 +460,6 @@ public class Game implements Runnable {
 	
 	/**
 	 * Tests if the Places are in 1 straight line (row) and if there are no gaps. 
-	 * 
 	 * @param moves the Places to be placed on Board b. 
 	 * @param b the Board on which the Places are put. 
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
@@ -501,7 +490,6 @@ public class Game implements Runnable {
 	
 	/**
 	 * Tests if the Places are in 1 straight line (column) and if there are no gaps. 
-	 * 
 	 * @param moves the Places to be placed on Board b. 
 	 * @param b the Board on which the Places are put. 
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
