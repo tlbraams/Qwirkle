@@ -170,7 +170,9 @@ public class HumanPlayer extends LocalPlayer {
 			try(Scanner scannerLine = new Scanner(line.next())) {
 				if(scannerLine.hasNextInt()) {
 					result = scannerLine.nextInt();
-					intRead = true;
+					if (result == 5 || result == 6) {
+						intRead = true;
+					}
 				} else {
 					System.out.println(this.getName() + ": What would you like to do?");
 					System.out.println("Place tiles ................... 5");

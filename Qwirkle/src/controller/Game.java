@@ -232,7 +232,7 @@ public class Game implements Runnable {
 	public void findFirstMove() {
 		Move[] moves = players[currentPlayerID].determineFirstMove(board);
 		if(validMove(moves, players[currentPlayerID])){
-			moveCounter ++;
+			moveCounter++;
 			if(moves[0] instanceof Place) {
 				place(moves, players[currentPlayerID]);
 				int score = getScore(moves);
@@ -260,7 +260,7 @@ public class Game implements Runnable {
 		while (running) {
 			Move[] moves = players[currentPlayerID].determineMove(board);
 			if(validMove(moves, players[currentPlayerID])){
-				moveCounter ++;
+				moveCounter++;
 				if(moves[0] instanceof Place) {
 					place(moves, players[currentPlayerID]);
 					int score = getScore(moves);
@@ -290,7 +290,7 @@ public class Game implements Runnable {
 			result = result && (isRow(moves, b) || isColumn(moves, b));
 			result = result && isValidRow(places, b);
 			result = result && isValidColumn(places, b);
-			if(moveCounter > 1) {
+			if(moveCounter > 0) {
 				result = result && isConnected(places);
 			}
 		} else if (moves[0] instanceof Trade) {

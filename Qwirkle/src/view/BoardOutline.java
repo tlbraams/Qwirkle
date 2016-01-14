@@ -9,7 +9,7 @@ public class BoardOutline {
 	 */
 	public static String getEdges(Board b) {
 		String topIndex = "   ";
-		for (int i = b.getMinColumn(); i < b.getMaxColumn(); i++) {
+		for (int i = b.getMinColumn(); i <= b.getMaxColumn(); i++) {
 			if (i < 10) {
 				topIndex += "   " + i;
 
