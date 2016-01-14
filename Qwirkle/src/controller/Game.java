@@ -303,7 +303,7 @@ public class Game implements Runnable {
 	public void findFirstMove() {
 		Move[] moves = players[currentPlayerID].determineFirstMove(board);
 		if(validMove(moves, players[currentPlayerID])){
-			moveCounter ++;
+			moveCounter++;
 			place(moves, players[currentPlayerID]);
 			int score = getScore(moves);
 			board.addScore(currentPlayerID, score);
@@ -332,11 +332,15 @@ public class Game implements Runnable {
 			Board b = board.deepCopy();
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			for(Place p : places) {
+				result = result && b.isEmpty(p.getRow(), p.getColumn());
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
-				}
+			}
 			result = result && (isRow(moves, b) || isColumn(moves, b));
 			result = result && isValidRow(places, b);
 			result = result && isValidColumn(places, b);
+			if(moveCounter > 0) {
+				result = result && isConnected(places);
+			}
 		} else if (moves[0] instanceof Trade) {
 			for (int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Trade;
@@ -477,6 +481,18 @@ public class Game implements Runnable {
 		}
 		return result;
 	}
+	
+	public boolean isConnected(Place[] places) {
+		boolean result = false;
+		for(Place p: places) {
+			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
+					(!board.isEmpty(p.getRow() + 1, p.getColumn())) ||
+					(!board.isEmpty(p.getRow(), p.getColumn() - 1)) ||
+					(!board.isEmpty(p.getRow(), p.getColumn() + 1)));
+		}
+		return result;
+	}
+
 	
 	public int getScore(Move[] moves) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);

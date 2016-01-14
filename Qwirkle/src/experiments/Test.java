@@ -1,5 +1,7 @@
 package experiments;
 
+import model.Place;
+
 public class Test {
 
 	public static void main(String[] args) {
@@ -9,4 +11,5 @@ public class Test {
 		System.out.println(i/10 - (i/100)*10);
 		System.out.println(i - (i/100)*100 - ((i/10)*10 - (i/100)*100));
 	}
+	
 }

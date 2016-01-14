@@ -164,8 +164,8 @@ public class Board {
 		}
 		if (column < minColumn) {
 			minColumn = column;
-		} else if (row > maxRow) {
-			maxRow = row;
+		} else if (column > maxColumn) {
+			maxColumn = column;
 		}
 	}
 	

@@ -27,7 +27,7 @@ public class TUI {
 	public void printBoard(Board b) {
 		String edges = BoardOutline.getEdges(b);
 		System.out.println(edges);
-		for (int i = b.getMinRow(); i < b.getMaxRow(); i++) {
+		for (int i = b.getMinRow(); i <= b.getMaxRow(); i++) {
 			String row = "";
 			if (i < 10) {
 				row = "  " + i;
@@ -36,7 +36,7 @@ public class TUI {
 			} else {
 				row = "" + i;
 			}
-			for (int j = b.getMinColumn(); j < b.getMaxColumn(); j++) {
+			for (int j = b.getMinColumn(); j <= b.getMaxColumn(); j++) {
 				if(b.getCell(i, j) != null) {
 					row = row + "| " + b.getCell(i, j).toString();
 				}
