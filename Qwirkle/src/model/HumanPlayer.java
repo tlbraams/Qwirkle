@@ -105,7 +105,11 @@ public class HumanPlayer extends LocalPlayer {
 		boolean cont = true;
 		boolean firstPiece = true;
 		while(cont) {
-			System.out.println("Please enter the piece you would like to place.");
+			if (firstPiece) {
+				System.out.println("What piece would you like to place first? (91, 91).");
+			} else {
+				System.out.println("Please enter the piece you would like to place.");
+			}
 			Scanner line = new Scanner(System.in);
 			try (Scanner scLine = new Scanner(line.next())) {
 				String input = scLine.next();
@@ -114,17 +118,14 @@ public class HumanPlayer extends LocalPlayer {
 				} else {
 					boolean found = false;
 					for (Piece p : hand) {
-						if (p.toString().equals(input)) {
+						if (p.toString().equals(input) && !found) {
 							int row;
-							if(firstPiece) {
-								row = 91;
-							} else {
-								row = requestRow();
-							}
 							int column;
 							if(firstPiece) {
+								row = 91;
 								column = 91;
 							} else {
+								row = requestRow();
 								column = requestColumn();
 							}
 							if (board.isField(row, column) && board.isEmpty(row, column)) {
