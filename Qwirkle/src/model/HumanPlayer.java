@@ -172,11 +172,11 @@ public class HumanPlayer extends LocalPlayer {
 					result = scannerLine.nextInt();
 					if (result == 5 || result == 6) {
 						intRead = true;
+					} else {
+						System.out.println("Please make a valid choice. (5/6)");
 					}
 				} else {
-					System.out.println(this.getName() + ": What would you like to do?");
-					System.out.println("Place tiles ................... 5");
-					System.out.println("Trade tiles ................... 6");
+					System.out.println("Please make a valid choice. (5/6)");
 				}
 			}
 		}
@@ -198,6 +198,8 @@ public class HumanPlayer extends LocalPlayer {
 				if(scannerLine.hasNextInt()) {
 					row = scannerLine.nextInt();
 					rowRead = true;
+				} else {
+					System.out.println("Please enter a valid integer.");
 				}
 			}
 		}
@@ -217,6 +219,8 @@ public class HumanPlayer extends LocalPlayer {
 				if(scannerLine.hasNextInt()) {
 					column = scannerLine.nextInt();
 					columnRead = true;
+				} else {
+					System.out.println("Please enter a valid integer.");
 				}
 			}
 		}
