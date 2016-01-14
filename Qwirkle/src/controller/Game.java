@@ -530,7 +530,15 @@ public class Game implements Runnable {
 		return result;
 	}
 	
-	public boolean isConnected(Place[] places) {
+	/**
+	 * Tests if every Place of places is connected to the another Piece.
+	 * @param places the Places to be made. 
+	 * @return true when the Places are connected to other Pieces, false when otherwise. 
+	 */
+	/*
+	 * @requires 	places.length < 7;
+	 */
+	public /* @NonNull */boolean isConnected(/* @NonNull */Place[] places) {
 		boolean result = false;
 		for(Place p: places) {
 			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
@@ -541,10 +549,16 @@ public class Game implements Runnable {
 		return result;
 	}
 
-	
-	public int getScore(Move[] moves) {
+	/**
+	 * Determines the score of a given array of Moves. 
+	 * @param moves the moves to be made. 
+	 * @return the score of the given moves. 
+	 */
+	public int getScore(/* @NonNull */ Move[] moves) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		int result = 0;
+		
+		// Determining the score when only one Place is made. 
 		if(places.length == 1) {
 			int row = board.getRowLength(places[0].getRow(), places[0].getColumn());
 			int column = board.getColumnLength(places[0].getRow(), places[0].getColumn());
@@ -560,7 +574,11 @@ public class Game implements Runnable {
 					result += column;
 				}
 			}
+		
+		// Determining the score when multiple Places have been made. 
 		} else {
+			
+			// Determining the score if the Places create a row. 
 			if (isRow(moves, board)) {
 				result = board.getRowLength(places[0].getRow(), places[0].getColumn());
 				if(result == 6) {
@@ -575,6 +593,7 @@ public class Game implements Runnable {
 						result += column;
 					}
 				}
+			// Determining the score if the Places create a column. 
 			} else if (isColumn(moves, board)) {
 				result = board.getColumnLength(places[0].getRow(), places[0].getColumn());
 				if(result == 6) {
@@ -598,7 +617,10 @@ public class Game implements Runnable {
 	
 	/**
 	 * Returns the playerID of the player with the most points after a game has ended.
-	 * @return
+	 * @return the playerID of the winner of the Game. 
+	 */
+	/*
+	 * @ensures 	\result < 5 && \result >= 0;
 	 */
 	public int isWinner() {
 		int result = -1;
@@ -619,9 +641,10 @@ public class Game implements Runnable {
 	 * The game has ended when the pile is empty and one of the players does not have
 	 * any pieces in its hand. Also returns true if two rounds have passed without a move
 	 * being made.
+	 * @return true when the Game has ended, false when the Game is still running. 
 	 */
 	private boolean endGame() {
-		// Check if one player has an empty hand and remember that playerID/
+		// Check if one player has an empty hand and remember that playerID.
 		boolean emptyHand = false;
 		for (Player p: players) {
 			if(!emptyHand) {
