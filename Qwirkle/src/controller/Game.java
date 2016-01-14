@@ -16,6 +16,9 @@ import view.TUI;
  * @author Tycho Braams & Jeroen Mulder
  * @version $1.0
  */
+/* 
+ * @invariant	
+ */
 
 public class Game implements Runnable {
 
@@ -320,22 +323,30 @@ public class Game implements Runnable {
 	 * @return true if the Moves are valid, false when invalid. 
 	 */
 	/*
-	 * 
+	 * @requires 	moves.length < player.getHand().size();
 	 */
-	public boolean validMove(Move[] moves, Player player) {
+	public /* @NonNull*/boolean validMove(/* @NonNull*/Move[] moves, /* @NonNull*/Player player) {
 		boolean result = true;
+		
+		// Check if all Moves are of type Place. 
 		if (moves[0] instanceof Place) {
 			for(int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Place;
 			}
+			
+			// Check if the cells of the Places are empty. 
 			Board b = board.deepCopy();
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			for(Place p : places) {
 				result = result && b.isEmpty(p.getRow(), p.getColumn());
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
 			}
+			
 			try{
+				// Check if the Places create an uninterrupted row or column. 
 				result = result && (isRow(moves, b) || isColumn(moves, b));
+				
+				// Check if the uninterrupted row or column is valid. 
 				result = result && isValidRow(places, b);
 				result = result && isValidColumn(places, b);
 				if(moveCounter > 0) {
@@ -344,11 +355,14 @@ public class Game implements Runnable {
 			} catch(UnconnectedMoveException e) {
 				e.getInfo();
 			}
+			
+		// Check if all Moves are of type Trade. 
 		} else if (moves[0] instanceof Trade) {
 			for (int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Trade;
 			}
 		}
+		
 		// Check if player has the tiles. 
 		for (Move m: moves) {
 			result = result && player.getHand().contains(m.getPiece());
@@ -356,7 +370,19 @@ public class Game implements Runnable {
 		return result;
 	}
 	
-	public boolean isValidRow(Place[] moves, Board b) {
+	/**
+	 * Tests if an array of Places on Board b is a valid row. 
+	 * It checks if the Places are connected to other Pieces of the Board and if 
+	 * the row it creates is valid. 
+	 * 
+	 * @param moves the array of Places that are to be made. 
+	 * @param b the board on which the Places are made. 
+	 * @return true is the Places are valid, false when not. 
+	 */
+	/*
+	 * @requires	moves.length < 7;
+	 */
+	public /* @NonNull */boolean isValidRow(/* @NonNull */Place[] moves, /* @NonNull */Board b) {
 		boolean result = true;
 		for(Place m : moves) {
 			int row = m.getRow();
@@ -367,14 +393,7 @@ public class Game implements Runnable {
 				if(b.isEmpty(row, i)) {
 					connected = false;
 				} else {
-					Piece p = b.getCell(row, i);
-					if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else if (!piece.getColor().equals(p.getColor()) && piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else {
-						result = false;
-					}
+					result = this.isValidConnectedPlace(piece, b, row, i);
 				}
 			}
 			connected = true;
@@ -382,21 +401,26 @@ public class Game implements Runnable {
 				if(b.isEmpty(row, i)) {
 					connected = false;
 				} else {
-					Piece p = b.getCell(row, i);
-					if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else if (!piece.getColor().equals(p.getColor()) && piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else {
-						result = false;
-					}
+					result = this.isValidConnectedPlace(piece, b, row, i);
 				}
 			}
 		}
 		return result;
 	}
 	
-	public boolean isValidColumn(Place[] moves, Board b) {
+	/**
+	 * Tests if an array of Places on Board b is a valid column. 
+	 * It checks if the Places are connected to other Pieces of the Board and if 
+	 * the column it creates is valid. 
+	 * 
+	 * @param moves the array of Places that are to be made. 
+	 * @param b the board on which the Places are made. 
+	 * @return true is the Places are valid, false when not. 
+	 */
+	/*
+	 * @requires	moves.length < 7;
+	 */
+	public /* @NonNull */boolean isValidColumn(/* @NonNull */Place[] moves, /* @NonNull */Board b) {
 		boolean result = true;
 		for(Place m : moves) {
 			int row = m.getRow();
@@ -407,14 +431,7 @@ public class Game implements Runnable {
 				if(b.isEmpty(i, column)) {
 					connected = false;
 				} else {
-					Piece p = b.getCell(i, column);
-					if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else if (!piece.getColor().equals(p.getColor()) && piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else {
-						result = false;
-					}
+					result = this.isValidConnectedPlace(piece, b, i, column);
 				}
 			}
 			connected = true;
@@ -422,21 +439,46 @@ public class Game implements Runnable {
 				if(b.isEmpty(i, column)) {
 					connected = false;
 				} else {
-					Piece p = b.getCell(i, column);
-					if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else if (!piece.getColor().equals(p.getColor()) && piece.getShape().equals(p.getShape())) {
-						result = result && true;
-					} else {
-						result = false;
-					}
+					result = this.isValidConnectedPlace(piece, b, i, column);
 				}
 			}
 		}
 		return result;
 	}
 	
-	public boolean isRow(Move[] moves, Board b) {
+	/**
+	 * Tests if a connected Place is connected in a valid way. 
+	 * It is considered valid when either the color of the Pieces are the same 
+	 * or the shape of the Pieces are the same. 
+	 * 
+	 * @param piece the Piece that is placed on Board b.
+	 * @param b the Board. 
+	 * @param row the row number that the Piece is placed in. 
+	 * @param i the column number that the Piece is placed in.
+	 * @return true is the Places are valid, false when not.
+	 */
+	public /* @NonNull */boolean isValidConnectedPlace(/* @NonNull */Piece piece, 
+			/* @NonNull */Board b, /* @NonNull */int row, /* @NonNull */int i) {
+		Boolean result = false;
+		Piece p = b.getCell(row, i);
+		if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
+			result = result && true;
+		} else if (!piece.getColor().equals(p.getColor()) && piece.getShape().equals(p.getShape())) {
+			result = result && true;
+		} else {
+			result = false;
+		}
+		return result;
+	}
+	
+	/**
+	 * Tests if the Places are in 1 straight line (row) and if there are no gaps. 
+	 * 
+	 * @param moves the Places to be placed on Board b. 
+	 * @param b the Board on which the Places are put. 
+	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
+	 */
+	public /* @NunNull */boolean isRow(/* @NunNull */Move[] moves, /* @NunNull */Board b) {
 		boolean result = true;
 		if(moves.length != 1) {
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
@@ -450,6 +492,8 @@ public class Game implements Runnable {
 					maxColumn = places[i].getColumn();
 				}
 			}
+			
+			// Check for gaps. 
 			for(int i = minColumn; i <= maxColumn && result; i++) {
 				result = result && !b.isEmpty(places[0].getRow(), i);
 			}
@@ -457,12 +501,15 @@ public class Game implements Runnable {
 		
 		return result;
 	}
+	
 	/**
-	 * Checks if moves (Places's) are in 1 straight line and if there are no gaps. 
-	 * @param moves
-	 * @return
+	 * Tests if the Places are in 1 straight line (column) and if there are no gaps. 
+	 * 
+	 * @param moves the Places to be placed on Board b. 
+	 * @param b the Board on which the Places are put. 
+	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 */
-	public boolean isColumn(Move[] moves, Board b) {
+	public /* @NunNull */boolean isColumn(/* @NunNull */Move[] moves, /* @NunNull */Board b) {
 		boolean result = true;
 		if(moves.length != 1) {
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
@@ -484,8 +531,14 @@ public class Game implements Runnable {
 		}
 		return result;
 	}
-	
-	public void isConnected(Place[] places) throws UnconnectedMoveException{
+	/**
+	 * Tests if every Place of places is connected to the another Piece.
+	 * @param places the Places to be made. 
+	 */
+	/*
+	 * @requires 	places.length < 7;
+	 */
+	public void isConnected(/* @NonNull */Place[] places) throws UnconnectedMoveException{
 		boolean result = false;
 		for(Place p: places) {
 			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
@@ -498,10 +551,16 @@ public class Game implements Runnable {
 		}
 	}
 
-	
-	public int getScore(Move[] moves) {
+	/**
+	 * Determines the score of a given array of Moves. 
+	 * @param moves the moves to be made. 
+	 * @return the score of the given moves. 
+	 */
+	public int getScore(/* @NonNull */ Move[] moves) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		int result = 0;
+		
+		// Determining the score when only one Place is made. 
 		if(places.length == 1) {
 			int row = board.getRowLength(places[0].getRow(), places[0].getColumn());
 			int column = board.getColumnLength(places[0].getRow(), places[0].getColumn());
@@ -517,7 +576,11 @@ public class Game implements Runnable {
 					result += column;
 				}
 			}
+		
+		// Determining the score when multiple Places have been made. 
 		} else {
+			
+			// Determining the score if the Places create a row. 
 			if (isRow(moves, board)) {
 				result = board.getRowLength(places[0].getRow(), places[0].getColumn());
 				if(result == 6) {
@@ -532,6 +595,7 @@ public class Game implements Runnable {
 						result += column;
 					}
 				}
+			// Determining the score if the Places create a column. 
 			} else if (isColumn(moves, board)) {
 				result = board.getColumnLength(places[0].getRow(), places[0].getColumn());
 				if(result == 6) {
@@ -555,7 +619,10 @@ public class Game implements Runnable {
 	
 	/**
 	 * Returns the playerID of the player with the most points after a game has ended.
-	 * @return
+	 * @return the playerID of the winner of the Game. 
+	 */
+	/*
+	 * @ensures 	\result < 5 && \result >= 0;
 	 */
 	public int isWinner() {
 		int result = -1;
@@ -576,9 +643,10 @@ public class Game implements Runnable {
 	 * The game has ended when the pile is empty and one of the players does not have
 	 * any pieces in its hand. Also returns true if two rounds have passed without a move
 	 * being made.
+	 * @return true when the Game has ended, false when the Game is still running. 
 	 */
 	private boolean endGame() {
-		// Check if one player has an empty hand and remember that playerID/
+		// Check if one player has an empty hand and remember that playerID.
 		boolean emptyHand = false;
 		for (Player p: players) {
 			if(!emptyHand) {
