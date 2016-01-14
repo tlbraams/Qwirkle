@@ -157,7 +157,16 @@ public class Board {
 	
 	public void setPiece(int row, int column, Piece piece) {
 		board[row][column] = piece;
-		//change min/max row/column if outside border.
+		if (row < minRow) {
+			minRow = row;
+		} else if (row > maxRow) {
+			maxRow = row;
+		}
+		if (column < minColumn) {
+			minColumn = column;
+		} else if (row > maxRow) {
+			maxRow = row;
+		}
 	}
 	
 	public void setLastMadeMove(int moveCount) {
