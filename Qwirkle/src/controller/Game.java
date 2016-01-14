@@ -284,8 +284,9 @@ public class Game implements Runnable {
 			Board b = board.deepCopy();
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			for(Place p : places) {
+				result = result && b.isEmpty(p.getRow(), p.getColumn());
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
-				}
+			}
 			result = result && (isRow(moves, b) || isColumn(moves, b));
 			result = result && isValidRow(places, b);
 			result = result && isValidColumn(places, b);
