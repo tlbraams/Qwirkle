@@ -152,6 +152,9 @@ public class HumanPlayer extends LocalPlayer {
 	
 	
 	public void showHand() {
+		if(hand.size() < 6) {
+			 System.out.println("No more pieces in the stack.");
+		}
 		String result = "Your hand:";
 		for(Piece p : hand) {
 			result += " | " + p.toString();
