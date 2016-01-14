@@ -50,7 +50,7 @@ public class HumanPlayer extends LocalPlayer {
 					} else {
 						boolean found = false;
 						for (Piece p : hand) {
-							if (p.toString().equals(input)) {
+							if (p.toString().equals(input) && !found) {
 								int row = requestRow();
 								int column = requestColumn();
 								if (board.isField(row, column) && board.isEmpty(row, column)) {
@@ -106,7 +106,7 @@ public class HumanPlayer extends LocalPlayer {
 		boolean firstPiece = true;
 		while(cont) {
 			if (firstPiece) {
-				System.out.println("What piece would you like to place first? (91, 91).");
+				System.out.println(this.getName() + ": What piece would you like to place first? (91, 91).");
 			} else {
 				System.out.println("Please enter the piece you would like to place.");
 			}
