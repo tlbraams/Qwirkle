@@ -35,7 +35,10 @@ public class HumanPlayer extends LocalPlayer {
 	 * @param board the given board.
 	 * @return An array of the chosen Moves, either all place moves or swap moves.
 	 */
-	public Move[] determineMove(Board board) {
+	/*
+	 *@ ensure 		(\forall int i = 0; i >= 0 && i < \result.length; \result[i] instanceof Move);
+	 */
+	public /*@ NonNull */Move[] determineMove(/*@ NonNull */Board board) {
 		showHand();
 		ArrayList<Move> moves = new ArrayList<Move>();
 		int type = showOptions();

@@ -3,7 +3,9 @@ package test;
 import controller.Game;
 import model.*;
 import view.*;
-
+/**
+ * Test the layout of the Board.
+ */
 public class TestingBoardLayout {
 
 	public static void main(String[] args) {

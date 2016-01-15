@@ -3,9 +3,7 @@ package test;
 import org.junit.*;
 
 import model.Board;
-import model.HumanPlayer;
 import model.Piece;
-import model.Player;
 
 import static org.junit.Assert.*;
 
