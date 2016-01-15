@@ -10,7 +10,7 @@ public class TestingBoardLayout {
 		Player[] players = new Player[2];
 		players[0] = new HumanPlayer("Tycho", 0);
 		players[1] = new HumanPlayer("Jeroen", 1);
-		Game game = new Game(21, 2, players, 1000);
+		Game game = new Game(2, players, 1000);
 		Board board = game.getBoard();
 		TUI view = game.getView();
 		board.setPiece(10, 10, board.draw());

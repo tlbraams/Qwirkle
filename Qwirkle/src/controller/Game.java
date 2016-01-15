@@ -62,34 +62,6 @@ public class Game implements Runnable {
 		moveCounter = 0;
 	}
 	
-	/**
-	 * Creates a new Game object with a board of a variable size.
-	 * @param playerCount	the amount of players participating in this Game. 
-	 * @param players 		the array with all players participating in this Game.
-	 * @param thinkTime 	the time in milliseconds that a computerplayer can take
-	 * 						before making a Move. 
-	 * @param boardSize		the length of the edges of the board that is to be played on.
-	 */
-	/*
-	 * @requires 	playerCount < 5 && playerCount > 1;
-	 * 				players.length() < 5 && players.length() > 1;
-	 * 				thinkTime > 0;
-	 * @ensures		this.playerCount = playerCount;
-	 * 				// All players in players are now in players. 
-	 * 				this.thinkTime = aiTime;
-	 */
-	public Game(int boardSize, int playerCount, Player[] players, int thinkTime) {
-		board = new Board(boardSize);
-		view = new TUI(this);
-		this.playerCount = playerCount;
-		this.players = new Player[this.playerCount];
-		for (int i = 0; i < playerCount; i++) {
-			this.players[i] = players[i];
-		}
-		aiTime = thinkTime;
-		moveCounter = 0;
-	}
-	
 	// ----- Queries -----
 	/**
 	 * Returns the Board object of this Game.
