@@ -341,6 +341,8 @@ public class Game implements Runnable {
 			for (Place p : places) {
 				result = result && b.isEmpty(p.getRow(), p.getColumn());
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
+				result = result && b.getRowLength(p.getRow(), p.getColumn()) < 7;
+				result = result && b.getColumnLength(p.getRow(), p.getColumn()) < 7;
 			}
 			
 			try {
@@ -355,6 +357,7 @@ public class Game implements Runnable {
 				}
 			} catch (UnconnectedMoveException e) {
 				e.getInfo();
+				result = false;
 			}
 			
 		// Check if all Moves are of type Trade. 
