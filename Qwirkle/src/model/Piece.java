@@ -11,10 +11,10 @@ public class Piece {
 	
 	// The possible colors of a piece.
 	// Red = R, Orange = O, Yellow = Y, Green = G, Blue = B, Purple = P
-	public enum Color {RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, DEFAULT};
+	public enum Color { RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, DEFAULT };
 	// The possible shapes of a piece.
 	// Circle = o, Diamond = d, Square = s, Clubs = c, Spade = x, Heart = *;
-	public enum Shape {DIAMOND, SQUARE, SPADE, HEART, CLUBS, CIRCLE, BLOCKED};
+	public enum Shape { DIAMOND, SQUARE, SPADE, HEART, CLUBS, CIRCLE, BLOCKED };
 	
 	// The color and shape of this piece.
 	private final Color color;
@@ -28,7 +28,7 @@ public class Piece {
 	/*@
 	 * ensures this.color == color && this.shape = shape;
 	 */
-	public Piece(Color color, Shape shape){
+	public Piece(Color color, Shape shape) {
 		this.color = color;
 		this.shape = shape;
 	}
@@ -46,99 +46,99 @@ public class Piece {
 	 */
 	/*@ pure */ public String toString() {
 		String result = "";
-		switch(color) {
-		case RED:
-			result += "R";
-			break;
-		case BLUE:
-			result += "B";
-			break;
-		case GREEN:
-			result += "G";
-			break;
-		case ORANGE:
-			result += "O";
-			break;
-		case PURPLE:
-			result += "P";
-			break;
-		case YELLOW:
-			result += "Y";
-			break;
-		default:
-			break;
+		switch (color) {
+			case RED:
+				result += "R";
+				break;
+			case BLUE:
+				result += "B";
+				break;
+			case GREEN:
+				result += "G";
+				break;
+			case ORANGE:
+				result += "O";
+				break;
+			case PURPLE:
+				result += "P";
+				break;
+			case YELLOW:
+				result += "Y";
+				break;
+			default:
+				break;
 		}
-		switch(shape){
-		case CIRCLE:
-			result += "o";
-			break;
-		case CLUBS:
-			result += "c";
-			break;
-		case DIAMOND:
-			result += "d";
-			break;
-		case HEART:
-			result += "*";
-			break;
-		case SPADE:
-			result += "x";
-			break;
-		case SQUARE:
-			result += "s";
-			break;
-		default:
-			break;
+		switch (shape) {
+			case CIRCLE:
+				result += "o";
+				break;
+			case CLUBS:
+				result += "c";
+				break;
+			case DIAMOND:
+				result += "d";
+				break;
+			case HEART:
+				result += "*";
+				break;
+			case SPADE:
+				result += "x";
+				break;
+			case SQUARE:
+				result += "s";
+				break;
+			default:
+				break;
 		}
 		return result;
 	}
 	
 	/*@ pure */ public String getAnsiCode() {
 		String result = "";
-		switch(shape){
-		case CIRCLE:
-			result += CIRCLE_CHAR;
-			break;
-		case CLUBS:
-			result += CLUB_CHAR;
-			break;
-		case DIAMOND:
-			result += DIAMOND_CHAR;
-			break;
-		case HEART:
-			result += HEART_CHAR;
-			break;
-		case SPADE:
-			result += SPADE_CHAR;
-			break;
-		case SQUARE:
-			result += SQUARE_CHAR;
-			break;
-		default:
-			result = " ";
-			break;
+		switch (shape) {
+			case CIRCLE:
+				result += CIRCLE_CHAR;
+				break;
+			case CLUBS:
+				result += CLUB_CHAR;
+				break;
+			case DIAMOND:
+				result += DIAMOND_CHAR;
+				break;
+			case HEART:
+				result += HEART_CHAR;
+				break;
+			case SPADE:
+				result += SPADE_CHAR;
+				break;
+			case SQUARE:
+				result += SQUARE_CHAR;
+				break;
+			default:
+				result = " ";
+				break;
 		}
-		switch(color) {
-		case RED:
-			result = ANSI_RED + result + ANSI_RESET;
-			break;
-		case BLUE:
-			result = ANSI_BLUE + result + ANSI_RESET;
-			break;
-		case GREEN:
-			result = ANSI_GREEN + result + ANSI_RESET;
-			break;
-		case ORANGE:
-			result = ANSI_CYAN + result + ANSI_RESET;
-			break;
-		case PURPLE:
-			result = ANSI_PURPLE + result + ANSI_RESET;
-			break;
-		case YELLOW:
-			result = ANSI_YELLOW + result + ANSI_RESET;
-			break;
-		default:
-			break;
+		switch (color) {
+			case RED:
+				result = ANSI_RED + result + ANSI_RESET;
+				break;
+			case BLUE:
+				result = ANSI_BLUE + result + ANSI_RESET;
+				break;
+			case GREEN:
+				result = ANSI_GREEN + result + ANSI_RESET;
+				break;
+			case ORANGE:
+				result = ANSI_CYAN + result + ANSI_RESET;
+				break;
+			case PURPLE:
+				result = ANSI_PURPLE + result + ANSI_RESET;
+				break;
+			case YELLOW:
+				result = ANSI_YELLOW + result + ANSI_RESET;
+				break;
+			default:
+				break;
 		}
 		
 		return result;

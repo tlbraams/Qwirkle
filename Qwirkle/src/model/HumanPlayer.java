@@ -30,17 +30,18 @@ public class HumanPlayer extends LocalPlayer {
 	/**
 	 * Asks the player which <code>Piece</code>'s from his hand to place where on the given board,
 	 * or which <code>Piece</code>'s he wants to trade with the stack.
-	 * If the player wants to place tiles, it is checked whether the given cells exist and are empty. 
+	 * If the player wants to place tiles,
+	 * it is checked whether the given cells exist and are empty. 
 	 * @param board the given board.
 	 * @return An array of the chosen Moves, either all place moves or swap moves.
 	 */
-	public Move[] determineMove(Board board){
+	public Move[] determineMove(Board board) {
 		showHand();
 		ArrayList<Move> moves = new ArrayList<Move>();
 		int type = showOptions();
 		if (type == 5) {
 			boolean cont = true;
-			while(cont) {
+			while (cont) {
 				System.out.println("Please enter the piece you would like to place.");
 				Scanner line = new Scanner(System.in);
 				try (Scanner scLine = new Scanner(line.next())) {
@@ -55,15 +56,15 @@ public class HumanPlayer extends LocalPlayer {
 								int column = requestColumn();
 								if (board.isField(row, column) && board.isEmpty(row, column)) {
 									moves.add(new Place(p, row, column));
-								} else if(!board.isField(row, column)) {
+								} else if (!board.isField(row, column)) {
 									System.out.println("Invalid Move exc");
-								} else if(!board.isEmpty(row, column)) {
+								} else if (!board.isEmpty(row, column)) {
 									System.out.println("Invalid Move exc");
 								}
 								found = true;
 							}
 						}
-						if(!found) {
+						if (!found) {
 							System.out.println("Not a piece in your hand");
 							//Possibly replace with exception.
 						}
@@ -72,7 +73,7 @@ public class HumanPlayer extends LocalPlayer {
 			}
 		} else if (type == 6) {
 			boolean cont = true;
-			while(cont) {
+			while (cont) {
 				System.out.println("Please enter the piece you would like to trade.");
 				Scanner line = new Scanner(System.in);
 				try (Scanner scLine = new Scanner(line.next())) {
@@ -87,7 +88,7 @@ public class HumanPlayer extends LocalPlayer {
 								found = true;
 							}
 						}
-						if(!found) {
+						if (!found) {
 							System.out.println("Not a piece in your hand");
 							//Possibly replace with exception.
 						}
@@ -104,9 +105,10 @@ public class HumanPlayer extends LocalPlayer {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		boolean cont = true;
 		boolean firstPiece = true;
-		while(cont) {
+		while (cont) {
 			if (firstPiece) {
-				System.out.println(this.getName() + ": What piece would you like to place first? (91, 91).");
+				System.out.println(this.getName() 
+								+ ": What piece would you like to place first? (91, 91).");
 			} else {
 				System.out.println("Please enter the piece you would like to place.");
 			}
@@ -121,7 +123,7 @@ public class HumanPlayer extends LocalPlayer {
 						if (p.toString().equals(input) && !found) {
 							int row;
 							int column;
-							if(firstPiece) {
+							if (firstPiece) {
 								row = 91;
 								column = 91;
 							} else {
@@ -131,15 +133,15 @@ public class HumanPlayer extends LocalPlayer {
 							if (board.isField(row, column) && board.isEmpty(row, column)) {
 								moves.add(new Place(p, row, column));
 								firstPiece = false;
-							} else if(!board.isField(row, column)) {
+							} else if (!board.isField(row, column)) {
 								System.out.println("Invalid Move exc");
-							} else if(!board.isEmpty(row, column)) {
+							} else if (!board.isEmpty(row, column)) {
 								System.out.println("Invalid Move exc");
 							}
 							found = true;
 						}
 					}
-					if(!found) {
+					if (!found) {
 						System.out.println("Not a piece in your hand");
 						//Possibly replace with exception.
 					}
@@ -152,11 +154,11 @@ public class HumanPlayer extends LocalPlayer {
 	
 	
 	public void showHand() {
-		if(hand.size() < 6) {
-			 System.out.println("No more pieces in the stack.");
+		if (hand.size() < 6) {
+			System.out.println("No more pieces in the stack.");
 		}
 		String result = "Your hand:";
-		for(Piece p : hand) {
+		for (Piece p : hand) {
 			result += " | " + p.toString();
 		}
 		System.out.println(result);
@@ -169,9 +171,9 @@ public class HumanPlayer extends LocalPlayer {
 		int result = 0;
 		boolean intRead = false;
 		Scanner line = new Scanner(System.in);
-		while(!intRead) {
-			try(Scanner scannerLine = new Scanner(line.next())) {
-				if(scannerLine.hasNextInt()) {
+		while (!intRead) {
+			try (Scanner scannerLine = new Scanner(line.next())) {
+				if (scannerLine.hasNextInt()) {
 					result = scannerLine.nextInt();
 					if (result == 5 || result == 6) {
 						intRead = true;
@@ -196,9 +198,9 @@ public class HumanPlayer extends LocalPlayer {
 		int row = 0;
 		boolean rowRead = false;
 		Scanner line = new Scanner(System.in);
-		while(!rowRead) {
-			try(Scanner scannerLine = new Scanner(line.next())) {
-				if(scannerLine.hasNextInt()) {
+		while (!rowRead) {
+			try (Scanner scannerLine = new Scanner(line.next())) {
+				if (scannerLine.hasNextInt()) {
 					row = scannerLine.nextInt();
 					rowRead = true;
 				} else {
@@ -217,9 +219,9 @@ public class HumanPlayer extends LocalPlayer {
 		int column = 0;
 		boolean columnRead = false;
 		Scanner line = new Scanner(System.in);
-		while(!columnRead) {
-			try(Scanner scannerLine = new Scanner(line.next())) {
-				if(scannerLine.hasNextInt()) {
+		while (!columnRead) {
+			try (Scanner scannerLine = new Scanner(line.next())) {
+				if (scannerLine.hasNextInt()) {
 					column = scannerLine.nextInt();
 					columnRead = true;
 				} else {

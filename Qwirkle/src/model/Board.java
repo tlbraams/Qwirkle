@@ -29,7 +29,7 @@ public class Board {
 	private int size;
 	private Piece[][] board;
 	private ArrayList<Piece> stack;
-	private int[] score;
+	private int[] scores;
 	
 	// ----- Constructors -----
 	
@@ -45,7 +45,7 @@ public class Board {
 		maxRow = 97;
 		minColumn = 85;
 		maxColumn = 97;
-		score = new int[4];
+		scores = new int[4];
 	}
 	
 	/**
@@ -58,9 +58,9 @@ public class Board {
 		stack = new ArrayList<Piece>();
 		fillStack();
 		minRow = 0;
-		maxRow = size-1;
+		maxRow = size - 1;
 		minColumn = 0;
-		maxColumn = size-1;
+		maxColumn = size - 1;
 	}
 	
 	// ----- Queries -----
@@ -101,7 +101,7 @@ public class Board {
 	 * @param column the column of the cell.
 	 * @return true if the cell is empty, false when occupied. 
 	 */
-	/* @pure */public /* @NonNull */boolean isEmpty(/* @NonNull */int row, /* @NonNull */int column) {
+	/*@pure*/public /* @NonNull */boolean isEmpty(/* @NonNull */int row, /* @NonNull */int column) {
 		return board[row][column] == null;
 	}
 	 
@@ -112,7 +112,7 @@ public class Board {
 	/*
 	 * @ensures 	\result == (0 <= row && row < size && 0 <= column && column < size);
 	 */
-	/* @pure */public /* @NonNull */boolean isField(/* @NonNull */int row, /* @NonNull */int column) {
+	/*@pure*/public /* @NonNull */boolean isField(/* @NonNull */int row, /* @NonNull */int column) {
 		return 0 <= row && row < size && 0 <= column && column < size;
 	}
 	
@@ -168,17 +168,16 @@ public class Board {
 	/* @pure */public /* @NonNull */int getRowLength(int row, int column) {
 		int result = 0;
 		Boolean isRow = true;
-		for(int i = column; isRow; i--) {
-			if(!isEmpty(row, i)) {
+		for (int i = column; isRow; i--) {
+			if (!isEmpty(row, i)) {
 				result++;
-			}
-			else {
+			} else {
 				isRow = false;
 			}
 		}
 		isRow = true;
-		for(int i = column + 1; isRow; i++) {
-			if(!isEmpty(row, i)) {
+		for (int i = column + 1; isRow; i++) {
+			if (!isEmpty(row, i)) {
 				result++;
 			} else {
 				isRow = false;
@@ -190,17 +189,16 @@ public class Board {
 	/* @pure */public /* @NonNull */int getColumnLength(int row, int column) {
 		int result = 0;
 		Boolean isColumn = true;
-		for(int i = row; isColumn; i--) {
-			if(!isEmpty(i, column)) {
+		for (int i = row; isColumn; i--) {
+			if (!isEmpty(i, column)) {
 				result++;
-			}
-			else {
+			} else {
 				isColumn = false;
 			}
 		}
 		isColumn = true;
-		for(int i = row + 1; isColumn; i++) {
-			if(!isEmpty(i, column)) {
+		for (int i = row + 1; isColumn; i++) {
+			if (!isEmpty(i, column)) {
 				result++;
 			} else {
 				isColumn = false;
@@ -210,7 +208,7 @@ public class Board {
 	}
 	
 	/* @pure */public /* @NonNull */int getScore(int playerID) {
-		return score[playerID];
+		return scores[playerID];
 	}
 	
 	/* @pure */public /* @NonNull */boolean emptyStack() {
@@ -223,7 +221,7 @@ public class Board {
 	 * Score kan enkel groter worden. 
 	 */
 	public void addScore(int playerID, int score) {
-		this.score[playerID] += score;
+		this.scores[playerID] += score;
 	}
 	
 	public void setPiece(int row, int column, Piece piece) {
@@ -268,8 +266,8 @@ public class Board {
 	public void fillStack() {
 		Set<Piece.Color> colors = EnumSet.complementOf(EnumSet.of(Piece.Color.DEFAULT));
 		Set<Piece.Shape> shapes = EnumSet.complementOf(EnumSet.of(Piece.Shape.BLOCKED));
-		for(Piece.Color color: colors) {
-			for(Piece.Shape shape: shapes){
+		for (Piece.Color color: colors) {
+			for (Piece.Shape shape: shapes) {
 				stack.add(new Piece(color, shape));
 				stack.add(new Piece(color, shape));
 				stack.add(new Piece(color, shape));
@@ -291,7 +289,7 @@ public class Board {
 	 * @param pieces the pieces received from a player.
 	 */
 	public void tradeReturn(Piece[] pieces) {
-		for(int i = 0; i < pieces.length; i++) {
+		for (int i = 0; i < pieces.length; i++) {
 			stack.add(pieces[i]);
 		}
 		Collections.shuffle(stack);
