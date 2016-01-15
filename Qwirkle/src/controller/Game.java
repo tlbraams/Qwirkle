@@ -429,7 +429,7 @@ public class Game implements Runnable {
 	 */
 	public /* @NonNull */boolean isValidConnectedPlace(/* @NonNull */Piece piece, 
 			/* @NonNull */Board b, /* @NonNull */int row, /* @NonNull */int i) {
-		Boolean result = false;
+		Boolean result = true;
 		Piece p = b.getCell(row, i);
 		if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
 			result = result && true;
@@ -507,7 +507,7 @@ public class Game implements Runnable {
 	/*
 	 * @requires 	places.length < 7;
 	 */
-	public void isConnected(/* @NonNull */Place[] places) throws UnconnectedMoveException{
+	public void isConnected(/* @NonNull */Place[] places) throws UnconnectedMoveException {
 		boolean result = false;
 		for (Place p: places) {
 			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
