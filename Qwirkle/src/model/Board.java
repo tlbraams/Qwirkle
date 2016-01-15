@@ -219,6 +219,9 @@ public class Board {
 	
 	// ----- Commands -----
 	
+	/*
+	 * Score kan enkel groter worden. 
+	 */
 	public void addScore(int playerID, int score) {
 		this.score[playerID] += score;
 	}
