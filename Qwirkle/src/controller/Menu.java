@@ -31,7 +31,7 @@ public class Menu {
 		while (running) {
 			displayOptions();
 			String line = in.nextLine();
-			if(line.equals("1")) {
+			if (line.equals("1")) {
 				registerNewPlayer();
 			} else if (line.equals("2")) {
 				if (playerCount > 1) {
@@ -40,11 +40,11 @@ public class Menu {
 					players = new Player[4];
 				} else {
 					System.out.println("Not enough players to start a game, please wait untill more"
-							+ " players register.");
+									+ " players register.");
 				}
-			} else if(line.equals("3")){
+			} else if (line.equals("3")) {
 				setAiTime();
-			}else if(line.equals("4")){
+			} else if (line.equals("4")) {
 				in.close();
 				running = false;
 				System.out.println("Goodbye!");
@@ -60,10 +60,10 @@ public class Menu {
 		System.out.println("Exit the application ............ 4");
 	}
 	
-	public void setAiTime(){
+	public void setAiTime() {
 		System.out.println("How long would you look the computerplayer to think? (ms)");
 		Scanner in = new Scanner(System.in);
-		if(in.hasNextInt()){
+		if (in.hasNextInt()) {
 			aiTime = in.nextInt();
 		} else {
 			System.out.println("Not a valid entry. Only integers are accepted.");
@@ -71,15 +71,17 @@ public class Menu {
 	}
 	
 	public void registerNewPlayer() {
-		System.out.println("What is your name? (can only contain letters with maximum length of 16)");
+		System.out.println("What is your name?"
+						+ " (can only contain letters with maximum length of 16)");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
-		while(running){
+		while (running) {
 			String name = line.nextLine();
-			if(name.contains(" ")){
+			if (name.contains(" ")) {
 				System.out.println("Your name cannot contain a space. Please enter a new name.");
 			} else if (name.length() > 16) {
-				System.out.println("Your name must have a maximum length of 16. Please enter a new name.");
+				System.out.println("Your name must have a maximum length of 16."
+								+ " Please enter a new name.");
 			} else if (name.length() < 1) {
 				System.out.println("Your name is too short. Please enter a new name.");
 			} else {
@@ -87,7 +89,7 @@ public class Menu {
 				playerCount++;
 				running = false;
 			}
-			if(playerCount == 4) {
+			if (playerCount == 4) {
 				new Game(playerCount, players, aiTime).run();
 				playerCount = 0;
 				players = new Player[4];
