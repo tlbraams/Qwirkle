@@ -12,12 +12,12 @@ import java.util.Scanner;
 
 import model.*;
 
-public class Client extends Thread{
+public class Client extends Thread {
 
 	private static final String USAGE = "usage java network.Client <address> <port>";
 	
 	public static void main(String[] args) {
-		if(args.length != 2) {
+		if (args.length != 2) {
 			System.out.println(USAGE);
 			System.exit(0);
 		}
@@ -72,15 +72,15 @@ public class Client extends Thread{
 		System.out.println("What name would you like to use?");
 		try {
 			String line;
-			while((line = playerInput.readLine()) != null) {
+			while ((line = playerInput.readLine()) != null) {
 				out.write("HELLO " + line);
 				out.newLine();
 				out.flush();
 			}
 			boolean waiting = true;
-			while(waiting) {
+			while (waiting) {
 				line = in.readLine();
-				if(line.startsWith("WELCOME")) {
+				if (line.startsWith("WELCOME")) {
 					Scanner scanner = new Scanner(line);
 					scanner.next();
 					clientName = scanner.next();
@@ -96,7 +96,29 @@ public class Client extends Thread{
 	}
 	
 	public void readCommands() {
-		
+		boolean playing = true;
+		while (playing) {
+			String line;
+			try {
+				line = in.readLine();
+				if (line.startsWith("NAMES")) {
+					// print all names
+				} else if (line.startsWith("NEXT")) {
+					// make a move if the given number is your own
+				} else if (line.startsWith("NEW")) {
+					// add the given tile(s) to your hand
+				} else if (line.startsWith("TURN")) {
+					// make the given move on your own board
+				} else if (line.startsWith("KICK")) {
+					// a player is removed
+				} else if (line.startsWith("WINNER")) {
+					// display some info
+					playing = false;
+				}
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			}
+		}
 	}
 	
 }

@@ -11,7 +11,7 @@ public class Server {
 	private static final String USAGE = "usage: " + Server.class.getName() + " <port>";
 	
 	public static void main(String[] args) {
-		if(args.length != 1) {
+		if (args.length != 1) {
 			System.out.println(USAGE);
 			System.exit(0);
 		}
@@ -33,15 +33,14 @@ public class Server {
 	public void run() {
 		try {
 			ServerSocket ssock = new ServerSocket(port);
-			while(true) {
-				GameHandler game = new GameHandler(this);
-				while(!game.isStarted()) {
+			while (true) {
+				GameHandler game = new GameHandler();
+				while (!game.isStarted()) {
 					print("Waiting for new Client.");
 					Socket sock = ssock.accept();
 					print("Received new connection: " + sock.getPort());
-					ClientHandler clientHandler = new ClientHandler(game, sock);
-					game.addClientHandler(clientHandler);
-					clientHandler.start();
+					NetworkPlayer networkPlayer = new NetworkPlayer(game, sock);
+					new Thread(networkPlayer).start();
 				}
 			}
 		} catch (IOException e) {
