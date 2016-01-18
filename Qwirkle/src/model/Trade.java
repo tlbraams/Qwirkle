@@ -5,6 +5,7 @@ public class Trade implements Move {
 	
 	private Piece piece;
 	
+	// ----- Constructor -----
 	public Trade(Piece piece) {
 		this.piece = piece;
 	}

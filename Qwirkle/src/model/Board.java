@@ -36,6 +36,13 @@ public class Board {
 	/**
 	 * Creates a new Board object of default size (183 x 183).
 	 */
+	/*
+	 *@ ensures		this.getSize == DIM;
+	 *				this.getMinRow == 86;
+	 *				this.getMaxRow == 97;
+	 *				this.getMinColumn == 85;
+	 *				this.getMaxColumn == 97;
+	 */
 	public Board() {
 		size = DIM;
 		board = new Piece[DIM][DIM];
@@ -48,27 +55,12 @@ public class Board {
 		scores = new int[4];
 	}
 	
-	/**
-	 * Creates a new Board object of a size of length dimension.
-	 *  @param dimension the length of the edges of a Board. 
-	 */
-	public Board(int dimension) {
-		size = dimension;
-		board = new Piece[dimension][dimension];
-		stack = new ArrayList<Piece>();
-		fillStack();
-		minRow = 0;
-		maxRow = size - 1;
-		minColumn = 0;
-		maxColumn = size - 1;
-	}
-	
 	// ----- Queries -----
 	/**
 	 * Returns the Board of this Game. 
 	 * @return the Board. 
 	 */
-	/* @pure */public /* @NonNull */Piece[][] getBoard() {
+	/*@ pure */public /*@ NonNull */Piece[][] getBoard() {
 		return board;
 	}
 	
@@ -77,10 +69,10 @@ public class Board {
 	 * @return piece the Piece in the given cell. 
 	 */
 	/*
-	 * @requires 	row >= minRow && row <= maxRow;
+	 *@ requires 	row >= minRow && row <= maxRow;
 	 * 				column >= minColumn && column <= maxColumn;
 	 */
-	/* @pure */public Piece getCell(/* @NonNull */int row, /* @NonNull */int column) {
+	/*@ pure */public Piece getCell(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return board[row][column];
 	}
 	
@@ -89,9 +81,9 @@ public class Board {
 	 * @return the size of a Board.
 	 */
 	/*
-	 * @ensures 	\result == maxRow;
+	 *@ ensures 	\result == maxRow;
 	 */
-	/* @pure */public /* @NonNullable */int getSize() {
+	/*@ pure */public /*@ NonNullable */int getSize() {
 		return size;
 	}
 	
@@ -101,7 +93,7 @@ public class Board {
 	 * @param column the column of the cell.
 	 * @return true if the cell is empty, false when occupied. 
 	 */
-	/*@pure*/public /* @NonNull */boolean isEmpty(/* @NonNull */int row, /* @NonNull */int column) {
+	/*@ pure*/public /*@ NonNull */boolean isEmpty(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return board[row][column] == null;
 	}
 	 
@@ -110,9 +102,9 @@ public class Board {
 	 * @return true if the row and column refer to a valid cell on the board, false otherwise.
 	 */
 	/*
-	 * @ensures 	\result == (0 <= row && row < size && 0 <= column && column < size);
+	 *@ ensures 	\result == (0 <= row && row < size && 0 <= column && column < size);
 	 */
-	/*@pure*/public /* @NonNull */boolean isField(/* @NonNull */int row, /* @NonNull */int column) {
+	/*@ pure*/public /*@ NonNull */boolean isField(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return 0 <= row && row < size && 0 <= column && column < size;
 	}
 	
@@ -120,7 +112,7 @@ public class Board {
 	 * Returns when the last made Move was made. 
 	 * @return the last made Move. 
 	 */
-	/* @pure */public /* @NonNull */int getLastMadeMove() {
+	/*@ pure */public /*@ NonNull */int getLastMadeMove() {
 		return lastMadeMove;
 	}
 	
@@ -128,7 +120,7 @@ public class Board {
 	 * Returns the minimal size of the rows on the Board. 
 	 * @return the minimal row size of the Board. 
 	 */
-	/* @pure */public /* @NonNull */int getMinRow() {
+	/*@ pure */public /*@ NonNull */int getMinRow() {
 		return minRow;
 	}
 	
@@ -136,7 +128,7 @@ public class Board {
 	 * Returns the maximum size of the rows on the Board. 
 	 * @return the maximum row size of the Board. 
 	 */
-	/* @pure */public /* @NonNull */int getMaxRow() {
+	/*@ pure */public /*@ NonNull */int getMaxRow() {
 		return maxRow;
 	}
 	
@@ -144,7 +136,7 @@ public class Board {
 	 * Returns the minimal size of the columns on the Board. 
 	 * @return the minimal column size of the Board. 
 	 */
-	/* @pure */public /* @NonNull */int getMinColumn() {
+	/*@ pure */public /*@ NonNull */int getMinColumn() {
 		return minColumn;
 	}
 	
@@ -152,7 +144,7 @@ public class Board {
 	 * Returns the maximum size of the columns on the Board. 
 	 * @return the maximum column size of the Board. 
 	 */	
-	/* @pure */public /* @NonNull */int getMaxColumn() {
+	/*@ pure */public /*@ NonNull */int getMaxColumn() {
 		return maxColumn;
 	}
 	
@@ -162,10 +154,10 @@ public class Board {
 	 *@return the length of a row.
 	 */
 	/*
-	 * @requires 	0 <= row && row < size && 0 <= column && column < size;
-	 * @ensures 	1 <= \result && 7 > \result;
+	 *@ requires 	0 <= row && row < size && 0 <= column && column < size;
+	 *@ ensures 	1 <= \result && 7 > \result;
 	 */
-	/* @pure */public /* @NonNull */int getRowLength(int row, int column) {
+	/*@ pure */public /*@ NonNull */int getRowLength(int row, int column) {
 		int result = 0;
 		Boolean isRow = true;
 		for (int i = column; isRow; i--) {
@@ -186,7 +178,7 @@ public class Board {
 		return result;
 	}
 	
-	/* @pure */public /* @NonNull */int getColumnLength(int row, int column) {
+	/*@ pure */public /*@ NonNull */int getColumnLength(int row, int column) {
 		int result = 0;
 		Boolean isColumn = true;
 		for (int i = row; isColumn; i--) {
@@ -207,16 +199,29 @@ public class Board {
 		return result;
 	}
 	
-	/* @pure */public /* @NonNull */int getScore(int playerID) {
+	/*@ pure */public /*@ NonNull */int getScore(int playerID) {
 		return scores[playerID];
 	}
 	
-	/* @pure */public /* @NonNull */boolean emptyStack() {
+	/*@ pure */public /*@ NonNull */boolean emptyStack() {
 		return stack.size() == 0;
+	}
+	
+	/*@ pure */public /*@ NonNull */ ArrayList<Piece> getStack() {
+		return stack;
 	}
 	
 	// ----- Commands -----
 	
+	/**
+	 * Adds a given score to the given player. 
+	 * @param playerID the player whose score will be adjusted. 
+	 * @param score the amount of points that the player gets. 
+	 */
+	/*
+	 *@ requires 	score >= 0;
+	 *				getScore(playerID) == \old(getScore(playerID)) + score;
+	 */
 	public void addScore(int playerID, int score) {
 		this.scores[playerID] += score;
 	}

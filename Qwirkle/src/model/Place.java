@@ -6,6 +6,7 @@ public class Place implements Move {
 	int row;
 	int column;
 	
+	// ----- Constructor -----
 	public Place(Piece piece, int row, int column) {
 		this.piece = piece;
 		this.row = row;
