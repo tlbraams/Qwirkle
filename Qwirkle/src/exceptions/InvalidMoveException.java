@@ -4,14 +4,14 @@ public class InvalidMoveException extends Exception {
 
 	private static final long serialVersionUID = -4181475150415857423L;
 
-	private String infoMessage;
+	private String message;
 	
-	public InvalidMoveException(String info) {
-		infoMessage = info;
+	public InvalidMoveException(String message) {
+		this.message = message;
 	}
 	
 	public void getInfo() {
-		System.out.println(infoMessage);
+		System.out.println(message);
 	}
 	
 }
