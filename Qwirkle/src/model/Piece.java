@@ -33,17 +33,48 @@ public class Piece {
 		this.shape = shape;
 	}
 	
-	public Piece(String colorShape) {
-		color = Color.DEFAULT;
-		shape = Shape.BLOCKED;
-	}
-	
 	/*@ pure */ public Color getColor() {
 		return color;
 	}
 	
 	/*@ pure */ public Shape getShape() {
 		return shape;
+	}
+	
+	public static Color charToColor(char color) {
+		Color result = Color.DEFAULT;
+		if (color == 'R') {
+			result = Color.RED;
+		} else if (color == 'O') {
+			result = Color.ORANGE;
+		} else if (color == 'Y') {
+			result = Color.YELLOW;
+		} else if (color == 'G') {
+			result = Color.GREEN;
+		} else if (color == 'B') {
+			result = Color.BLUE;
+		} else if (color == 'P') {
+			result = Color.PURPLE;
+		}
+		return result;
+	}
+	
+	public static Shape chatToShape(char shape) {
+		Shape result = Shape.BLOCKED;
+		if (shape == 'o') {
+			result = Shape.CIRCLE;
+		} else if (shape == 'd') {
+			result = Shape.DIAMOND;
+		} else if (shape == 's') {
+			result = Shape.SQUARE;
+		} else if (shape == 'c') {
+			result = Shape.CLUBS;
+		} else if (shape == '*') {
+			result = Shape.HEART;
+		} else if (shape == 'x') {
+			result = Shape.SPADE;
+		}
+		return result;
 	}
 	
 	/**

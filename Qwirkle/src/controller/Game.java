@@ -596,6 +596,4 @@ public class Game implements Runnable {
 		return (board.emptyStack() && emptyHand) ||
 					(board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
 	}
-	
-	
 }

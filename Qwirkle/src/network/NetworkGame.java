@@ -39,7 +39,8 @@ public class NetworkGame implements Runnable {
 	 * 
 	 * @param playerCount	the amount of players participating in this Game. 
 	 * @param players 		the array with all players participating in this Game.
-	 * @param thinkTime 	the time in milliseconds that a computer player can take before making a Move. 
+	 * @param thinkTime 	the time in milliseconds that a computer player can take
+	 * 						before making a Move. 
 	 */
 	/*
 	 * @requires 	playerCount < 5 && playerCount > 1;
@@ -50,12 +51,12 @@ public class NetworkGame implements Runnable {
 	 * 				this.thinkTime = aiTime;
 	 */
 	public NetworkGame(int playerCount, /* @NonNull */NetworkPlayer[] players, int thinkTime, 
-				GameHandler h){
+					GameHandler h) {
 		board = new Board();
 		this.playerCount = playerCount;
 		this.players = new NetworkPlayer[this.playerCount];
 		handler = h;
-		for(int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < playerCount; i++) {
 			this.players[i] = players[i];
 		}
 		aiTime = thinkTime;
@@ -85,7 +86,6 @@ public class NetworkGame implements Runnable {
 	 * Returns the maximum amount of points of a given hand. 
 	 * This method is called for each Player at the beginning of this Game to 
 	 * determine which player is allowed to start the game. 
-	 * 
 	 * @param hand the Hand a player holds. 
 	 * @return the maximum amount of points one can get with the given Hand. 
 	 */
@@ -95,17 +95,19 @@ public class NetworkGame implements Runnable {
 	 */
 	/* @pure */public /* @NonNull*/ int findMaxScore(HashSet<Piece> hand) {
 		int max = 0;
-		for(Piece p : hand) {
+		for (Piece p : hand) {
 			Set<Piece> restHand = new HashSet<>(hand);
 			restHand.remove(p);
 			int color = 1;
 			int shape = 1;
 			
-			// Check if either the color or the shape of each rp matches that of p. If so, add to color or shape. 
-			for(Piece rp : restHand) {
-				if(rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
+			// Check if either the color or the shape of each rp matches that of p.
+			//				If so, add to color or shape. 
+			for (Piece rp : restHand) {
+				if (rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
 					color++;
-				} else if (!rp.getColor().equals(p.getColor()) && rp.getShape().equals(p.getShape())) {
+				} else if (!rp.getColor().equals(p.getColor()) 
+								&& rp.getShape().equals(p.getShape())) {
 					shape++;
 				}
 			}
@@ -123,18 +125,18 @@ public class NetworkGame implements Runnable {
 	// ----- Commands -----
 	
 	/**
-	 * Starts and ends Game. At the beginning it fills all Hands, and then finds the players that is allowed
+	 * Starts and ends Game. At the beginning it fills all Hands,
+	 * and then finds the players that is allowed
 	 * to make a Move first. It prints the board on the System.Out and executes the first Move.
-	 * 
-	 * During the Game it lets the Players makes Moves, checks them for validity and keeps the scores. 
-	 * 
+	 * During the Game it lets the Players makes Moves,
+	 * checks them for validity and keeps the scores.
 	 * When the Game has finished it stops the Game and displays the winner and scores. 
 	 */
 	public void playGame() {
 		// Fills the Hands of each Player with 6 Pieces. 
-		for(int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < playerCount; i++) {
 			String command = "NEW"; 
-			for(int j = 0; j < 6; j++) {
+			for (int j = 0; j < 6; j++) {
 				Piece piece = board.draw();
 				players[i].receive(piece);
 				command += " " + piece.toString();
@@ -148,10 +150,10 @@ public class NetworkGame implements Runnable {
 		while (!endGame()) {
 			handler.broadcast("NEXT " + currentPlayerID);
 			Move[] moves = players[currentPlayerID].determineMove(board);
-			if(validMove(moves, players[currentPlayerID])){
-				moveCounter ++;
+			if (validMove(moves, players[currentPlayerID])) {
+				moveCounter++;
 				String newPieces = "NEW";
-				if(moves[0] instanceof Place) {
+				if (moves[0] instanceof Place) {
 					newPieces += place(moves, players[currentPlayerID]);
 					int score = getScore(moves);
 					board.addScore(currentPlayerID, score);
@@ -180,7 +182,7 @@ public class NetworkGame implements Runnable {
 	 */
 	public void run() {
 		String welcome = "NAMES";
-		for(int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < playerCount; i++) {
 			welcome += " " + players[i].getName() + " " + players[i].getID();
 		}
 		welcome += " " + aiTime;
@@ -192,7 +194,6 @@ public class NetworkGame implements Runnable {
 	 * Places the Piece from a Player on the Board in the indicated cell.
 	 * After placing a Piece, it is removed from the Players hand and the Player 
 	 * gets a new Piece (if the Stack is not empty). 
-	 * 
 	 * @param moves the Moves that a Player wants to make.
 	 * @param player the Player who wants to make the Moves.
 	 */
@@ -203,7 +204,7 @@ public class NetworkGame implements Runnable {
 	public String place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		String result = "";
-		for(Place m: places) {
+		for (Place m: places) {
 			Piece piece = m.getPiece();
 			player.remove(piece);
 			int row = m.getRow();
@@ -216,7 +217,7 @@ public class NetworkGame implements Runnable {
 				
 			}
 		}
-		if(result.equals("")) {
+		if (result.equals("")) {
 			result = " empty";
 		}
 		board.setLastMadeMove(moveCounter);
@@ -227,7 +228,6 @@ public class NetworkGame implements Runnable {
 	 * Trades the given Pieces in the Moves from a Player with random Pieces in the Stack.
 	 * The Pieces are removed from the Players Hand and added to the Stack. 
 	 * The Players Hand is refilled again to 6 Pieces (if the Stack is not empty). 
-	 * 
 	 * @param moves the Moves that a Player wants to make.
 	 * @param player the Player who wants to make the Moves.
 	 */
@@ -238,7 +238,7 @@ public class NetworkGame implements Runnable {
 	public String tradePieces(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Piece[] pieces = new Piece[moves.length];
 		String result = "";
-		for(int i = 0; i < moves.length; i++) {
+		for (int i = 0; i < moves.length; i++) {
 			pieces[i] = moves[i].getPiece();
 			player.remove(pieces[i]);
 			Piece newPiece = board.draw();
@@ -262,10 +262,10 @@ public class NetworkGame implements Runnable {
 	public void findFirstPlayer() {
 		int maxScore = 0;
 		int playerNumber = 0;
-		for(int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < playerCount; i++) {
 			HashSet<Piece> hand = players[i].getHand();
 			int temp = findMaxScore(hand);
-			if (temp > maxScore){
+			if (temp > maxScore) {
 				maxScore = temp;
 				playerNumber = i;
 			}
@@ -275,9 +275,11 @@ public class NetworkGame implements Runnable {
 
 	
 	/**
-	 * Tests if a given array of Moves contains only valid Moves. It tests if all the moves are of the same 
-	 * type, if a placing of Pieces is one straight row or column, and finally if the players makes Moves
-	 * with Pieces that are in its Hand. If any of the above conditions is violated, the turn is skipped. 
+	 * Tests if a given array of Moves contains only valid Moves.
+	 * It tests if all the moves are of the same type,
+	 * if a placing of Pieces is one straight row or column,
+	 * and finally if the players makes Moves with Pieces that are in its Hand.
+	 *  If any of the above conditions is violated, the turn is skipped. 
 	 * @param moves the Moves that the given Player wants to make. 
 	 * @param player the Player that wants to make the given Moves. 
 	 * @return true if the Moves are valid, false when invalid. 
@@ -290,29 +292,29 @@ public class NetworkGame implements Runnable {
 		
 		// Check if all Moves are of type Place. 
 		if (moves[0] instanceof Place) {
-			for(int i = 1; i < moves.length; i++) {
+			for (int i = 1; i < moves.length; i++) {
 				result = result && moves[i] instanceof Place;
 			}
 			
 			// Check if the cells of the Places are empty. 
 			Board b = board.deepCopy();
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-			for(Place p : places) {
+			for (Place p : places) {
 				result = result && b.isEmpty(p.getRow(), p.getColumn());
 				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
 			}
 			
-			try{
+			try {
 				// Check if the Places create an uninterrupted row or column. 
 				result = result && (isRow(moves, b) || isColumn(moves, b));
 				
 				// Check if the uninterrupted row or column is valid. 
 				result = result && isValidRow(places, b);
 				result = result && isValidColumn(places, b);
-				if(moveCounter > 0) {
+				if (moveCounter > 0) {
 					isConnected(places);
 				}
-			} catch(UnconnectedMoveException e) {
+			} catch (UnconnectedMoveException e) {
 				e.getInfo();
 			}
 			
@@ -334,7 +336,6 @@ public class NetworkGame implements Runnable {
 	 * Tests if an array of Places on Board b is a valid row. 
 	 * It checks if the Places are connected to other Pieces of the Board and if 
 	 * the row it creates is valid. 
-	 * 
 	 * @param moves the array of Places that are to be made. 
 	 * @param b the board on which the Places are made. 
 	 * @return true is the Places are valid, false when not. 
@@ -344,21 +345,21 @@ public class NetworkGame implements Runnable {
 	 */
 	public /* @NonNull */boolean isValidRow(/* @NonNull */Place[] moves, /* @NonNull */Board b) {
 		boolean result = true;
-		for(Place m : moves) {
+		for (Place m : moves) {
 			int row = m.getRow();
 			int column = m.getColumn();
 			Piece piece = m.getPiece();
 			boolean connected = true;
-			for(int i = column - 1; connected; i--) {
-				if(b.isEmpty(row, i)) {
+			for (int i = column - 1; connected; i--) {
+				if (b.isEmpty(row, i)) {
 					connected = false;
 				} else {
 					result = this.isValidConnectedPlace(piece, b, row, i);
 				}
 			}
 			connected = true;
-			for(int i = column + 1; connected; i++) {
-				if(b.isEmpty(row, i)) {
+			for (int i = column + 1; connected; i++) {
+				if (b.isEmpty(row, i)) {
 					connected = false;
 				} else {
 					result = this.isValidConnectedPlace(piece, b, row, i);
@@ -372,7 +373,6 @@ public class NetworkGame implements Runnable {
 	 * Tests if an array of Places on Board b is a valid column. 
 	 * It checks if the Places are connected to other Pieces of the Board and if 
 	 * the column it creates is valid. 
-	 * 
 	 * @param moves the array of Places that are to be made. 
 	 * @param b the board on which the Places are made. 
 	 * @return true is the Places are valid, false when not. 
@@ -382,21 +382,21 @@ public class NetworkGame implements Runnable {
 	 */
 	public /* @NonNull */boolean isValidColumn(/* @NonNull */Place[] moves, /* @NonNull */Board b) {
 		boolean result = true;
-		for(Place m : moves) {
+		for (Place m : moves) {
 			int row = m.getRow();
 			int column = m.getColumn();
 			Piece piece = m.getPiece();
 			boolean connected = true;
-			for(int i = row - 1; connected; i--) {
-				if(b.isEmpty(i, column)) {
+			for (int i = row - 1; connected; i--) {
+				if (b.isEmpty(i, column)) {
 					connected = false;
 				} else {
 					result = this.isValidConnectedPlace(piece, b, i, column);
 				}
 			}
 			connected = true;
-			for(int i = row + 1; connected; i++) {
-				if(b.isEmpty(i, column)) {
+			for (int i = row + 1; connected; i++) {
+				if (b.isEmpty(i, column)) {
 					connected = false;
 				} else {
 					result = this.isValidConnectedPlace(piece, b, i, column);
@@ -423,7 +423,8 @@ public class NetworkGame implements Runnable {
 		Piece p = b.getCell(row, i);
 		if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
 			result = result && true;
-		} else if (!piece.getColor().equals(p.getColor()) && piece.getShape().equals(p.getShape())) {
+		} else if (!piece.getColor().equals(p.getColor())
+						&& piece.getShape().equals(p.getShape())) {
 			result = result && true;
 		} else {
 			result = false;
@@ -440,11 +441,11 @@ public class NetworkGame implements Runnable {
 	 */
 	public /* @NunNull */boolean isRow(/* @NunNull */Move[] moves, /* @NunNull */Board b) {
 		boolean result = true;
-		if(moves.length != 1) {
+		if (moves.length != 1) {
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			int minColumn = places[0].getColumn();
 			int maxColumn = minColumn;
-			for(int i = 1; i < places.length; i++) {
+			for (int i = 1; i < places.length; i++) {
 				result = result && places[0].getRow() == places[i].getRow();
 				if (places[i].getColumn() < minColumn) {
 					minColumn = places[i].getColumn();
@@ -454,7 +455,7 @@ public class NetworkGame implements Runnable {
 			}
 			
 			// Check for gaps. 
-			for(int i = minColumn; i <= maxColumn && result; i++) {
+			for (int i = minColumn; i <= maxColumn && result; i++) {
 				result = result && !b.isEmpty(places[0].getRow(), i);
 			}
 		}
@@ -471,12 +472,12 @@ public class NetworkGame implements Runnable {
 	 */
 	public /* @NunNull */boolean isColumn(/* @NunNull */Move[] moves, /* @NunNull */Board b) {
 		boolean result = true;
-		if(moves.length != 1) {
+		if (moves.length != 1) {
 			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 			int minRow = places[0].getRow();
 			int maxRow = minRow;
 			// Check for straight line Place. 
-			for(int i = 1; i < places.length; i++) {
+			for (int i = 1; i < places.length; i++) {
 				result = result && places[0].getColumn() == places[i].getColumn();
 				if (places[i].getRow() < minRow) {
 					minRow = places[i].getRow();
@@ -485,7 +486,7 @@ public class NetworkGame implements Runnable {
 				}
 			}
 			// Check for gaps. 
-			for(int i = minRow; i <= maxRow && result; i++) {
+			for (int i = minRow; i <= maxRow && result; i++) {
 				result = result && !b.isEmpty(i, places[0].getColumn());
 			}
 		}
@@ -498,15 +499,15 @@ public class NetworkGame implements Runnable {
 	/*
 	 * @requires 	places.length < 7;
 	 */
-	public void isConnected(/* @NonNull */Place[] places) throws UnconnectedMoveException{
+	public void isConnected(/* @NonNull */Place[] places) throws UnconnectedMoveException {
 		boolean result = false;
-		for(Place p: places) {
+		for (Place p: places) {
 			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
 					(!board.isEmpty(p.getRow() + 1, p.getColumn())) ||
 					(!board.isEmpty(p.getRow(), p.getColumn() - 1)) ||
 					(!board.isEmpty(p.getRow(), p.getColumn() + 1)));
 		}
-		if(!result) {
+		if (!result) {
 			throw new UnconnectedMoveException();
 		}
 	}
@@ -521,18 +522,18 @@ public class NetworkGame implements Runnable {
 		int result = 0;
 		
 		// Determining the score when only one Place is made. 
-		if(places.length == 1) {
+		if (places.length == 1) {
 			int row = board.getRowLength(places[0].getRow(), places[0].getColumn());
 			int column = board.getColumnLength(places[0].getRow(), places[0].getColumn());
 			if (row > 1) {
 				result += row;
-				if(row == 6) {
+				if (row == 6) {
 					result += row;
 				}
 			}
 			if (column > 1) {
 				result += column;
-				if(column == 6) {
+				if (column == 6) {
 					result += column;
 				}
 			}
@@ -543,30 +544,30 @@ public class NetworkGame implements Runnable {
 			// Determining the score if the Places create a row. 
 			if (isRow(moves, board)) {
 				result = board.getRowLength(places[0].getRow(), places[0].getColumn());
-				if(result == 6) {
+				if (result == 6) {
 					result += result;
 				}
-				for(int i = 0; i < places.length; i++) {
+				for (int i = 0; i < places.length; i++) {
 					int column =  board.getColumnLength(places[i].getRow(), places[i].getColumn());
 					if (column > 1) {
 						result = result + column;
 					}
-					if(column == 6) {
+					if (column == 6) {
 						result += column;
 					}
 				}
 			// Determining the score if the Places create a column. 
 			} else if (isColumn(moves, board)) {
 				result = board.getColumnLength(places[0].getRow(), places[0].getColumn());
-				if(result == 6) {
+				if (result == 6) {
 					result += result;
 				}
-				for(int i = 0; i < places.length; i++) {
+				for (int i = 0; i < places.length; i++) {
 					int row = board.getRowLength(places[i].getRow(), places[i].getColumn());
 					if (row > 1) {
 						result = result + row; 
 					}
-					if(row == 6) {
+					if (row == 6) {
 						result += row;
 					}
 					
@@ -587,9 +588,9 @@ public class NetworkGame implements Runnable {
 	public int isWinner() {
 		int result = -1;
 		int maxScore = 0;
-		if(endGame()) {
-			for(Player p: players) {
-				if(board.getScore(p.getID()) > maxScore) {
+		if (endGame()) {
+			for (Player p: players) {
+				if (board.getScore(p.getID()) > maxScore) {
 					result = p.getID();
 					maxScore = board.getScore(result);
 				}
@@ -609,13 +610,14 @@ public class NetworkGame implements Runnable {
 		// Check if one player has an empty hand and remember that playerID.
 		boolean emptyHand = false;
 		for (Player p: players) {
-			if(!emptyHand) {
+			if (!emptyHand) {
 				emptyHand = p.getHand().size() == 0;
 				if (emptyHand) {
 					board.addScore(p.getID(), 6);
 				}
 			}
 		}
-		return (board.emptyStack() && emptyHand) || (board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
+		return (board.emptyStack() && emptyHand) ||
+						(board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
 	}
 }

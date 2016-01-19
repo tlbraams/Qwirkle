@@ -35,6 +35,8 @@ public class Server {
 			ServerSocket ssock = new ServerSocket(port);
 			while (true) {
 				GameHandler game = new GameHandler();
+				game.start();
+				threads.add(game);
 				while (!game.isStarted()) {
 					print("Waiting for new Client.");
 					Socket sock = ssock.accept();

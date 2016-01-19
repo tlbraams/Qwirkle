@@ -256,7 +256,7 @@ public class TestGame {
 			new Place(new Piece(Piece.Color.RED, Piece.Shape.DIAMOND), 91, 96)
 		};
 		game.place(move, player1);
-		assertTrue(game.getScore(move) == 12);
+		assertTrue(game.getBoard().getScore(move) == 12);
 	
 	}
 	
