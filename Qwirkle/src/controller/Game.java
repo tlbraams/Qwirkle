@@ -523,8 +523,6 @@ public class Game implements Runnable {
 		}
 	}
 
-	
-	
 	/**
 	 * Returns the playerID of the player with the most points after a game has ended.
 	 * @return the playerID of the winner of the Game. 
