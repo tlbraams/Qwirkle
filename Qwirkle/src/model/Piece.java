@@ -33,6 +33,11 @@ public class Piece {
 		this.shape = shape;
 	}
 	
+	public Piece(String colorShape) {
+		color = Color.DEFAULT;
+		shape = Shape.BLOCKED;
+	}
+	
 	/*@ pure */ public Color getColor() {
 		return color;
 	}

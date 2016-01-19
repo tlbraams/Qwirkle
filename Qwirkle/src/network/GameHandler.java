@@ -1,9 +1,6 @@
 package network;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import model.Move;
 
 
 /**
@@ -56,14 +53,14 @@ public class GameHandler extends Thread {
 	public int validName(String name) {
 		int result = -1;
 		if (!name.contains(" ") && name.length() < 17 && name.length() >= 1
-				&& name.matches("[a-zA-Z]+")) {
+						&& name.matches("[a-zA-Z]+")) {
 			result = playerCount;
 		}
 		return result;
 	}
 	
 	public void broadcast(String message) {
-		for(NetworkPlayer p: players) {
+		for (NetworkPlayer p: players) {
 			p.sendCommand(message);
 		}
 	}

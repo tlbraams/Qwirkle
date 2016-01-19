@@ -31,16 +31,15 @@ public class TUI {
 			String row = "";
 			if (i < 10) {
 				row = "  " + i;
-			} else if (i < 100){
+			} else if (i < 100) {
 				row = " " + i;
 			} else {
 				row = "" + i;
 			}
 			for (int j = b.getMinColumn(); j <= b.getMaxColumn(); j++) {
-				if(b.getCell(i, j) != null) {
+				if (b.getCell(i, j) != null) {
 					row = row + "| " + b.getCell(i, j).toString();
-				}
-				else {
+				} else {
 					row = row + "|   ";
 				}
 			}
@@ -51,7 +50,7 @@ public class TUI {
 	
 	public void printScore(Board b) {
 		String result = "Scores:";
-		for(int i = 0; i < control.getPlayerCount(); i++) {
+		for (int i = 0; i < control.getPlayerCount(); i++) {
 			result += " player" + i + ": " + b.getScore(i);
 		}
 		System.out.println(result);

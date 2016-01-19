@@ -57,6 +57,7 @@ public class Client extends Thread {
 	private String clientName;
 	private Socket sock;
 	private Player player;
+	private Board board;
 	private BufferedReader in;
 	private BufferedWriter out;
 	private BufferedReader playerInput;
@@ -101,15 +102,39 @@ public class Client extends Thread {
 			String line;
 			try {
 				line = in.readLine();
+				Scanner lineScan = new Scanner(line);
 				if (line.startsWith("NAMES")) {
-					// print all names
+					System.out.println(line);
+					board = new Board();
 				} else if (line.startsWith("NEXT")) {
-					// make a move if the given number is your own
+					lineScan.next();
+					int playerID = lineScan.nextInt();
+					if (this.player.getID() == playerID) {
+						Move[] move = this.player.determineMove(board);
+						String result = "";
+						if (move[0] instanceof Place) {
+							result = "PLACE";
+							for (int i = 0; i < move.length; i++) {
+								result += move[i].toString();
+							}
+						} else if (move[0] instanceof Trade) {
+							result = "TRADE";
+							for (int i = 0; i < move.length; i++) {
+								result += move[i].toString();
+							}
+						}
+						sendCommand(result);
+					}
 				} else if (line.startsWith("NEW")) {
-					// add the given tile(s) to your hand
+					lineScan.next();
+					while (lineScan.hasNext()) {
+						player.receive(new Piece(lineScan.next()));
+					}
 				} else if (line.startsWith("TURN")) {
-					// make the given move on your own board
+					lineScan.next();
+					// translate and make the move;
 				} else if (line.startsWith("KICK")) {
+					lineScan.next();
 					// a player is removed
 				} else if (line.startsWith("WINNER")) {
 					// display some info
@@ -118,6 +143,16 @@ public class Client extends Thread {
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
 			}
+		}
+	}
+	
+	public void sendCommand(String message) {
+		try {
+			out.write(message);
+			out.newLine();
+			out.flush();
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
 		}
 	}
 	
