@@ -39,7 +39,8 @@ public class NetworkGame implements Runnable {
 	 * 
 	 * @param playerCount	the amount of players participating in this Game. 
 	 * @param players 		the array with all players participating in this Game.
-	 * @param thinkTime 	the time in milliseconds that a computer player can take before making a Move. 
+	 * @param thinkTime 	the time in milliseconds that a computer player can take
+	 * 						before making a Move. 
 	 */
 	/*
 	 * @requires 	playerCount < 5 && playerCount > 1;
@@ -50,12 +51,12 @@ public class NetworkGame implements Runnable {
 	 * 				this.thinkTime = aiTime;
 	 */
 	public NetworkGame(int playerCount, /* @NonNull */NetworkPlayer[] players, int thinkTime, 
-				GameHandler h){
+					GameHandler h) {
 		board = new Board();
 		this.playerCount = playerCount;
 		this.players = new NetworkPlayer[this.playerCount];
 		handler = h;
-		for(int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < playerCount; i++) {
 			this.players[i] = players[i];
 		}
 		aiTime = thinkTime;
@@ -95,17 +96,19 @@ public class NetworkGame implements Runnable {
 	 */
 	/* @pure */public /* @NonNull*/ int findMaxScore(HashSet<Piece> hand) {
 		int max = 0;
-		for(Piece p : hand) {
+		for (Piece p : hand) {
 			Set<Piece> restHand = new HashSet<>(hand);
 			restHand.remove(p);
 			int color = 1;
 			int shape = 1;
 			
-			// Check if either the color or the shape of each rp matches that of p. If so, add to color or shape. 
-			for(Piece rp : restHand) {
-				if(rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
+			// Check if either the color or the shape of each rp matches that of p.
+			//				If so, add to color or shape. 
+			for (Piece rp : restHand) {
+				if (rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
 					color++;
-				} else if (!rp.getColor().equals(p.getColor()) && rp.getShape().equals(p.getShape())) {
+				} else if (!rp.getColor().equals(p.getColor()) 
+								&& rp.getShape().equals(p.getShape())) {
 					shape++;
 				}
 			}
@@ -123,18 +126,18 @@ public class NetworkGame implements Runnable {
 	// ----- Commands -----
 	
 	/**
-	 * Starts and ends Game. At the beginning it fills all Hands, and then finds the players that is allowed
+	 * Starts and ends Game. At the beginning it fills all Hands,
+	 * and then finds the players that is allowed
 	 * to make a Move first. It prints the board on the System.Out and executes the first Move.
-	 * 
-	 * During the Game it lets the Players makes Moves, checks them for validity and keeps the scores. 
-	 * 
+	 * During the Game it lets the Players makes Moves,
+	 * checks them for validity and keeps the scores.
 	 * When the Game has finished it stops the Game and displays the winner and scores. 
 	 */
 	public void playGame() {
 		// Fills the Hands of each Player with 6 Pieces. 
-		for(int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < playerCount; i++) {
 			String command = "NEW"; 
-			for(int j = 0; j < 6; j++) {
+			for (int j = 0; j < 6; j++) {
 				Piece piece = board.draw();
 				players[i].receive(piece);
 				command += " " + piece.toString();
@@ -148,10 +151,10 @@ public class NetworkGame implements Runnable {
 		while (!endGame()) {
 			handler.broadcast("NEXT " + currentPlayerID);
 			Move[] moves = players[currentPlayerID].determineMove(board);
-			if(validMove(moves, players[currentPlayerID])){
-				moveCounter ++;
+			if (validMove(moves, players[currentPlayerID])) {
+				moveCounter++;
 				String newPieces = "NEW";
-				if(moves[0] instanceof Place) {
+				if (moves[0] instanceof Place) {
 					newPieces += place(moves, players[currentPlayerID]);
 					int score = getScore(moves);
 					board.addScore(currentPlayerID, score);

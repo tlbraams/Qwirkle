@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 import model.*;
 
-public class NetworkPlayer implements Player, Runnable{
+public class NetworkPlayer implements Player, Runnable {
 	public static final int MAX_HAND = 6;
 	/**
 	 * The NetworkPlayer class implements the Player interface.
@@ -108,14 +108,14 @@ public class NetworkPlayer implements Player, Runnable{
 			if (line.startsWith("MOVE")) {
 				scanLine.next();
 				ArrayList<Place> places = new ArrayList<>();
-				while (scanLine.hasNext()){
-					String name = scanLine.next();
+				while (scanLine.hasNext()) {
+					String pieceName = scanLine.next();
 					int row = scanLine.nextInt();
 					int column = scanLine.nextInt();
 					Piece piece = null;
 					boolean found = false;
 					for (Piece p: hand) {
-						if (p.toString().equals(name) && !found) {
+						if (p.toString().equals(pieceName) && !found) {
 							piece = p;
 							found = true;
 						}
@@ -129,12 +129,12 @@ public class NetworkPlayer implements Player, Runnable{
 			} else if (line.startsWith("SWAP")) {
 				scanLine.next();
 				ArrayList<Trade> trades = new ArrayList<>();
-				while (scanLine.hasNext()){
-					String name = scanLine.next();
+				while (scanLine.hasNext()) {
+					String pieceName = scanLine.next();
 					Piece piece = null;
 					boolean found = false;
 					for (Piece p: hand) {
-						if (p.toString().equals(name) && !found) {
+						if (p.toString().equals(pieceName) && !found) {
 							piece = p;
 							found = true;
 						}

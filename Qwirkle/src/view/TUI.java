@@ -10,9 +10,16 @@ public class TUI {
 	 * The TUI class is used as the textual user interface.
 	 */
 	private Game control;
+	private Board board;
 	
 	public TUI(Game game) {
 		control = game;
+		board = control.getBoard();
+	}
+	
+	public TUI(Board board) {
+		control = null;
+		this.board = board;
 	}
 	
 	
@@ -20,8 +27,8 @@ public class TUI {
 	// ------------ Commands ------------------------
 	
 	public void update() {
-		printBoard(control.getBoard());
-		printScore(control.getBoard());
+		printBoard(board);
+		printScore(board);
 	}
 	
 	public void printBoard(Board b) {

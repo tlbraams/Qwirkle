@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import model.*;
+import view.TUI;
 
 public class Client extends Thread {
 
@@ -58,6 +59,7 @@ public class Client extends Thread {
 	private Socket sock;
 	private Player player;
 	private Board board;
+	private TUI view;
 	private BufferedReader in;
 	private BufferedWriter out;
 	private BufferedReader playerInput;
@@ -106,6 +108,7 @@ public class Client extends Thread {
 				if (line.startsWith("NAMES")) {
 					System.out.println(line);
 					board = new Board();
+					view = new TUI(board);
 				} else if (line.startsWith("NEXT")) {
 					lineScan.next();
 					int playerID = lineScan.nextInt();
@@ -128,7 +131,11 @@ public class Client extends Thread {
 				} else if (line.startsWith("NEW")) {
 					lineScan.next();
 					while (lineScan.hasNext()) {
-						player.receive(new Piece(lineScan.next()));
+						String chars = lineScan.next();
+						char color = chars.charAt(0);
+						char shape = chars.charAt(1);
+						player.receive(new Piece(Piece.charToColor(color),
+										Piece.chatToShape(shape)));
 					}
 				} else if (line.startsWith("TURN")) {
 					lineScan.next();
