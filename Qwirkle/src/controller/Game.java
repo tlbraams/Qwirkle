@@ -157,7 +157,7 @@ public class Game implements Runnable {
 				moveCounter++;
 				if (moves[0] instanceof Place) {
 					place(moves, players[currentPlayerID]);
-					int score = getScore(moves);
+					int score = board.getScore(moves);
 					board.addScore(currentPlayerID, score);
 				} else if (moves[0] instanceof Trade) {
 					tradePieces(moves, players[currentPlayerID]);
@@ -278,7 +278,7 @@ public class Game implements Runnable {
 		if (validMove(moves, players[currentPlayerID])) {
 			moveCounter++;
 			place(moves, players[currentPlayerID]);
-			int score = getScore(moves);
+			int score = board.getScore(moves);
 			board.addScore(currentPlayerID, score);
 		}			
 		currentPlayerID = (currentPlayerID + 1) % playerCount;
@@ -523,70 +523,6 @@ public class Game implements Runnable {
 		}
 	}
 
-	/**
-	 * Determines the score of a given array of Moves. 
-	 * @param moves the moves to be made. 
-	 * @return the score of the given moves. 
-	 */
-	public int getScore(/* @NonNull */ Move[] moves) {
-		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-		int result = 0;
-		
-		// Determining the score when only one Place is made. 
-		if (places.length == 1) {
-			int row = board.getRowLength(places[0].getRow(), places[0].getColumn());
-			int column = board.getColumnLength(places[0].getRow(), places[0].getColumn());
-			if (row > 1) {
-				result += row;
-				if (row == 6) {
-					result += row;
-				}
-			}
-			if (column > 1) {
-				result += column;
-				if (column == 6) {
-					result += column;
-				}
-			}
-		
-		// Determining the score when multiple Places have been made. 
-		} else {
-			
-			// Determining the score if the Places create a row. 
-			if (isRow(moves, board)) {
-				result = board.getRowLength(places[0].getRow(), places[0].getColumn());
-				if (result == 6) {
-					result += result;
-				}
-				for (int i = 0; i < places.length; i++) {
-					int column =  board.getColumnLength(places[i].getRow(), places[i].getColumn());
-					if (column > 1) {
-						result = result + column;
-					}
-					if (column == 6) {
-						result += column;
-					}
-				}
-			// Determining the score if the Places create a column. 
-			} else if (isColumn(moves, board)) {
-				result = board.getColumnLength(places[0].getRow(), places[0].getColumn());
-				if (result == 6) {
-					result += result;
-				}
-				for (int i = 0; i < places.length; i++) {
-					int row = board.getRowLength(places[i].getRow(), places[i].getColumn());
-					if (row > 1) {
-						result = result + row; 
-					}
-					if (row == 6) {
-						result += row;
-					}
-					
-				}
-			}
-		}
-		return result;
-	}
 	
 	
 	/**

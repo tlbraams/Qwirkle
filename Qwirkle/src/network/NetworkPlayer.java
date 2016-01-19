@@ -53,12 +53,14 @@ public class NetworkPlayer implements Player, Runnable {
 		boolean wait = true;
 		while (wait) {
 			String line = in.readLine();
+			System.out.println(line);
 			if (line != null && line.startsWith("HELLO ")) {
 				Scanner scanLine = new Scanner(line);
 				scanLine.next();
 				name = scanLine.next();
 				id = game.validName(name);
 				if (id != -1) {
+					System.out.println("WELCOME " + name + " " + id);
 					sendCommand("WELCOME " + name + " " + id);
 					wait = false;
 					game.addNetworkPlayer(this);

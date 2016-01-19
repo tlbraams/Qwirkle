@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -93,7 +94,7 @@ public class Board {
 	 * @param column the column of the cell.
 	 * @return true if the cell is empty, false when occupied. 
 	 */
-	/*@ pure*/public /*@ NonNull */boolean isEmpty(/*@ NonNull */int row, /*@ NonNull */int column) {
+	/*@pure*/public /*@ NonNull */boolean isEmpty(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return board[row][column] == null;
 	}
 	 
@@ -104,7 +105,7 @@ public class Board {
 	/*
 	 *@ ensures 	\result == (0 <= row && row < size && 0 <= column && column < size);
 	 */
-	/*@ pure*/public /*@ NonNull */boolean isField(/*@ NonNull */int row, /*@ NonNull */int column) {
+	/*@pure*/public /*@ NonNull */boolean isField(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return 0 <= row && row < size && 0 <= column && column < size;
 	}
 	
@@ -295,5 +296,70 @@ public class Board {
 			stack.add(pieces[i]);
 		}
 		Collections.shuffle(stack);
+	}
+	
+	/**
+	 * Determines the score of a given array of Moves. 
+	 * @param moves the moves to be made. 
+	 * @return the score of the given moves. 
+	 */
+	public int getScore(/* @NonNull */ Move[] moves) {
+		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
+		int result = 0;
+		
+		// Determining the score when only one Place is made. 
+		if (places.length == 1) {
+			int row = getRowLength(places[0].getRow(), places[0].getColumn());
+			int column = getColumnLength(places[0].getRow(), places[0].getColumn());
+			if (row > 1) {
+				result += row;
+				if (row == 6) {
+					result += row;
+				}
+			}
+			if (column > 1) {
+				result += column;
+				if (column == 6) {
+					result += column;
+				}
+			}
+		
+		// Determining the score when multiple Places have been made. 
+		} else {
+			
+			// Determining the score if the Places create a row. 
+			if (places[0].getRow() == places[1].getRow()) {
+				result = getRowLength(places[0].getRow(), places[0].getColumn());
+				if (result == 6) {
+					result += result;
+				}
+				for (int i = 0; i < places.length; i++) {
+					int column =  getColumnLength(places[i].getRow(), places[i].getColumn());
+					if (column > 1) {
+						result = result + column;
+					}
+					if (column == 6) {
+						result += column;
+					}
+				}
+			// Determining the score if the Places create a column. 
+			} else if (places[0].getColumn() == places[1].getColumn()) {
+				result = getColumnLength(places[0].getRow(), places[0].getColumn());
+				if (result == 6) {
+					result += result;
+				}
+				for (int i = 0; i < places.length; i++) {
+					int row = getRowLength(places[i].getRow(), places[i].getColumn());
+					if (row > 1) {
+						result = result + row; 
+					}
+					if (row == 6) {
+						result += row;
+					}
+					
+				}
+			}
+		}
+		return result;
 	}
 }
