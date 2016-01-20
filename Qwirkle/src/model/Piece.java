@@ -41,6 +41,7 @@ public class Piece {
 		return shape;
 	}
 	
+	
 	public static Color charToColor(char color) {
 		Color result = Color.DEFAULT;
 		if (color == 'R') {
