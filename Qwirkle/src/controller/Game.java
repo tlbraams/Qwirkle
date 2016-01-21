@@ -1,11 +1,9 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import exceptions.*;
 import model.*;
 import view.TUI;
 
@@ -55,12 +53,12 @@ public class Game implements Runnable {
 	 */
 	public Game(int playerCount, /*@ NonNull */Player[] players, int thinkTime) {
 		board = new Board();
-		view = new TUI(this);
 		this.playerCount = playerCount;
 		this.players = new Player[this.playerCount];
 		for (int i = 0; i < playerCount; i++) {
 			this.players[i] = players[i];
 		}
+		view = new TUI(this);
 		aiTime = thinkTime;
 		moveCounter = 0;
 	}
