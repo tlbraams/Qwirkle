@@ -18,7 +18,7 @@ public class NetworkPlayer implements Player {
 		this.id = id;
 	}
 	
-	public String getName(){
+	public String getName() {
 		return name;
 	}
 	

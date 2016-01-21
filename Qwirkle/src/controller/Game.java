@@ -222,16 +222,16 @@ public class Game implements Runnable {
 	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
 	 *  			myArray[i] instanceof Place)          
 	 */
-	public void place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player, /*@ NonNull */ Board board) {
+	public void place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player, /*@ NonNull */ Board b) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		for (Place m: places) {
 			Piece piece = m.getPiece();
 			player.remove(piece);
 			int row = m.getRow();
 			int column = m.getColumn();
-			board.setPiece(row, column, piece);
-			if (!board.emptyStack()) {
-				player.receive(board.draw());
+			b.setPiece(row, column, piece);
+			if (!b.emptyStack()) {
+				player.receive(b.draw());
 			}
 		}
 		board.setLastMadeMove(moveCounter);
@@ -381,7 +381,8 @@ public class Game implements Runnable {
 	 * Returns all the Pieces of a kicked Players hand.
 	 */
 	/* 
-	 *@ ensures 	board.getStack().size() == \old(board.getStack().size()) + players[playerID].getHand().size();
+	 *@ ensures 	board.getStack().size() == \old(board.getStack().size())
+	 *												 + players[playerID].getHand().size();
 	 */
 	public void returnPieces(int playerID) {
 		Piece[] piecesToReturn = new Piece[players[playerID].getHand().size()];
