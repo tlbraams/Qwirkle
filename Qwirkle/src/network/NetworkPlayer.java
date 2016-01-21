@@ -22,16 +22,16 @@ public class NetworkPlayer implements Player, Runnable {
 	 */
 	
 	private HashSet<Piece> hand;
+	private Server server;
 	private Socket sock;
 	private String name;
 	private int id;
-	private GameHandler game;
 	private BufferedReader in;
 	private BufferedWriter out;
 	
 
-	public NetworkPlayer(GameHandler game, Socket sock) throws IOException {
-		this.game = game;
+	public NetworkPlayer(Server server, Socket sock) throws IOException {
+		this.server = server;
 		this.sock = sock;
 		in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
@@ -51,23 +51,20 @@ public class NetworkPlayer implements Player, Runnable {
 	 * @throws IOException
 	 */
 	public void setName() throws IOException {
-		boolean wait = true;
-		while (wait) {
-			String line = in.readLine();
-			System.out.println(line);
-			if (line != null && line.startsWith("HELLO ")) {
-				Scanner scanLine = new Scanner(line);
-				scanLine.next();
-				name = scanLine.next();
-				id = game.validName(name);
-				if (id != -1) {
-					System.out.println("WELCOME " + name + " " + id);
-					sendCommand("WELCOME " + name + " " + id);
-					wait = false;
-					game.addNetworkPlayer(this);
-				} else {
-					this.shutDown();
-				}
+		String line = in.readLine();
+		System.out.println(line);
+		if (line != null && line.startsWith("HELLO ")) {
+			Scanner scanLine = new Scanner(line);
+			scanLine.next();
+			name = scanLine.next();
+			id = server.validName(name);
+			if (id != -1) {
+				System.out.println("WELCOME " + name + " " + id);
+				sendCommand("WELCOME " + name + " " + id);
+				server.setReady(this);
+			} else {
+				sendCommand("INVALID");
+				this.shutDown();
 			}
 		}
 	}

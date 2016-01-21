@@ -231,6 +231,7 @@ public class Client extends Thread {
 				valid = board.validMove(move, player);
 				for (int i = 0; i < move.length; i++) {
 					player.remove(move[i].getPiece());
+					print(i + " " + move[i].getPiece().toString());
 				}
 			} catch (InvalidMoveException e) {
 				print(e.getInfo());

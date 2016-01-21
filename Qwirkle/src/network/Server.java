@@ -24,33 +24,53 @@ public class Server {
 	// ------------
 	
 	private int port;
+	private List<NetworkPlayer> readyPlayers;
 	private List<GameHandler> threads;
 	
 	public Server(int portArg) {
 		port = portArg;
 		threads = new ArrayList<>();
+		readyPlayers = new ArrayList<>();
 	}
 	
 	public void run() {
 		try {
 			ServerSocket ssock = new ServerSocket(port);
+			ArrayList<NetworkPlayer> players = new ArrayList<>();
 			while (true) {
-				GameHandler game = new GameHandler();
-				game.start();
-				threads.add(game);
-				print("Created new game");
-				while (!game.isStarted()) {
-					print("Waiting for new Client.");
-					Socket sock = ssock.accept();
-					print("Received new connection: " + sock.getPort());
-					NetworkPlayer networkPlayer = new NetworkPlayer(game, sock);
-					new Thread(networkPlayer).start();
-				}
+				print("Waiting for new Client.");
+				Socket sock = ssock.accept();
+				print("Received new connection: " + sock.getPort());
+				NetworkPlayer networkPlayer = new NetworkPlayer(this, sock);
+				new Thread(networkPlayer).start();
+				players.add(networkPlayer);
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
 	}
+
+	public void setReady(NetworkPlayer player) {
+		readyPlayers.add(player);
+		if (readyPlayers.size() == 4) {
+			GameHandler game = new GameHandler(readyPlayers);
+			game.start();
+			threads.add(game);
+			print("Created new game");
+			readyPlayers = new ArrayList<>();
+		}
+	}
+	
+
+	public int validName(String name) {
+		int result = -1;
+		if (!name.contains(" ") && name.length() < 17 && name.length() >= 1
+						&& name.matches("[a-zA-Z]+")) {
+			result = readyPlayers.size();
+		}
+		return result;
+	}
+	
 	
 	public void print(String message) {
 		System.out.println(message);
