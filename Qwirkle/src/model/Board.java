@@ -577,10 +577,10 @@ public class Board {
 		boolean fixedColor = true;
 		boolean fixedShape = true;
 		for (int i = 0; i < wholeRow.size(); i++) {
-			fixedColor = fixedColor && wholeRow.get(0).getColor() == piece.getColor();
+			fixedColor = fixedColor && wholeRow.get(i).getColor() == piece.getColor();
 		}
 		for (int i = 0; i < wholeRow.size(); i++) {
-			fixedShape = fixedShape && wholeRow.get(0).getShape() == piece.getShape();
+			fixedShape = fixedShape && wholeRow.get(i).getShape() == piece.getShape();
 		}
 		if (!(fixedColor || fixedShape)) {
 			throw new InvalidMoveException("The piece: " + piece.toString()

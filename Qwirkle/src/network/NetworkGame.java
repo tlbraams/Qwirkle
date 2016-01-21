@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import exceptions.*;
 import model.*;
 
 /**
@@ -31,6 +30,8 @@ public class NetworkGame implements Runnable {
 	
 	private int currentPlayerID;
 	private int moveCounter;
+	
+	boolean kickOccured;
 	
 	// ----- Constructor -----
 	
@@ -61,6 +62,7 @@ public class NetworkGame implements Runnable {
 		}
 		aiTime = thinkTime;
 		moveCounter = 0;
+		kickOccured = false;
 	}
 	
 	
@@ -152,12 +154,12 @@ public class NetworkGame implements Runnable {
 			Move[] moves = players[currentPlayerID].determineMove(board);
 			if (moves == null || moves.length == 0) {
 				players[currentPlayerID].sendCommand("Error, no move given.");
-			} else if (validMove(moves, players[currentPlayerID])) {
+			} else if (board.validMove(moves, players[currentPlayerID])) {
 				moveCounter++;
 				String newPieces = "NEW";
 				if (moves[0] instanceof Place) {
 					newPieces += place(moves, players[currentPlayerID]);
-					int score = getScore(moves);
+					int score = board.getScore(moves);
 					board.addScore(currentPlayerID, score);
 					handler.broadcast("TURN " + moves.toString());
 				} else if (moves[0] instanceof Trade) {
@@ -166,10 +168,24 @@ public class NetworkGame implements Runnable {
 				}
 				players[currentPlayerID].sendCommand(newPieces);
 			}			
-			currentPlayerID = (currentPlayerID + 1) % playerCount;
+			currentPlayerID = nextPlayer();
 		}
 		// Finishing the Game off. 
 		ending();
+	}
+	
+	/**
+	 * Determines which Player is next. 
+	 * @return
+	 */
+	public int nextPlayer() {
+		int nextPlayerID = 0;
+		if (kickOccured) {
+			nextPlayerID = players[currentPlayerID % playerCount].getID();
+		} else {
+			nextPlayerID = players[(currentPlayerID + 1) % playerCount].getID();
+		}
+		return nextPlayerID;
 	}
 	
 	/**
@@ -274,310 +290,6 @@ public class NetworkGame implements Runnable {
 		}
 		currentPlayerID = playerNumber;
 	}
-
-	
-	/**
-	 * Tests if a given array of Moves contains only valid Moves.
-	 * It tests if all the moves are of the same type,
-	 * if a placing of Pieces is one straight row or column,
-	 * and finally if the players makes Moves with Pieces that are in its Hand.
-	 *  If any of the above conditions is violated, the turn is skipped. 
-	 * @param moves the Moves that the given Player wants to make. 
-	 * @param player the Player that wants to make the given Moves. 
-	 * @return true if the Moves are valid, false when invalid. 
-	 */
-	/*
-	 * @requires 	moves.length < player.getHand().size();
-	 */
-	public /* @NonNull*/boolean validMove(/* @NonNull*/Move[] moves, /* @NonNull*/Player player) {
-		boolean result = true;
-		
-		// Check if all Moves are of type Place. 
-		if (moves[0] instanceof Place) {
-			for (int i = 1; i < moves.length; i++) {
-				result = result && moves[i] instanceof Place;
-			}
-			
-			// Check if the cells of the Places are empty. 
-			Board b = board.deepCopy();
-			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-			for (Place p : places) {
-				result = result && b.isEmpty(p.getRow(), p.getColumn());
-				b.setPiece(p.getRow(), p.getColumn(), p.getPiece());
-			}
-			
-			try {
-				// Check if the Places create an uninterrupted row or column. 
-				result = result && (isRow(moves, b) || isColumn(moves, b));
-				
-				// Check if the uninterrupted row or column is valid. 
-				result = result && isValidRow(places, b);
-				result = result && isValidColumn(places, b);
-				if (moveCounter > 0) {
-					isConnected(places);
-				}
-			} catch (UnconnectedMoveException e) {
-				e.getInfo();
-			}
-			
-		// Check if all Moves are of type Trade. 
-		} else if (moves[0] instanceof Trade) {
-			for (int i = 1; i < moves.length; i++) {
-				result = result && moves[i] instanceof Trade;
-			}
-		}
-		
-		// Check if player has the tiles. 
-		for (Move m: moves) {
-			result = result && player.getHand().contains(m.getPiece());
-		}
-		return result;
-	}
-	
-	/**
-	 * Tests if an array of Places on Board b is a valid row. 
-	 * It checks if the Places are connected to other Pieces of the Board and if 
-	 * the row it creates is valid. 
-	 * @param moves the array of Places that are to be made. 
-	 * @param b the board on which the Places are made. 
-	 * @return true is the Places are valid, false when not. 
-	 */
-	/*
-	 * @requires	moves.length < 7;
-	 */
-	public /* @NonNull */boolean isValidRow(/* @NonNull */Place[] moves, /* @NonNull */Board b) {
-		boolean result = true;
-		for (Place m : moves) {
-			int row = m.getRow();
-			int column = m.getColumn();
-			Piece piece = m.getPiece();
-			boolean connected = true;
-			for (int i = column - 1; connected; i--) {
-				if (b.isEmpty(row, i)) {
-					connected = false;
-				} else {
-					result = this.isValidConnectedPlace(piece, b, row, i);
-				}
-			}
-			connected = true;
-			for (int i = column + 1; connected; i++) {
-				if (b.isEmpty(row, i)) {
-					connected = false;
-				} else {
-					result = this.isValidConnectedPlace(piece, b, row, i);
-				}
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Tests if an array of Places on Board b is a valid column. 
-	 * It checks if the Places are connected to other Pieces of the Board and if 
-	 * the column it creates is valid. 
-	 * @param moves the array of Places that are to be made. 
-	 * @param b the board on which the Places are made. 
-	 * @return true is the Places are valid, false when not. 
-	 */
-	/*
-	 * @requires	moves.length < 7;
-	 */
-	public /* @NonNull */boolean isValidColumn(/* @NonNull */Place[] moves, /* @NonNull */Board b) {
-		boolean result = true;
-		for (Place m : moves) {
-			int row = m.getRow();
-			int column = m.getColumn();
-			Piece piece = m.getPiece();
-			boolean connected = true;
-			for (int i = row - 1; connected; i--) {
-				if (b.isEmpty(i, column)) {
-					connected = false;
-				} else {
-					result = this.isValidConnectedPlace(piece, b, i, column);
-				}
-			}
-			connected = true;
-			for (int i = row + 1; connected; i++) {
-				if (b.isEmpty(i, column)) {
-					connected = false;
-				} else {
-					result = this.isValidConnectedPlace(piece, b, i, column);
-				}
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * Tests if a connected Place is connected in a valid way. 
-	 * It is considered valid when either the color of the Pieces are the same 
-	 * or the shape of the Pieces are the same. 
-	 * 
-	 * @param piece the Piece that is placed on Board b.
-	 * @param b the Board. 
-	 * @param row the row number that the Piece is placed in. 
-	 * @param i the column number that the Piece is placed in.
-	 * @return true is the Places are valid, false when not.
-	 */
-	public /* @NonNull */boolean isValidConnectedPlace(/* @NonNull */Piece piece, 
-			/* @NonNull */Board b, /* @NonNull */int row, /* @NonNull */int i) {
-		Boolean result = false;
-		Piece p = b.getCell(row, i);
-		if (piece.getColor().equals(p.getColor()) && !piece.getShape().equals(p.getShape())) {
-			result = result && true;
-		} else if (!piece.getColor().equals(p.getColor())
-						&& piece.getShape().equals(p.getShape())) {
-			result = result && true;
-		} else {
-			result = false;
-		}
-		return result;
-	}
-	
-	/**
-	 * Tests if the Places are in 1 straight line (row) and if there are no gaps. 
-	 * 
-	 * @param moves the Places to be placed on Board b. 
-	 * @param b the Board on which the Places are put. 
-	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
-	 */
-	public /* @NunNull */boolean isRow(/* @NunNull */Move[] moves, /* @NunNull */Board b) {
-		boolean result = true;
-		if (moves.length != 1) {
-			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-			int minColumn = places[0].getColumn();
-			int maxColumn = minColumn;
-			for (int i = 1; i < places.length; i++) {
-				result = result && places[0].getRow() == places[i].getRow();
-				if (places[i].getColumn() < minColumn) {
-					minColumn = places[i].getColumn();
-				} else if (places[i].getColumn() > maxColumn) {
-					maxColumn = places[i].getColumn();
-				}
-			}
-			
-			// Check for gaps. 
-			for (int i = minColumn; i <= maxColumn && result; i++) {
-				result = result && !b.isEmpty(places[0].getRow(), i);
-			}
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Tests if the Places are in 1 straight line (column) and if there are no gaps. 
-	 * 
-	 * @param moves the Places to be placed on Board b. 
-	 * @param b the Board on which the Places are put. 
-	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
-	 */
-	public /* @NunNull */boolean isColumn(/* @NunNull */Move[] moves, /* @NunNull */Board b) {
-		boolean result = true;
-		if (moves.length != 1) {
-			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-			int minRow = places[0].getRow();
-			int maxRow = minRow;
-			// Check for straight line Place. 
-			for (int i = 1; i < places.length; i++) {
-				result = result && places[0].getColumn() == places[i].getColumn();
-				if (places[i].getRow() < minRow) {
-					minRow = places[i].getRow();
-				} else if (places[i].getRow() > maxRow) {
-					maxRow = places[i].getRow();
-				}
-			}
-			// Check for gaps. 
-			for (int i = minRow; i <= maxRow && result; i++) {
-				result = result && !b.isEmpty(i, places[0].getColumn());
-			}
-		}
-		return result;
-	}
-	/**
-	 * Tests if every Place of places is connected to the another Piece.
-	 * @param places the Places to be made. 
-	 */
-	/*
-	 * @requires 	places.length < 7;
-	 */
-	public void isConnected(/* @NonNull */Place[] places) throws UnconnectedMoveException {
-		boolean result = false;
-		for (Place p: places) {
-			result = result || ((!board.isEmpty(p.getRow() - 1, p.getColumn())) ||
-					(!board.isEmpty(p.getRow() + 1, p.getColumn())) ||
-					(!board.isEmpty(p.getRow(), p.getColumn() - 1)) ||
-					(!board.isEmpty(p.getRow(), p.getColumn() + 1)));
-		}
-		if (!result) {
-			throw new UnconnectedMoveException();
-		}
-	}
-
-	/**
-	 * Determines the score of a given array of Moves. 
-	 * @param moves the moves to be made. 
-	 * @return the score of the given moves. 
-	 */
-	public int getScore(/* @NonNull */ Move[] moves) {
-		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-		int result = 0;
-		
-		// Determining the score when only one Place is made. 
-		if (places.length == 1) {
-			int row = board.getRowLength(places[0].getRow(), places[0].getColumn());
-			int column = board.getColumnLength(places[0].getRow(), places[0].getColumn());
-			if (row > 1) {
-				result += row;
-				if (row == 6) {
-					result += row;
-				}
-			}
-			if (column > 1) {
-				result += column;
-				if (column == 6) {
-					result += column;
-				}
-			}
-		
-		// Determining the score when multiple Places have been made. 
-		} else {
-			
-			// Determining the score if the Places create a row. 
-			if (isRow(moves, board)) {
-				result = board.getRowLength(places[0].getRow(), places[0].getColumn());
-				if (result == 6) {
-					result += result;
-				}
-				for (int i = 0; i < places.length; i++) {
-					int column =  board.getColumnLength(places[i].getRow(), places[i].getColumn());
-					if (column > 1) {
-						result = result + column;
-					}
-					if (column == 6) {
-						result += column;
-					}
-				}
-			// Determining the score if the Places create a column. 
-			} else if (isColumn(moves, board)) {
-				result = board.getColumnLength(places[0].getRow(), places[0].getColumn());
-				if (result == 6) {
-					result += result;
-				}
-				for (int i = 0; i < places.length; i++) {
-					int row = board.getRowLength(places[i].getRow(), places[i].getColumn());
-					if (row > 1) {
-						result = result + row; 
-					}
-					if (row == 6) {
-						result += row;
-					}
-					
-				}
-			}
-		}
-		return result;
-	}
 	
 	
 	/**
@@ -621,5 +333,52 @@ public class NetworkGame implements Runnable {
 		}
 		return (board.emptyStack() && emptyHand) ||
 						(board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
+	}
+	
+
+	/**
+	 * Kicks a player when he send an invalid command or move. 
+	 */
+	public void kick(int playerID) {
+		returnPieces(playerID);
+		playerCount--;
+		setPlayers(playerID);
+		kickOccured = true;
+	}
+	
+	/**
+	 * Create a new Player[] without the player that is kicked. 
+	 * @param playerID the ID of the player that is being kicked. 
+	 */
+	/*
+	 *@ ensure	players.size() == \old(players.size()) - 1;
+	 */
+	public void setPlayers(int playerID) {
+		NetworkPlayer[] newPlayers = new NetworkPlayer[playerCount];
+		int i = 0;
+		for (NetworkPlayer player: players) {
+			if (player.getID() != playerID) {
+				newPlayers[i] = player;
+				i++;
+			} 
+		}
+		players = newPlayers;
+	}
+	
+	/**
+	 * Returns all the Pieces of a kicked Players hand.
+	 */
+	/* 
+	 *@ ensures 	board.getStack().size() == \old(board.getStack().size())
+	 *												 + players[playerID].getHand().size();
+	 */
+	public void returnPieces(int playerID) {
+		Piece[] piecesToReturn = new Piece[players[playerID].getHand().size()];
+		int i = 0;
+		for (Piece piece: players[playerID].getHand()) {
+			piecesToReturn[i] = piece;
+			i++;
+		}
+		board.tradeReturn(piecesToReturn);
 	}
 }
