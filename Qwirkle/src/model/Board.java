@@ -378,51 +378,42 @@ public class Board {
 	/*
 	 * @requires 	moves.length < player.getHand().size();
 	 */
-	public /* @NonNull*/boolean validMove(/* @NonNull*/Move[] moves, /* @NonNull*/Player player) {
+	public /* @NonNull*/boolean validMove(/* @NonNull*/Move[] moves, /* @NonNull*/Player player)
+			throws InvalidMoveException {
 		boolean result = true;
 		
 		if (moves[0] instanceof Place) {
-			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-			try {				
-				// Start with tests.
-				allPlaceMoves(moves);
-				cellsAreAvailable(places);
-				cellsAreValid(places);
-				isConnected(places);
-				
-				// Create a deep copy of the board and place Pieces on it. 
-				Board deepCopyBoard = this.deepCopy();
-				for (Place place: places) {
-					deepCopyBoard.setPiece(place.getRow(), place.getColumn(), place.getPiece());
-				}
-				
-				boolean isRow;
-				
-				// Continue the tests.
-				isRow = deepCopyBoard.isUninterruptedRow(places);
-				deepCopyBoard.isUninterruptedColumn(places);
-				if (isRow) {
-					deepCopyBoard.pieceIsConnectedRowAndUnique(places);
-					deepCopyBoard.piecesFitInColumns(places);
-				} else {
-					deepCopyBoard.pieceIsConnectedColumnAndUnique(places);
-					deepCopyBoard.piecesFitInRows(places);
-				}
-				playerHasPiece(moves, player);
-			} catch (InvalidMoveException e) {
-				e.getInfo();
-				result = false;
+			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);				
+			// Start with tests.
+			allPlaceMoves(moves);
+			cellsAreAvailable(places);
+			cellsAreValid(places);
+			isConnected(places);
+			
+			// Create a deep copy of the board and place Pieces on it. 
+			Board deepCopyBoard = this.deepCopy();
+			for (Place place: places) {
+				deepCopyBoard.setPiece(place.getRow(), place.getColumn(), place.getPiece());
 			}
+			
+			boolean isRow;
+			
+			// Continue the tests.
+			isRow = deepCopyBoard.isUninterruptedRow(places);
+			deepCopyBoard.isUninterruptedColumn(places);
+			if (isRow) {
+				deepCopyBoard.pieceIsConnectedRowAndUnique(places);
+				deepCopyBoard.piecesFitInColumns(places);
+			} else {
+				deepCopyBoard.pieceIsConnectedColumnAndUnique(places);
+				deepCopyBoard.piecesFitInRows(places);
+			}
+			playerHasPiece(moves, player);
 		}
 		
 		if (moves[0] instanceof Trade) {
-			try {
-				allTradeMoves(moves);
-				playerHasPiece(moves, player);
-			} catch (InvalidMoveException e) {
-				e.getInfo();
-				result = false;
-			}
+			allTradeMoves(moves);
+			playerHasPiece(moves, player);
 		}
 		return result;
 	}

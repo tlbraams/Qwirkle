@@ -10,8 +10,8 @@ public class InvalidMoveException extends Exception {
 		this.message = message;
 	}
 	
-	public void getInfo() {
-		System.out.println(message);
+	public String getInfo() {
+		return message;
 	}
 	
 }

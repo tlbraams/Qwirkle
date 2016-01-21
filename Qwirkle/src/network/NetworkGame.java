@@ -152,19 +152,27 @@ public class NetworkGame implements Runnable {
 			Move[] moves = players[currentPlayerID].determineMove(board);
 			if (moves == null || moves.length == 0) {
 				players[currentPlayerID].sendCommand("Error, no move given.");
-			} else if (validMove(moves, players[currentPlayerID])) {
-				moveCounter++;
-				String newPieces = "NEW";
-				if (moves[0] instanceof Place) {
-					newPieces += place(moves, players[currentPlayerID]);
-					int score = getScore(moves);
-					board.addScore(currentPlayerID, score);
-					handler.broadcast("TURN " + moves.toString());
-				} else if (moves[0] instanceof Trade) {
-					newPieces += tradePieces(moves, players[currentPlayerID]);
-					handler.broadcast("TURN empty");
+			} else {
+				boolean valid = false;
+				try {
+					valid = board.validMove(moves, players[currentPlayerID]);
+				} catch (InvalidMoveException e) {
+					players[currentPlayerID].sendCommand(e.getInfo());
 				}
-				players[currentPlayerID].sendCommand(newPieces);
+				if (valid) {
+					moveCounter++;
+					String newPieces = "NEW";
+					if (moves[0] instanceof Place) {
+						newPieces += place(moves, players[currentPlayerID]);
+						int score = getScore(moves);
+						board.addScore(currentPlayerID, score);
+						handler.broadcast("TURN " + moves.toString());
+					} else if (moves[0] instanceof Trade) {
+						newPieces += tradePieces(moves, players[currentPlayerID]);
+						handler.broadcast("TURN empty");
+					}
+					players[currentPlayerID].sendCommand(newPieces);
+				}
 			}			
 			currentPlayerID = (currentPlayerID + 1) % playerCount;
 		}
