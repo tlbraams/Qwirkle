@@ -107,6 +107,7 @@ public class NetworkPlayer implements Player, Runnable {
 		Move[] move = null;
 		try {
 			line = in.readLine();
+			System.out.println(line);
 			Scanner scanLine = new Scanner(line);
 			if (line.startsWith("MOVE")) {
 				scanLine.next();
@@ -124,8 +125,8 @@ public class NetworkPlayer implements Player, Runnable {
 						}
 					}
 					if (found) {
+						System.out.println(piece.toString());
 						places.add(new Place(piece, row, column));
-						
 					} else {
 						sendCommand("Error: " + pieceName + " is not a piece in your hand.");
 					}

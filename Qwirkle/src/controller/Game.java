@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import exceptions.InvalidMoveException;
 import model.*;
 import view.TUI;
 
@@ -155,7 +156,13 @@ public class Game implements Runnable {
 		// During the Game.
 		while (!endGame()) {
 			Move[] moves = players[currentPlayerID].determineMove(board);
-			if (board.validMove(moves, players[currentPlayerID])) {
+			boolean valid = false;
+			try {
+				valid = board.validMove(moves, players[currentPlayerID]);
+			} catch (InvalidMoveException e) {
+				System.out.print(e.getInfo());
+			}
+			if (valid) {
 				moveCounter++;
 				if (moves[0] instanceof Place) {
 					place(moves, players[currentPlayerID]);
@@ -291,7 +298,13 @@ public class Game implements Runnable {
 	 */
 	public void findFirstMove() {
 		Move[] moves = players[currentPlayerID].determineFirstMove(board);
-		if (board.validMove(moves, players[currentPlayerID])) {
+		boolean valid = false;
+		try {
+			valid = board.validMove(moves, players[currentPlayerID]);
+		} catch (InvalidMoveException e) {
+			System.out.print(e.getInfo());
+		}
+		if (valid) {
 			moveCounter++;
 			place(moves, players[currentPlayerID]);
 			int score = board.getScore(moves);

@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import exceptions.InvalidMoveException;
 import model.*;
+import view.TUI;
 
 /**
  * Class for controlling a game ones it has started. It keeps the scores and 
@@ -23,6 +25,7 @@ public class NetworkGame implements Runnable {
 	// ----- Instance Variables -----
 	
 	private Board board;
+	private TUI view;
 	private int playerCount;
 	private NetworkPlayer[] players;
 	private int aiTime;
@@ -60,6 +63,7 @@ public class NetworkGame implements Runnable {
 		for (int i = 0; i < playerCount; i++) {
 			this.players[i] = players[i];
 		}
+		view = new TUI(board, playerCount);
 		aiTime = thinkTime;
 		moveCounter = 0;
 		kickOccured = false;
@@ -154,20 +158,32 @@ public class NetworkGame implements Runnable {
 			Move[] moves = players[currentPlayerID].determineMove(board);
 			if (moves == null || moves.length == 0) {
 				players[currentPlayerID].sendCommand("Error, no move given.");
-			} else if (board.validMove(moves, players[currentPlayerID])) {
-				moveCounter++;
-				String newPieces = "NEW";
-				if (moves[0] instanceof Place) {
-					newPieces += place(moves, players[currentPlayerID]);
-					int score = board.getScore(moves);
-					board.addScore(currentPlayerID, score);
-					handler.broadcast("TURN " + moves.toString());
-				} else if (moves[0] instanceof Trade) {
-					newPieces += tradePieces(moves, players[currentPlayerID]);
-					handler.broadcast("TURN empty");
+			} else {
+				boolean valid = false;
+				try {
+					valid = board.validMove(moves, players[currentPlayerID]);
+				} catch (InvalidMoveException e) {
+					players[currentPlayerID].sendCommand(e.getInfo());
 				}
-				players[currentPlayerID].sendCommand(newPieces);
-			}			
+				if (valid) {
+					moveCounter++;
+					String newPieces = "NEW";
+					String move = "TURN " + currentPlayerID;
+					if (moves[0] instanceof Place) {
+						String[] result = place(moves, players[currentPlayerID]);
+						newPieces += result[0];
+						move += result[1];
+						int score = board.getScore(moves);
+						board.addScore(currentPlayerID, score);
+					} else if (moves[0] instanceof Trade) {
+						newPieces += tradePieces(moves, players[currentPlayerID]);
+						move += " empty";
+					}
+					players[currentPlayerID].sendCommand(newPieces);
+					handler.broadcast(move);
+				}
+			}
+			view.update();
 			currentPlayerID = nextPlayer();
 		}
 		// Finishing the Game off. 
@@ -219,9 +235,11 @@ public class NetworkGame implements Runnable {
 	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
 	 *  			myArray[i] instanceof Place)          
 	 */
-	public String place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
+	public String[] place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
-		String result = "";
+		String[] result = new String[2];
+		String newPieces = "";
+		String moveString = "";
 		for (Place m: places) {
 			Piece piece = m.getPiece();
 			player.remove(piece);
@@ -231,13 +249,12 @@ public class NetworkGame implements Runnable {
 			if (!board.emptyStack()) {
 				Piece newPiece = board.draw();
 				player.receive(newPiece);
-				result += " " + newPiece.toString(); 
-				
+				newPieces += " " + newPiece.toString(); 
 			}
+			moveString += m.toString();
 		}
-		if (result.equals("")) {
-			result = " empty";
-		}
+		result[0] = newPieces;
+		result[1] = moveString;
 		board.setLastMadeMove(moveCounter);
 		return result;
 	}
