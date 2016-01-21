@@ -1,6 +1,5 @@
 package model;
 
-import controller.Game;
 
 public class RandomComputerPlayer extends ComputerPlayer {
 
@@ -8,13 +7,13 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	private int timeToThink;
 	
 	/**
-	 * Ook werken met Timers. Deze gooien ActionEvents naar alle ActionListeners. Dit kunnen we gebruiken om 
-	 * de AI Time To think in te stellen. 
+	 * Ook werken met Timers. Deze gooien ActionEvents naar alle ActionListeners.
+	 * Dit kunnen we gebruiken om de AI Time To think in te stellen. 
 	 */
 	
 	
 	// ----- Constructor -----
-	public RandomComputerPlayer(String name, int ID, int timeToThink) {
+	public RandomComputerPlayer(String name, int id, int timeToThink) {
 		super(name, ID);
 		this.timeToThink = timeToThink;
 	}
@@ -26,9 +25,9 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	 */
 	public Move[] determineMove(Board board) {
 		Move[] result = new Move[1];
-		for(Piece piece: hand) {
-			for(int row = board.getMinRow(); row < board.getMaxRow(); row++) {
-				for(int column = board.getMinColumn(); column < board.getMaxColumn(); column++) {
+		for (Piece piece: hand) {
+			for (int row = board.getMinRow(); row < board.getMaxRow(); row++) {
+				for (int column = board.getMinColumn(); column < board.getMaxColumn(); column++) {
 					result[0] = new Place(piece, row, column);
 					if (board.validMove(result, this)) {
 						return result;
@@ -36,8 +35,8 @@ public class RandomComputerPlayer extends ComputerPlayer {
 				}
 			}
 		}
-		for(Piece piece: hand) {
-			for(int i = 0; i < hand.size(); i++) {
+		for (Piece piece: hand) {
+			for (int i = 0; i < hand.size(); i++) {
 				result[i] = new Trade(piece);
 			}
 		}
