@@ -44,13 +44,16 @@ public class TestRandomAI {
 	
 	@Test
 	public void simpleTest() {
-		player.receive(piece);
-		
+		for (int j = 0; j < 6; j++) {
+			Piece piece = board.draw();
+			player.receive(piece);
+		}	
 		board.setPiece(91, 91, pieceGreenDiamond);
 		board.setPiece(92, 91, pieceGreenSpade);
 		board.setPiece(93, 91, pieceGreenCircle);
 		board.setPiece(94, 91, pieceGreenHeart);
 		Move[] moves = player.determineMove(board);
+		System.out.println(player.getHand().toString());
 		for (Move move: moves) {
 			if (move instanceof Place) {
 				board.setPiece(((Place) move).getRow(), ((Place) move).getColumn(), move.getPiece());

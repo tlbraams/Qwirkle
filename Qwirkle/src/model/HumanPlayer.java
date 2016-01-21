@@ -44,63 +44,59 @@ public class HumanPlayer extends LocalPlayer {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		int type = showOptions();
 		if (type == 5) {
-			boolean cont = true;
-			while (cont) {
-				System.out.println("Please enter the piece you would like to place.");
-				Scanner line = new Scanner(System.in);
-				try (Scanner scLine = new Scanner(line.next())) {
-					String input = scLine.next();
-					if (input.equals("Done")) {
-						cont = false;
-					} else {
-						boolean found = false;
-						for (Piece p : hand) {
-							if (p.toString().equals(input) && !found) {
-								int row = requestRow();
-								int column = requestColumn();
-								if (board.isField(row, column) && board.isEmpty(row, column)) {
-									moves.add(new Place(p, row, column));
-								} else if (!board.isField(row, column)) {
-									System.out.println("Invalid Move exc");
-								} else if (!board.isEmpty(row, column)) {
-									System.out.println("Invalid Move exc");
-								}
-								found = true;
-							}
-						}
-						if (!found) {
-							System.out.println("Not a piece in your hand");
-							//Possibly replace with exception.
-						}
-					}
-				}
-			}
+			moves = place(); 
 		} else if (type == 6) {
 			boolean cont = true;
 			while (cont) {
-				System.out.println("Please enter the piece you would like to trade.");
-				Scanner line = new Scanner(System.in);
-				try (Scanner scLine = new Scanner(line.next())) {
-					String input = scLine.next();
-					if (input.equals("Done")) {
-						cont = false;
-					} else {
-						boolean found = false;
-						for (Piece p : hand) {
-							if (p.toString().equals(input)) {
-								moves.add(new Trade(p));
-								found = true;
-							}
+				moves = trade();
+			}
+		}
+		Move[] result = moves.toArray(new Move[moves.size()]);
+		return result;
+	}
+	
+	public /*@ NonNull */ArrayList<Move> place() {
+		ArrayList<Move> result = new ArrayList<Move>();
+		boolean cont = true;
+		while (cont) {
+			System.out.println("Please enter the piece you would like to place.");
+			Scanner line = new Scanner(System.in);
+			try (Scanner scLine = new Scanner(line.next())) {
+				String input = scLine.next();
+				if (input.equals("Done")) {
+					cont = false;
+				} else {
+					for (Piece p: hand) {
+						if (p.toString().equals(input)) {
+							int row = requestRow();
+							int column = requestColumn();
+							result.add(new Place(p, row, column));
 						}
-						if (!found) {
-							System.out.println("Not a piece in your hand");
-							//Possibly replace with exception.
+					}
+				}
+			}		
+		} return result;
+	}
+	
+	public /*@NonNull */ArrayList<Move> trade() {
+		ArrayList<Move> result = new ArrayList<Move>();
+		boolean cont = true;
+		while (cont) {
+			System.out.println("Please enter the piece you would like to trade.");
+			Scanner line = new Scanner(System.in);
+			try (Scanner scLine = new Scanner(line.next())) {
+				String input = scLine.next();
+				if (input.equals("Done")) {
+					cont = false;
+				} else {
+					for (Piece p : hand) {
+						if (p.toString().equals(input)) {
+							result.add(new Trade(p));
 						}
 					}
 				}
 			}
 		}
-		Move[] result = moves.toArray(new Move[moves.size()]);
 		return result;
 	}
 	
@@ -133,21 +129,11 @@ public class HumanPlayer extends LocalPlayer {
 							} else {
 								row = requestRow();
 								column = requestColumn();
-							}
-							if (board.isField(row, column) && board.isEmpty(row, column)) {
 								moves.add(new Place(p, row, column));
 								firstPiece = false;
-							} else if (!board.isField(row, column)) {
-								System.out.println("Invalid Move exc");
-							} else if (!board.isEmpty(row, column)) {
-								System.out.println("Invalid Move exc");
 							}
 							found = true;
 						}
-					}
-					if (!found) {
-						System.out.println("Not a piece in your hand");
-						//Possibly replace with exception.
 					}
 				}
 			}
