@@ -7,7 +7,9 @@ import controller.Game;
 import model.Board;
 import model.ComputerPlayer;
 import model.HumanPlayer;
+import model.Move;
 import model.Piece;
+import model.Place;
 import model.Player;
 import model.RandomComputerPlayer;
 import view.TUI;
@@ -24,6 +26,7 @@ public class TestRandomAI {
 	private Piece pieceGreenSpade;
 	private Piece pieceGreenCircle;
 	private Piece pieceGreenHeart;
+	private Piece piece;
 	
 	@Before
 	public void setUp() {
@@ -32,6 +35,7 @@ public class TestRandomAI {
 		player = new RandomComputerPlayer("AI", 1, AIThinkTime);
 		players = new Player[] {new HumanPlayer("Jeroen", 0), player}; 
 		board = new Board();
+		piece = new Piece(Piece.Color.ORANGE, Piece.Shape.CIRCLE);
 		pieceGreenDiamond = new Piece(Piece.Color.GREEN, Piece.Shape.DIAMOND);
 		pieceGreenSpade = new Piece(Piece.Color.GREEN, Piece.Shape.SPADE);
 		pieceGreenCircle = new Piece(Piece.Color.GREEN, Piece.Shape.CIRCLE);
@@ -41,19 +45,18 @@ public class TestRandomAI {
 	
 	@Test
 	public void simpleTest() {
-		// Fill the hand of the Players with Pieces
-		for (int i = 0; i < playerCount; i++) {
-			for (int j = 0; j < 6; j++) {
-				Piece piece = board.draw();
-				players[i].receive(piece);
-			}	
-		}
+		player.receive(piece);
 		
 		board.setPiece(91, 91, pieceGreenDiamond);
 		board.setPiece(92, 91, pieceGreenSpade);
 		board.setPiece(93, 91, pieceGreenCircle);
 		board.setPiece(94, 91, pieceGreenHeart);
-		player.determineMove(board);
+		Move[] moves = player.determineMove(board);
+		for (Move move: moves) {
+			if (move instanceof Place) {
+				board.setPiece(((Place) move).getRow(), ((Place) move).getColumn(), move.getPiece());
+			}
+		}
 		tui.update();
 		
 	}
