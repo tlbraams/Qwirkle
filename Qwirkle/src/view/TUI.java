@@ -11,15 +11,18 @@ public class TUI {
 	 */
 	private Game control;
 	private Board board;
+	int playerCount;
 	
 	public TUI(Game game) {
 		control = game;
 		board = control.getBoard();
+		playerCount = control.getPlayerCount();
 	}
 	
-	public TUI(Board board) {
+	public TUI(Board board, int players) {
 		control = null;
 		this.board = board;
+		playerCount = players;
 	}
 	
 	
@@ -57,7 +60,7 @@ public class TUI {
 	
 	public void printScore(Board b) {
 		String result = "Scores:";
-		for (int i = 0; i < control.getPlayerCount(); i++) {
+		for (int i = 0; i < playerCount; i++) {
 			result += " player" + i + ": " + b.getScore(i);
 		}
 		System.out.println(result);

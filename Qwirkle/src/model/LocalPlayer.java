@@ -33,7 +33,7 @@ public abstract class LocalPlayer implements Player {
 		return hand;
 	}
 	
-	public void setID(int number){
+	public void setID(int number) {
 		id = number;
 	}
 	

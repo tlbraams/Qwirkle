@@ -150,7 +150,9 @@ public class NetworkGame implements Runnable {
 		while (!endGame()) {
 			handler.broadcast("NEXT " + currentPlayerID);
 			Move[] moves = players[currentPlayerID].determineMove(board);
-			if (validMove(moves, players[currentPlayerID])) {
+			if (moves == null || moves.length == 0) {
+				players[currentPlayerID].sendCommand("Error, no move given.");
+			} else if (validMove(moves, players[currentPlayerID])) {
 				moveCounter++;
 				String newPieces = "NEW";
 				if (moves[0] instanceof Place) {
@@ -186,7 +188,7 @@ public class NetworkGame implements Runnable {
 			welcome += " " + players[i].getName() + " " + players[i].getID();
 		}
 		welcome += " " + aiTime;
-		System.out.println(welcome);
+		handler.broadcast(welcome);
 		playGame();
 	}
 	

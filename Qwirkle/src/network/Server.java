@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("resource")
 public class Server {
 
 	private static final String USAGE = "usage: " + Server.class.getName() + " <port>";
@@ -37,6 +38,7 @@ public class Server {
 				GameHandler game = new GameHandler();
 				game.start();
 				threads.add(game);
+				print("Created new game");
 				while (!game.isStarted()) {
 					print("Waiting for new Client.");
 					Socket sock = ssock.accept();

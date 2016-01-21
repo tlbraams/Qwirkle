@@ -5,6 +5,7 @@ import java.util.Scanner;
 import exceptions.InvalidNameException;
 import model.*;
 
+@SuppressWarnings("resource")
 public class Menu {
 
 	/**
@@ -124,12 +125,14 @@ public class Menu {
 	public void hasOnlyLetters(/*@ NonNull */String name) throws InvalidNameException {
 		char[] characters = name.toCharArray();
 		if (name.contains(" ")) {
-			throw new InvalidNameException("Your name cannot contain a space. Please enter a new name.");
+			throw new InvalidNameException("Your name cannot contain a space."
+					+ " Please enter a new name.");
 		} 
 		for (char character: characters) {
 			int ascii = (int) character;
 			if (!((64 < ascii && ascii < 91) || (96 < ascii && ascii < 123))) {
-				throw new InvalidNameException("Your name contains characters other than letters. Please enter a new name.");
+				throw new InvalidNameException("Your name contains characters other than letters."
+						+ " Please enter a new name.");
 			} 
 		}
 	}

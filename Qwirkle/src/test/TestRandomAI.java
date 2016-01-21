@@ -3,9 +3,8 @@ package test;
 import org.junit.Before;
 import org.junit.Test;
 
-import controller.Game;
+
 import model.Board;
-import model.ComputerPlayer;
 import model.HumanPlayer;
 import model.Move;
 import model.Piece;
@@ -16,7 +15,7 @@ import view.TUI;
 
 public class TestRandomAI {
 
-	private int AIThinkTime;
+	private int aiThinkTime;
 	private Player[] players;
 	private Board board;
 	private TUI tui;
@@ -31,8 +30,8 @@ public class TestRandomAI {
 	@Before
 	public void setUp() {
 		playerCount = 2;
-		AIThinkTime = 9999;
-		player = new RandomComputerPlayer("AI", 1, AIThinkTime);
+		aiThinkTime = 9999;
+		player = new RandomComputerPlayer("AI", 1, aiThinkTime);
 		players = new Player[] {new HumanPlayer("Jeroen", 0), player}; 
 		board = new Board();
 		piece = new Piece(Piece.Color.ORANGE, Piece.Shape.CIRCLE);
@@ -40,7 +39,7 @@ public class TestRandomAI {
 		pieceGreenSpade = new Piece(Piece.Color.GREEN, Piece.Shape.SPADE);
 		pieceGreenCircle = new Piece(Piece.Color.GREEN, Piece.Shape.CIRCLE);
 		pieceGreenHeart = new Piece(Piece.Color.GREEN, Piece.Shape.HEART);
-		tui = new TUI(board);
+		tui = new TUI(board, players.length);
 	}
 	
 	@Test

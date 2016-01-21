@@ -196,7 +196,7 @@ public class Client extends Thread {
 	public void startGame(String line) {
 		System.out.println(line);
 		board = new Board();
-		view = new TUI(board);
+		
 		players = new ArrayList<>();
 		tilesInStack = 108;
 		Scanner scanLine = new Scanner(line);
@@ -211,6 +211,7 @@ public class Client extends Thread {
 				notAI = false;
 			}
 		}
+		view = new TUI(board, players.size());
 		scanLine.close();
 	}
 	

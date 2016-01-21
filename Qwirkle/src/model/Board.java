@@ -386,21 +386,28 @@ public class Board {
 			try {				
 				// Start with tests.
 				allPlaceMoves(moves);
-				cellsAreAvailable(places, this);
-				cellsAreValid(places, this);
+				cellsAreAvailable(places);
+				cellsAreValid(places);
 				isConnected(places);
 				
 				// Create a deep copy of the board and place Pieces on it. 
-				Board deepCopyBoard = new Board().deepCopy();
+				Board deepCopyBoard = this.deepCopy();
 				for (Place place: places) {
 					deepCopyBoard.setPiece(place.getRow(), place.getColumn(), place.getPiece());
 				}
 				
+				boolean isRow;
+				
 				// Continue the tests.
-				isUninterruptedRow(places, deepCopyBoard);
-				isUninterruptedColumn(places,deepCopyBoard);
-				pieceIsConnectedRowAndUnique(places, deepCopyBoard);
-				pieceIsConnectedColumnAndUnique(places, deepCopyBoard);
+				isRow = deepCopyBoard.isUninterruptedRow(places);
+				deepCopyBoard.isUninterruptedColumn(places);
+				if (isRow) {
+					deepCopyBoard.pieceIsConnectedRowAndUnique(places);
+					deepCopyBoard.piecesFitInColumns(places);
+				} else {
+					deepCopyBoard.pieceIsConnectedColumnAndUnique(places);
+					deepCopyBoard.piecesFitInRows(places);
+				}
 				playerHasPiece(moves, player);
 			} catch (InvalidMoveException e) {
 				e.getInfo();
@@ -429,9 +436,10 @@ public class Board {
 	 *@ requires	moves[0] instanceof Place;
 	 */
 	public void allPlaceMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
-		 for (int i = 1; i < moves.length; i++) {
-			 if (!(moves[i] instanceof Place)) {
-				throw new InvalidMoveException("You are trying to place tiles and trade in the same turn. This is not allowed.");
+		for (int i = 1; i < moves.length; i++) {
+			if (!(moves[i] instanceof Place)) {
+				throw new InvalidMoveException("You are trying to place tiles and trade"
+						+ " in the same turn. This is not allowed.");
 			}
 		}
 	}
@@ -447,9 +455,10 @@ public class Board {
 	 *@ requires	moves[0] instanceof Trade;
 	 */
 	public void allTradeMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
-		 for (int i = 1; i < moves.length; i++) {
-			 if (!(moves[i] instanceof Trade)) {
-				throw new InvalidMoveException("You are trying to place tiles and trade in the same turn. This is not allowed.");
+		for (int i = 1; i < moves.length; i++) {
+			if (!(moves[i] instanceof Trade)) {
+				throw new InvalidMoveException("You are trying to place tiles and trade"
+						+ " in the same turn. This is not allowed.");
 			}
 		}
 	}
@@ -462,10 +471,11 @@ public class Board {
 	/*
 	 *@ requires	
 	 */
-	public void cellsAreAvailable(/*@ NonNull */Place[] places, /*@ NonNull */Board board) throws InvalidMoveException {
+	public void cellsAreAvailable(/*@ NonNull */Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
-			if (!board.isEmpty(place.getRow(), place.getColumn())) {
-				throw new InvalidMoveException("You are trying to place a tile in a cell that is already occupied.");
+			if (!isEmpty(place.getRow(), place.getColumn())) {
+				throw new InvalidMoveException("You are trying to place a tile"
+						+ " in a cell that is already occupied.");
 			}
 		}
 	}
@@ -476,9 +486,9 @@ public class Board {
 	 * @param board the Board that the Player wants to make the Move on. 
 	 * @throws InvalidMoveException
 	 */
-	public void cellsAreValid(/*@ NonNull */Place[] places, /*@ NonNull */Board board) throws InvalidMoveException{
+	public void cellsAreValid(/*@ NonNull */Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
-			if (!board.isField(place.getRow(), place.getColumn())) {
+			if (!isField(place.getRow(), place.getColumn())) {
 				throw new InvalidMoveException("You are trying to place a tile outside the board.");
 			}
 		}
@@ -491,31 +501,34 @@ public class Board {
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 * @throws InvalidMoveException
 	 */
-	public void isUninterruptedRow(/* @NunNull */Place[] places, /* @NunNull */Board board) throws InvalidMoveException {
+	public boolean isUninterruptedRow(/* @NunNull */Place[] places) throws InvalidMoveException {
 		boolean isRow = true;
 		for (int i = 0; i < places.length; i++) {
 			isRow = isRow && places[i].getRow() == places[0].getRow();
 		}
 		if (places.length != 1 && isRow) {
-			int minColumn = places[0].getColumn();
-			int maxColumn = minColumn;
+			int minColumnPlace = places[0].getColumn();
+			int maxColumnPlace = minColumnPlace;
 			for (int i = 1; i < places.length; i++) {
 				if (places[0].getRow() != places[i].getRow()) {
-					throw new InvalidMoveException("You are trying to place Pieces on seperate rows.");
+					throw new InvalidMoveException("You are trying to place Pieces"
+							+ " on seperate rows.");
 				}
-				if (places[i].getColumn() < minColumn) {
-					minColumn = places[i].getColumn();
-				} else if (places[i].getColumn() > maxColumn) {
-					maxColumn = places[i].getColumn();
+				if (places[i].getColumn() < minColumnPlace) {
+					minColumnPlace = places[i].getColumn();
+				} else if (places[i].getColumn() > maxColumnPlace) {
+					maxColumnPlace = places[i].getColumn();
 				}
 			}
 			
-			for (int i = minColumn; i <= maxColumn; i++) {
-				if (board.isEmpty(places[0].getRow(), i)) {
-					throw new InvalidMoveException("You are trying to place two seperate rows on the board.");
+			for (int i = minColumnPlace; i <= maxColumnPlace; i++) {
+				if (isEmpty(places[0].getRow(), i)) {
+					throw new InvalidMoveException("You are trying to place two seperate rows"
+							+ " on the board.");
 				}
 			}
 		}
+		return isRow;
 	}
 	
 	/**
@@ -524,27 +537,29 @@ public class Board {
 	 * @param b the Board on which the Places are put. 
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 */
-	public void isUninterruptedColumn(/* @NunNull */Place[] places, /* @NunNull */Board board) throws InvalidMoveException {
+	public void isUninterruptedColumn(/* @NunNull */Place[] places) throws InvalidMoveException {
 		boolean isColumn = true;
 		for (int i = 0; i < places.length; i++) {
 			isColumn = isColumn && places[i].getColumn() == places[0].getColumn();
 		}
 		if (places.length != 1 && isColumn) {
-			int minRow = places[0].getRow();
-			int maxRow = minRow;
+			int minRowPlace = places[0].getRow();
+			int maxRowPlace = minRowPlace;
 			for (int i = 1; i < places.length; i++) {
 				if (places[0].getColumn() != places[i].getColumn()) {
-					throw new InvalidMoveException("You are trying to place Pieces on seperate columns.");
+					throw new InvalidMoveException("You are trying to place Pieces"
+							+ " on seperate columns.");
 				}
-				if (places[i].getRow() < minRow) {
-					minRow = places[i].getRow();
-				} else if (places[i].getRow() > maxRow) {
-					maxRow = places[i].getRow();
+				if (places[i].getRow() < minRowPlace) {
+					minRowPlace = places[i].getRow();
+				} else if (places[i].getRow() > maxRowPlace) {
+					maxRowPlace = places[i].getRow();
 				}	
 			}	
-			for (int i = minRow; i <= maxRow; i++) {
-				if (board.isEmpty(places[0].getColumn(), i)) {
-					throw new InvalidMoveException("You are trying to place two seperate columns on the board.");
+			for (int i = minRowPlace; i <= maxRowPlace; i++) {
+				if (isEmpty(i, places[0].getColumn())) {
+					throw new InvalidMoveException("You are trying to place two seperate columns"
+							+ " on the board.");
 				}
 			}
 		}
@@ -557,7 +572,8 @@ public class Board {
 	 * @param wholeRow a set with all the Pieces that are in the row in which the Piece belongs. 
 	 * @throws InvalidMoveException
 	 */
-	public void isUniqueColorOrShape(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow) throws InvalidMoveException {
+	public void isUniqueColorOrShape(/* @NonNull */Piece piece,
+					/* @NonNull */ArrayList<Piece> wholeRow) throws InvalidMoveException {
 		boolean fixedColor = true;
 		boolean fixedShape = true;
 		for (int i = 0; i < wholeRow.size(); i++) {
@@ -566,8 +582,9 @@ public class Board {
 		for (int i = 0; i < wholeRow.size(); i++) {
 			fixedShape = fixedShape && wholeRow.get(0).getShape() == piece.getShape();
 		}
-		if (! (fixedColor || fixedShape)) {
-			throw new InvalidMoveException("The row that you try to place does not have one fixed color or shape.");
+		if (!(fixedColor || fixedShape)) {
+			throw new InvalidMoveException("The piece: " + piece.toString()
+					+ ", does not fit in the row.");
 		} else if (fixedColor) {
 			hasUniqueShape(piece, wholeRow);
 		} else if (fixedShape) {
@@ -578,10 +595,12 @@ public class Board {
 	/**
 	 * Checks if a Piece added to a set of Places has a unique color. 
 	 */
-	public void hasUniqueColor(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow) throws InvalidMoveException {
+	public void hasUniqueColor(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
+			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getColor() == piece.getColor()) {
-				throw new InvalidMoveException("You try to place a row with tiles of the same color.");
+				throw new InvalidMoveException("You try to place a row with tiles"
+						+ " of the same color.");
 			}
 		}
 	}
@@ -589,10 +608,12 @@ public class Board {
 	/**
 	 * Checks if a Piece added to a set of Places has a unique shape. 
 	 */
-	public void hasUniqueShape(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow) throws InvalidMoveException {
+	public void hasUniqueShape(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
+			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getShape() == piece.getShape()) {
-				throw new InvalidMoveException("You try to place a row with tiles of the same shape.");
+				throw new InvalidMoveException("You try to place a row with tiles"
+						+ " of the same shape.");
 			}
 		}
 	}	
@@ -607,39 +628,43 @@ public class Board {
 	/*
 	 * @requires	moves.length < 7;
 	 */
-	public void pieceIsConnectedRowAndUnique(/*@ NonNull */Place[] places, /*@ NonNull */Board board) throws InvalidMoveException {
+	public void pieceIsConnectedRowAndUnique(/*@ NonNull */Place[] places)
+			throws InvalidMoveException {
 		
-		// Create an ArrayList<Piece> of Pieces that are in the row that is added to, but not in the Place[].
+		// Create an ArrayList<Piece> of Pieces that are in the row
+		// that is added to, but not in the Place[].
 		ArrayList<Piece> wholeRow = new ArrayList<>();
 		int row = places[0].getRow();
 		int column = places[0].getColumn();
 		boolean connected = true;
 		for (int i = column - 1; connected; i--) {
-			if (board.isEmpty(row, i)) {
+			if (isEmpty(row, i)) {
 				connected = false;
 			} else {
 				boolean found = false;
 				for (Place place: places) {
-					if(place.getColumn() == i) {
+					if (place.getColumn() == i) {
 						found = true;
 					}
-				} if (!found) {
-					wholeRow.add(board.getCell(row, i));
+				}
+				if (!found) {
+					wholeRow.add(getCell(row, i));
 				}
 			}
 		}
 		connected = true;
 		for (int i = column + 1; connected; i++) {
-			if (board.isEmpty(row, i)) {
+			if (isEmpty(row, i)) {
 				connected = false;
 			} else {
 				boolean found = false;
 				for (Place place: places) {
-					if(place.getColumn() == i) {
+					if (place.getColumn() == i) {
 						found = true;
 					}
-				} if (!found) {
-					wholeRow.add(board.getCell(row, i));
+				}
+				if (!found) {
+					wholeRow.add(getCell(row, i));
 				}
 			}
 		}
@@ -648,6 +673,32 @@ public class Board {
 			Piece piece = place.getPiece();
 			isUniqueColorOrShape(piece, wholeRow);
 			wholeRow.add(piece);
+		} 
+	}
+	
+	public void piecesFitInColumns(Place[] places) throws InvalidMoveException {
+		for (Place place: places) {
+			ArrayList<Piece> wholeRow = new ArrayList<>();
+			int row = place.getRow();
+			int column = place.getColumn();
+			boolean connected = true;
+			for (int i = row - 1; connected; i--) {
+				if (isEmpty(i, column)) {
+					connected = false;
+				} else {
+					wholeRow.add(getCell(i, column));
+				}
+			}
+			connected = true;
+			for (int i = row + 1; connected; i++) {
+				if (isEmpty(i, column)) {
+					connected = false;
+				} else {
+					wholeRow.add(getCell(i, column));
+				}
+			}
+			Piece piece = place.getPiece();
+			isUniqueColorOrShape(piece, wholeRow);
 		} 
 	}
 	
@@ -661,38 +712,42 @@ public class Board {
 	/*
 	 * @requires	moves.length < 7;
 	 */
-	public void pieceIsConnectedColumnAndUnique(/*@ NonNull */Place[] places, /*@ NonNull */Board board) throws InvalidMoveException {
-		// Create an ArrayList<Piece> of Pieces that are in the row that is added to, but not in the Place[].
+	public void pieceIsConnectedColumnAndUnique(/*@ NonNull */Place[] places)
+			throws InvalidMoveException {
+		// Create an ArrayList<Piece> of Pieces that are in the row that is added to,
+		// but not in the Place[].
 		ArrayList<Piece> wholeRow = new ArrayList<>();
 		int row = places[0].getRow();
 		int column = places[0].getColumn();
 		boolean connected = true;
 		for (int i = row - 1; connected; i--) {
-			if (board.isEmpty(i, column)) {
+			if (isEmpty(i, column)) {
 				connected = false;
 			} else {
 				boolean found = false;
 				for (Place place: places) {
-					if(place.getRow() == i) {
+					if (place.getRow() == i) {
 						found = true;
 					}
-				} if (!found) {
-					wholeRow.add(board.getCell(i, column));
+				}
+				if (!found) {
+					wholeRow.add(getCell(i, column));
 				}
 			}
 		}
 		connected = true;
 		for (int i = row + 1; connected; i++) {
-			if (board.isEmpty(i, column)) {
+			if (isEmpty(i, column)) {
 				connected = false;
 			} else {
 				boolean found = false;
 				for (Place place: places) {
-					if(place.getRow() == i) {
+					if (place.getRow() == i) {
 						found = true;
 					}
-				} if (!found) {
-					wholeRow.add(board.getCell(i, column));
+				}
+				if (!found) {
+					wholeRow.add(getCell(i, column));
 				}
 			}
 		}		
@@ -703,13 +758,40 @@ public class Board {
 		} 
 	}
 	
+	public void piecesFitInRows(Place[] places) throws InvalidMoveException {
+		for (Place place: places) {
+			ArrayList<Piece> wholeRow = new ArrayList<>();
+			int row = place.getRow();
+			int column = place.getColumn();
+			boolean connected = true;
+			for (int i = column - 1; connected; i--) {
+				if (isEmpty(row, i)) {
+					connected = false;
+				} else {
+					wholeRow.add(getCell(row, i));
+				}
+			}
+			connected = true;
+			for (int i = column + 1; connected; i++) {
+				if (isEmpty(row, i)) {
+					connected = false;
+				} else {
+					wholeRow.add(getCell(row, i));
+				}
+			}
+			Piece piece = place.getPiece();
+			isUniqueColorOrShape(piece, wholeRow);
+		}
+	}
+	
 	/**
 	 * Tests if the Player has the given Piece in its Hand.
 	 */
 	public void playerHasPiece(Move[] moves, Player player) throws InvalidMoveException {
 		for (Move move: moves) {
 			if (!(player.getHand().contains(move.getPiece()))) {
-				throw new InvalidMoveException("You are trying to place a tile that you do not have in your hand.");
+				throw new InvalidMoveException("You are trying to place"
+						+ " a tile that you do not have in your hand.");
 			}
 		}
 	}

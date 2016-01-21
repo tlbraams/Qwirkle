@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
+@SuppressWarnings("resource")
 public class HumanPlayer extends LocalPlayer {
 
 	/**
