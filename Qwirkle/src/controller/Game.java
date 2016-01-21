@@ -307,7 +307,7 @@ public class Game implements Runnable {
 				cellsAreAvailable(moves, board);
 				cellsAreValid(moves, board);
 				isUninterruptedRow(moves, board);
-				isUninterruptedColumn(moves,board);
+				isUninterruptedColumn(moves, board);
 				pieceIsConnectedRowAndUnique(moves, board);
 				pieceIsConnectedColumnAndUnique(moves, board);
 				playerHasPiece(moves, player);
