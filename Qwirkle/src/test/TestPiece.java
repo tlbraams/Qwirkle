@@ -7,7 +7,8 @@ import model.Piece;
 import static org.junit.Assert.*;
 
 /**
- * Test the class Piece. Testing the the toString() and the correct assignment of parameters in the constructor.
+ * Test the class Piece.
+ * Testing the the toString() and the correct assignment of parameters in the constructor.
  */
 
 public class TestPiece {

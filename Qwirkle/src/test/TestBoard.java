@@ -119,5 +119,5 @@ public class TestBoard {
 		// Test if the correct Pieces are place in the correct cells. 
 		assertEquals("Piece in the cell is correct", board.getCell(91, 91), pieceGreenDiamond);
 		assertEquals("Piece in the cell is correct", board.getCell(94, 91), pieceGreenHeart);
-		}
+	}
 }

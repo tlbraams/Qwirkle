@@ -22,8 +22,10 @@ public class OutputWithColor {
 	private static char spade = (char) 6;
 	private static char horizontalLine = (char) 179;
 	
-	private static String sequence = ANSI_RED + diamond + ANSI_WHITE + horizontalLine + ANSI_GREEN + spade + ANSI_RESET;
-	private static String sequence2 = ANSI_BLUE + diamond + ANSI_RESET + horizontalLine + ANSI_RED + heart +  ANSI_RESET;
+	private static String sequence = ANSI_RED + diamond + ANSI_WHITE + horizontalLine 
+					+ ANSI_GREEN + spade + ANSI_RESET;
+	private static String sequence2 = ANSI_BLUE + diamond + ANSI_RESET + horizontalLine 
+					+ ANSI_RED + heart +  ANSI_RESET;
 	
 	public static void main(String[] args) {
 		AnsiConsole.systemInstall();

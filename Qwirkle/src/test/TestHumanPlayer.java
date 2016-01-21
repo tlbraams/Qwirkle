@@ -7,7 +7,6 @@ import model.HumanPlayer;
 import model.Move;
 import model.Piece;
 import model.Place;
-import model.Player;
 import model.Trade;
 
 import static org.junit.Assert.*;
@@ -77,11 +76,11 @@ public class TestHumanPlayer {
 		assertTrue(result instanceof Move[]);
 		boolean sameInstance = true;
 		if (result[0] instanceof Trade) {
-			for(int i = 1; i < result.length && sameInstance == true; i++) {
-			sameInstance = result[i] instanceof Trade;
+			for (int i = 1; i < result.length && sameInstance == true; i++) {
+				sameInstance = result[i] instanceof Trade;
 			}
-		}else {
-			for(int i = 0; i < result.length && sameInstance == true; i++) {
+		} else {
+			for (int i = 0; i < result.length && sameInstance == true; i++) {
 				sameInstance = result[i] instanceof Place;
 			}
 		}
