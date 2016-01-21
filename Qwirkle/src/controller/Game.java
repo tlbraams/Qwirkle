@@ -32,7 +32,7 @@ public class Game implements Runnable {
 	private int currentPlayerID;
 	private int moveCounter;
 	
-	boolean kickOccured = false;
+	boolean kickOccured;
 	
 	// ----- Constructor -----
 	
@@ -61,6 +61,7 @@ public class Game implements Runnable {
 		view = new TUI(this);
 		aiTime = thinkTime;
 		moveCounter = 0;
+		kickOccured = false;
 	}
 	
 	// ----- Queries -----
