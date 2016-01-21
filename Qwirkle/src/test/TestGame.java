@@ -52,53 +52,6 @@ public class TestGame {
 	}
 	
 	/**
-	 * Checks if placing a 7th stone in a row results in false.
-	 */
-	@Test
-	public void testSeventhMove() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		board.setPiece(91, 92, new Piece(Piece.Color.RED, Piece.Shape.SQUARE));
-		board.setPiece(91, 93, new Piece(Piece.Color.RED, Piece.Shape.CLUBS));
-		board.setPiece(91, 94, new Piece(Piece.Color.RED, Piece.Shape.DIAMOND));
-		board.setPiece(91, 95, new Piece(Piece.Color.RED, Piece.Shape.HEART));
-		board.setPiece(91, 96, new Piece(Piece.Color.RED, Piece.Shape.SPADE));
-		Place[] move = new Place[] { 
-			new Place(new Piece(Piece.Color.RED, Piece.Shape.DIAMOND), 91, 97)
-		};
-		assertFalse(game.validMove(move, player1));
-	}
-	
-	
-	
-	
-	/**
-	 * Checks if placing a stone on an occupied slot results in false.
-	 */
-	@Test
-	public void testOccupiedMove() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] {
-			new Place(new Piece(Piece.Color.PURPLE, Piece.Shape.CIRCLE), 91, 91)
-		};
-		assertFalse(game.validMove(move, player1));
-	}
-	
-	/**
-	 * Checks if a move with 2 tiles on the same spot results in false.
-	 */
-	@Test
-	public void testDuplicateMove() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] {
-			new Place(new Piece(Piece.Color.PURPLE, Piece.Shape.CIRCLE), 91, 92),
-			new Place(new Piece(Piece.Color.BLUE, Piece.Shape.CIRCLE), 91, 92)
-		};
-		assertFalse(game.validMove(move, player1));
-	
-	}
-	
-	
-	/**
 	 * Checks if MaxScore finds the player with the longest line.
 	 */
 	@Test
