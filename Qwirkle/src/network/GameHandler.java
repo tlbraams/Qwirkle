@@ -34,7 +34,14 @@ public class GameHandler extends Thread {
 	public void run() {
 		while (playerCount < 4) {
 			started = false;
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		System.out.println("Starting.");
 		started = true;
 		playGame();
 	}
@@ -47,7 +54,7 @@ public class GameHandler extends Thread {
 	
 	public void playGame() {
 		game = new NetworkGame(playerCount, players, aiTime, this);
-		game.run();
+		new Thread(game).start();
 	}
 	
 	public int validName(String name) {

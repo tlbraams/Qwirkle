@@ -159,7 +159,7 @@ public class Game implements Runnable {
 			if (validMove(moves, players[currentPlayerID])) {
 				moveCounter++;
 				if (moves[0] instanceof Place) {
-					place(moves, players[currentPlayerID], board);
+					place(moves, players[currentPlayerID]);
 					int score = board.getScore(moves);
 					board.addScore(currentPlayerID, score);
 				} else if (moves[0] instanceof Trade) {
@@ -222,16 +222,16 @@ public class Game implements Runnable {
 	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
 	 *  			myArray[i] instanceof Place)          
 	 */
-	public void place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player, /*@ NonNull */ Board b) {
+	public void place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		for (Place m: places) {
 			Piece piece = m.getPiece();
 			player.remove(piece);
 			int row = m.getRow();
 			int column = m.getColumn();
-			b.setPiece(row, column, piece);
-			if (!b.emptyStack()) {
-				player.receive(b.draw());
+			board.setPiece(row, column, piece);
+			if (!board.emptyStack()) {
+				player.receive(board.draw());
 			}
 		}
 		board.setLastMadeMove(moveCounter);
@@ -294,7 +294,7 @@ public class Game implements Runnable {
 		Move[] moves = players[currentPlayerID].determineFirstMove(board);
 		if (validMove(moves, players[currentPlayerID])) {
 			moveCounter++;
-			place(moves, players[currentPlayerID], board);
+			place(moves, players[currentPlayerID]);
 			int score = board.getScore(moves);
 			board.addScore(currentPlayerID, score);
 		}			
@@ -758,8 +758,6 @@ public class Game implements Runnable {
 		playerCount--;
 		setPlayers(playerID);
 		kickOccured = true;
-		
-		
 	}
 	
 	/**

@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import model.*;
 import controller.*;
-import exceptions.UnconnectedMoveException;
 import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertFalse;
@@ -53,108 +52,6 @@ public class TestGame {
 	}
 	
 	/**
-	 * Checks if placing a piece that is not connected to the rest of the board
-	 * throws the corresponding exception.
-	 */
-	@Test
-	public void testUnconnectedMove() throws UnconnectedMoveException {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] {new Place(new Piece(Piece.Color.BLUE, Piece.Shape.CIRCLE),
-									88, 88)};
-		
-		exception.expect(UnconnectedMoveException.class);
-		game.isConnected(move);
-	}
-	
-	/**
-	 * Checks if placing a piece that is connected to the rest of the board
-	 * doesn't throw the corresponding exception.
-	 */
-	@Test
-	public void testConnectedMove() throws UnconnectedMoveException {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] {new Place(new Piece(Piece.Color.BLUE, Piece.Shape.CIRCLE),
-									91, 92)};
-		
-		game.isConnected(move);
-	}
-	
-	/**
-	 * Checks if placing multiple pieces in different row/columns (not a straight line)
-	 * results in false. (To be changed to exception)
-	 */
-	@Test
-	public void testSplitPlace() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		board.setPiece(91, 92, new Piece(Piece.Color.BLUE, Piece.Shape.CIRCLE));
-		board.setPiece(91, 93, new Piece(Piece.Color.GREEN, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] { 
-			new Place(new Piece(Piece.Color.RED, Piece.Shape.DIAMOND), 90, 91),
-			new Place(new Piece(Piece.Color.GREEN, Piece.Shape.DIAMOND), 92, 93)
-		};
-		game.place(move, player1);
-		assertFalse(game.isRow(move, board) || game.isColumn(move, board));
-	}
-	
-	/**
-	 * Checks if placing multiple pieces in the same row/columns (a straight line)
-	 * results in True. (To be changed to exception)
-	 */
-	@Test
-	public void testNotSplitPlace() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		board.setPiece(91, 92, new Piece(Piece.Color.BLUE, Piece.Shape.CIRCLE));
-		board.setPiece(91, 93, new Piece(Piece.Color.GREEN, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] { 
-			new Place(new Piece(Piece.Color.PURPLE, Piece.Shape.CIRCLE), 91, 94),
-			new Place(new Piece(Piece.Color.ORANGE, Piece.Shape.CIRCLE), 91, 95)
-		};
-		game.place(move, player1);
-		assertTrue(game.isRow(move, board) || game.isColumn(move, board));
-	}
-	
-	/**
-	 * Checks if placing a piece whose shape doesn't match the row
-	 * results in false.
-	 */
-	@Test
-	public void testNonMatchingShapeMove() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		board.setPiece(91, 92, new Piece(Piece.Color.BLUE, Piece.Shape.CIRCLE));
-		board.setPiece(91, 93, new Piece(Piece.Color.GREEN, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] { 
-			new Place(new Piece(Piece.Color.PURPLE, Piece.Shape.DIAMOND), 91, 94)
-		};
-		Place[] moves = new Place[] { 
-			new Place(new Piece(Piece.Color.PURPLE, Piece.Shape.DIAMOND), 90, 91)
-		};
-		game.place(move, player1);
-		game.place(moves, player2);
-		assertFalse(game.isValidColumn(moves, board));
-		assertFalse(game.isValidRow(move, board));
-	}
-	/**
-	 * Checks if placing a piece whose color doesn't match the row
-	 * results in false.
-	 */
-	@Test
-	public void testNonMatchingColorMove() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		board.setPiece(91, 92, new Piece(Piece.Color.RED, Piece.Shape.SQUARE));
-		board.setPiece(91, 93, new Piece(Piece.Color.RED, Piece.Shape.CLUBS));
-		Place[] move = new Place[] { 
-			new Place(new Piece(Piece.Color.BLUE, Piece.Shape.DIAMOND), 91, 94)
-		};
-		Place[] moves = new Place[] { 
-			new Place(new Piece(Piece.Color.BLUE, Piece.Shape.DIAMOND), 90, 91)
-		};
-		game.place(move, player1);
-		game.place(moves, player2);
-		assertFalse(game.isValidColumn(moves, board));
-		assertFalse(game.isValidRow(move, board));
-	}
-	
-	/**
 	 * Checks if placing a 7th stone in a row results in false.
 	 */
 	@Test
@@ -172,26 +69,7 @@ public class TestGame {
 	}
 	
 	
-	/**
-	 * Checks if placing a piece whose color/shape does match the row
-	 * results in true.
-	 */
-	@Test
-	public void testMatchingMove() {
-		board.setPiece(91, 91, new Piece(Piece.Color.RED, Piece.Shape.CIRCLE));
-		board.setPiece(91, 92, new Piece(Piece.Color.BLUE, Piece.Shape.CIRCLE));
-		board.setPiece(91, 93, new Piece(Piece.Color.GREEN, Piece.Shape.CIRCLE));
-		Place[] move = new Place[] { 
-			new Place(new Piece(Piece.Color.PURPLE, Piece.Shape.CIRCLE), 91, 94)
-		};
-		Place[] moves = new Place[] { 
-			new Place(new Piece(Piece.Color.RED, Piece.Shape.SQUARE), 90, 91)
-		};
-		game.place(move, player1);
-		game.place(moves, player2);
-		assertTrue(game.isValidRow(move, board));
-		assertTrue(game.isValidColumn(moves, board));
-	}
+	
 	
 	/**
 	 * Checks if placing a stone on an occupied slot results in false.

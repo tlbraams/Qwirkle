@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import model.*;
 
+@SuppressWarnings("resource")
 public class NetworkPlayer implements Player, Runnable {
 	public static final int MAX_HAND = 6;
 	/**
@@ -122,10 +123,12 @@ public class NetworkPlayer implements Player, Runnable {
 							found = true;
 						}
 					}
-					if (!found) {
-						// piece not in hand error ??
+					if (found) {
+						places.add(new Place(piece, row, column));
+						
+					} else {
+						sendCommand("Error: " + pieceName + " is not a piece in your hand.");
 					}
-					places.add(new Place(piece, row, column));
 					move = places.toArray(new Move[places.size()]);
 				}
 			} else if (line.startsWith("SWAP")) {
@@ -141,12 +144,14 @@ public class NetworkPlayer implements Player, Runnable {
 							found = true;
 						}
 					}
-					if (!found) {
-						// piece not in hand error ??
+					if (found) {
+						trades.add(new Trade(piece));
+						
+					} else {
+						sendCommand("Error: " + pieceName + " is not a piece in your hand.");
 					}
-					trades.add(new Trade(piece));
-					move = trades.toArray(new Move[trades.size()]);
 				}
+				move = trades.toArray(new Move[trades.size()]);
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
