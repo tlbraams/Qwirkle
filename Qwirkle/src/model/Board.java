@@ -311,58 +311,95 @@ public class Board {
 		
 		// Determining the score when only one Place is made. 
 		if (places.length == 1) {
-			int row = getRowLength(places[0].getRow(), places[0].getColumn());
-			int column = getColumnLength(places[0].getRow(), places[0].getColumn());
-			if (row > 1) {
-				result += row;
-				if (row == 6) {
-					result += row;
-				}
-			}
-			if (column > 1) {
-				result += column;
-				if (column == 6) {
-					result += column;
-				}
-			}
-		
+			result = getScoreOnePlace(places);
+			
 		// Determining the score when multiple Places have been made. 
 		} else {
 			
 			// Determining the score if the Places create a row. 
 			if (places[0].getRow() == places[1].getRow()) {
-				result = getRowLength(places[0].getRow(), places[0].getColumn());
-				if (result == 6) {
-					result += result;
-				}
-				for (int i = 0; i < places.length; i++) {
-					int column =  getColumnLength(places[i].getRow(), places[i].getColumn());
-					if (column > 1) {
-						result = result + column;
-					}
-					if (column == 6) {
-						result += column;
-					}
-				}
+				result = getScoreRowWise(places);
+				
 			// Determining the score if the Places create a column. 
 			} else if (places[0].getColumn() == places[1].getColumn()) {
-				result = getColumnLength(places[0].getRow(), places[0].getColumn());
-				if (result == 6) {
-					result += result;
-				}
-				for (int i = 0; i < places.length; i++) {
-					int row = getRowLength(places[i].getRow(), places[i].getColumn());
-					if (row > 1) {
-						result = result + row; 
-					}
-					if (row == 6) {
-						result += row;
-					}
-					
-				}
+				result = getScoreColumnWise(places);
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Determines the score of a place with only one Piece.
+	 * @param places the Place that is being made. 
+	 * @return
+	 */
+	/*
+	 *@ requires	places.length == 1;
+	 *@ ensures		0 < \result;
+	 */
+	public /*@ NonNull */int getScoreOnePlace(Place[] places) {
+		int result = 0;
+		int row = getRowLength(places[0].getRow(), places[0].getColumn());
+		int column = getColumnLength(places[0].getRow(), places[0].getColumn());
+		if (row > 1) {
+			result += row;
+			if (row == 6) {
+				result += row;
+			}
+		}
+		if (column > 1) {
+			result += column;
+			if (column == 6) {
+				result += column;
+			}
+		}
+		return result;
+	}
+	
+	
+	/*
+	 *@ requires	1 < place.length && place.length < 7;
+	 *@ ensures		0 <= \result;
+	 */
+	public /*@ NonNull */int getScoreRowWise(/*@ NonNull */Place[] places) {
+		int result = 0;
+		result = getRowLength(places[0].getRow(), places[0].getColumn());
+		if (result == 6) {
+			result += result;
+		}
+		for (int i = 0; i < places.length; i++) {
+			int column =  getColumnLength(places[i].getRow(), places[i].getColumn());
+			if (column > 1) {
+				result = result + column;
+			}
+			if (column == 6) {
+				result += column;
+			}
+		}
+		return result;
+	}
+	
+	/*
+	 *@ requires	1 < place.length && place.length < 7;
+	 *@ ensures		0 <= \result;
+	 */
+	public /*@ NonNull */int getScoreColumnWise(/*@ NonNull */Place[] places) {
+		int result = 0;
+		result = getColumnLength(places[0].getRow(), places[0].getColumn());
+		if (result == 6) {
+			result += result;
+		}
+		for (int i = 0; i < places.length; i++) {
+			int row = getRowLength(places[i].getRow(), places[i].getColumn());
+			if (row > 1) {
+				result = result + row; 
+			}
+			if (row == 6) {
+				result += row;
+			}
+		}
+		return result;
+		
 	}
 	
 	/**

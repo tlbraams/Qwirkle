@@ -2,6 +2,7 @@ package controller;
 
 import java.util.Scanner;
 
+import exceptions.InvalidGameException;
 import exceptions.InvalidNameException;
 import model.*;
 
@@ -21,10 +22,15 @@ public class Menu {
 	int aiTime;
 	
 	public static void main(String[] args) {
-		new Menu().run();
+		try {
+			new Menu().run();
+		} catch (InvalidGameException e) {
+			System.out.println(e.getInfo());
+		}
+		
 	}
 	
-	public void run() {
+	public void run() throws InvalidGameException {
 		players = new Player[4];
 		Scanner in = new Scanner(System.in);
 		Boolean running = true;
@@ -41,8 +47,7 @@ public class Menu {
 					playerCount = 0;
 					players = new Player[4];
 				} else {
-					System.out.println("Not enough players to start a game, please wait untill more"
-									+ " players register.");
+					throw new InvalidGameException("This game does not have enough players yet. Please wait.");
 				}
 			} else if (line.equals("3")) {
 				setAiTime();
@@ -72,9 +77,32 @@ public class Menu {
 		}
 	}
 	
+	public void displayRegistrationOptions() {
+		System.out.println("What kind of player would you like to register?");
+		System.out.println("Human player ...... ............. 7");
+		System.out.println("Computer player ................. 8");
+	}
+	
 	public void registerNewPlayer() {
+		displayRegistrationOptions();
+		Boolean running = true;
+		Scanner line = new Scanner(System.in);
+		while (running) {
+			String kindOfPlayer = line.nextLine();
+			if (kindOfPlayer.equals("7")) {
+				registerHumanPlayer();
+				running = false;
+			}
+			if (kindOfPlayer.equals("8")) {
+				registerComputerPlayer();
+				running = false;
+			}
+		}
+	}
+	
+	public void registerHumanPlayer() {
 		System.out.println("What is your name?"
-						+ " (can only contain letters with maximum length of 16)");
+					+ " (can only contain letters with maximum length of 16)");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
 		while (running) {
@@ -84,6 +112,31 @@ public class Menu {
 				hasOnlyLetters(name);
 				
 				players[playerCount] = new HumanPlayer(name, playerCount);
+				playerCount++;
+				running = false;
+			} catch (InvalidNameException e) {
+				e.getInfo();
+			}
+			if (playerCount == 4) {
+				new Game(playerCount, players, aiTime).run();
+				playerCount = 0;
+				players = new Player[4];
+			}
+		}
+	}
+	
+	public void registerComputerPlayer() {
+		System.out.println("What name do you want the Computer Player to have?"
+				+ " (can only contain letters with maximum length of 16)");
+		Boolean running = true;
+		Scanner line = new Scanner(System.in);
+		while (running) {
+			String name = line.nextLine();
+			try {
+				isRightLength(name);
+				hasOnlyLetters(name);
+				
+				players[playerCount] = new RandomComputerPlayer(name, playerCount, aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {
