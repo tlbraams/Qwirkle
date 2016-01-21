@@ -130,6 +130,8 @@ public class HumanPlayer extends LocalPlayer {
 							if (firstPiece) {
 								row = 91;
 								column = 91;
+								moves.add(new Place(p, 91, 91));
+								firstPiece = false;
 							} else {
 								row = requestRow();
 								column = requestColumn();

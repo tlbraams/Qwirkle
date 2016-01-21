@@ -47,7 +47,7 @@ public class Menu {
 					playerCount = 0;
 					players = new Player[4];
 				} else {
-					throw new InvalidGameException("This game does not have enough players yet. Please wait.");
+					System.out.println("This game does not have enough players yet. Please wait.");
 				}
 			} else if (line.equals("3")) {
 				setAiTime();

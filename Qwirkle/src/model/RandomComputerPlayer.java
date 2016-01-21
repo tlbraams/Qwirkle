@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.InvalidMoveException;
 
 public class RandomComputerPlayer extends ComputerPlayer {
 
@@ -14,7 +15,7 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	
 	// ----- Constructor -----
 	public RandomComputerPlayer(String name, int id, int timeToThink) {
-		super(name, ID);
+		super(name, id);
 		this.timeToThink = timeToThink;
 	}
 
@@ -25,21 +26,40 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	 */
 	public Move[] determineMove(Board board) {
 		Move[] result = new Move[1];
+		// Try to make a Place.
 		for (Piece piece: hand) {
 			for (int row = board.getMinRow(); row < board.getMaxRow(); row++) {
 				for (int column = board.getMinColumn(); column < board.getMaxColumn(); column++) {
 					result[0] = new Place(piece, row, column);
-					if (board.validMove(result, this)) {
+					try {
+						if (board.validMove(result, this)) {
 						return result;
+						}
+					} catch (InvalidMoveException e) {
+						System.out.println(e.getInfo());
 					}
 				}
 			}
 		}
+		result = new Move[hand.size()];
+		int i = 0;
 		for (Piece piece: hand) {
-			for (int i = 0; i < hand.size(); i++) {
-				result[i] = new Trade(piece);
+			result[i] = new Trade(piece);
+			i++;
+		}
+		return result;
+	}
+	
+	public Move[] determineFirstMove(Board board) {
+		Move[] result = new Move[1];
+		boolean filled = false;
+		for (Piece piece: hand) {
+			if (!filled) {
+				result[0] = new Place(piece, 91, 91);
+				filled = true;
 			}
 		}
 		return result;
+		
 	}
 }
