@@ -157,7 +157,7 @@ public class NetworkGame implements Runnable {
 			handler.broadcast("NEXT " + currentPlayerID);
 			Move[] moves = players[currentPlayerID].determineMove(board);
 			if (moves == null || moves.length == 0) {
-				players[currentPlayerID].sendCommand("Error, no move given.");
+				kick(currentPlayerID, "No move given");
 			} else {
 				boolean valid = false;
 				try {
@@ -356,11 +356,13 @@ public class NetworkGame implements Runnable {
 	/**
 	 * Kicks a player when he send an invalid command or move. 
 	 */
-	public void kick(int playerID) {
-		returnPieces(playerID);
+	public void kick(int playerID, String reason) {
+		int tiles = returnPieces(playerID);
 		playerCount--;
 		setPlayers(playerID);
 		kickOccured = true;
+		handler.kick(playerID);
+		handler.broadcast("KICK " + playerID + " " + tiles + " " + reason);
 	}
 	
 	/**
@@ -389,7 +391,7 @@ public class NetworkGame implements Runnable {
 	 *@ ensures 	board.getStack().size() == \old(board.getStack().size())
 	 *												 + players[playerID].getHand().size();
 	 */
-	public void returnPieces(int playerID) {
+	public int returnPieces(int playerID) {
 		Piece[] piecesToReturn = new Piece[players[playerID].getHand().size()];
 		int i = 0;
 		for (Piece piece: players[playerID].getHand()) {
@@ -397,5 +399,6 @@ public class NetworkGame implements Runnable {
 			i++;
 		}
 		board.tradeReturn(piecesToReturn);
+		return i;
 	}
 }

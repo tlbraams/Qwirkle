@@ -231,14 +231,14 @@ public class Board {
 	
 	public void setPiece(int row, int column, Piece piece) {
 		board[row][column] = piece;
-		if (row < minRow) {
+		if (row <= minRow) {
 			minRow = row - 5;
-		} else if (row > maxRow) {
+		} else if (row >= maxRow) {
 			maxRow = row + 5;
 		}
-		if (column < minColumn) {
+		if (column <= minColumn) {
 			minColumn = column - 5;
-		} else if (column > maxColumn) {
+		} else if (column >= maxColumn) {
 			maxColumn = column + 5;
 		}
 	}
@@ -418,39 +418,42 @@ public class Board {
 	public /* @NonNull*/boolean validMove(/* @NonNull*/Move[] moves, /* @NonNull*/Player player)
 			throws InvalidMoveException {
 		boolean result = true;
-		
-		if (moves[0] instanceof Place) {
-			Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);				
-			// Start with tests.
-			allPlaceMoves(moves);
-			cellsAreAvailable(places);
-			cellsAreValid(places);
-			isConnected(places);
-			
-			// Create a deep copy of the board and place Pieces on it. 
-			Board deepCopyBoard = this.deepCopy();
-			for (Place place: places) {
-				deepCopyBoard.setPiece(place.getRow(), place.getColumn(), place.getPiece());
+		if (moves.length == 0) {
+			throw new InvalidMoveException("No moves given");
+		} else {
+			if (moves[0] instanceof Place) {
+				Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);				
+				// Start with tests.
+				allPlaceMoves(moves);
+				cellsAreValid(places);
+				cellsAreAvailable(places);
+				isConnected(places);
+				
+				// Create a deep copy of the board and place Pieces on it. 
+				Board deepCopyBoard = this.deepCopy();
+				for (Place place: places) {
+					deepCopyBoard.setPiece(place.getRow(), place.getColumn(), place.getPiece());
+				}
+				
+				boolean isRow;
+				
+				// Continue the tests.
+				isRow = deepCopyBoard.isUninterruptedRow(places);
+				deepCopyBoard.isUninterruptedColumn(places);
+				if (isRow) {
+					deepCopyBoard.pieceIsConnectedRowAndUnique(places);
+					deepCopyBoard.piecesFitInColumns(places);
+				} else {
+					deepCopyBoard.pieceIsConnectedColumnAndUnique(places);
+					deepCopyBoard.piecesFitInRows(places);
+				}
+				playerHasPiece(moves, player);
 			}
 			
-			boolean isRow;
-			
-			// Continue the tests.
-			isRow = deepCopyBoard.isUninterruptedRow(places);
-			deepCopyBoard.isUninterruptedColumn(places);
-			if (isRow) {
-				deepCopyBoard.pieceIsConnectedRowAndUnique(places);
-				deepCopyBoard.piecesFitInColumns(places);
-			} else {
-				deepCopyBoard.pieceIsConnectedColumnAndUnique(places);
-				deepCopyBoard.piecesFitInRows(places);
+			if (moves[0] instanceof Trade) {
+				allTradeMoves(moves);
+				playerHasPiece(moves, player);
 			}
-			playerHasPiece(moves, player);
-		}
-		
-		if (moves[0] instanceof Trade) {
-			allTradeMoves(moves);
-			playerHasPiece(moves, player);
 		}
 		return result;
 	}

@@ -36,14 +36,12 @@ public class Server {
 	public void run() {
 		try {
 			ServerSocket ssock = new ServerSocket(port);
-			ArrayList<NetworkPlayer> players = new ArrayList<>();
 			while (true) {
 				print("Waiting for new Client.");
 				Socket sock = ssock.accept();
 				print("Received new connection: " + sock.getPort());
 				NetworkPlayer networkPlayer = new NetworkPlayer(this, sock);
 				new Thread(networkPlayer).start();
-				players.add(networkPlayer);
 			}
 		} catch (IOException e) {
 			System.err.println(e.getMessage());

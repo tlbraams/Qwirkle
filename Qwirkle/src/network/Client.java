@@ -103,7 +103,9 @@ public class Client extends Thread {
 			try {
 				line = in.readLine();
 				Scanner lineScan = new Scanner(line);
-				if (line.startsWith("NAMES")) {
+				if (line == null) {
+					shutDown();
+				} else if (line.startsWith("NAMES")) {
 					startGame(line);
 				} else if (line.startsWith("NEXT")) {
 					view.update();
@@ -225,7 +227,7 @@ public class Client extends Thread {
 	 */
 	public void findMove() {
 		Move[] move = player.determineMove(board);
-		boolean valid = true;
+		boolean valid = false;
 		while (!valid) {
 			try {
 				valid = board.validMove(move, player);
@@ -331,5 +333,20 @@ public class Client extends Thread {
 			print(players.get(i) + ": " + board.getScore(i));
 		}
 		scanLine.close();
-	}	
+	}
+	
+	/**
+	 * ShutsDown the Client.
+	 */
+	public void shutDown() {
+		try {
+			in.close();
+			out.close();
+			sock.close();
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
+		
+	}
 }

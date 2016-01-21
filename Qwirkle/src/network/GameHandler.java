@@ -9,13 +9,13 @@ import java.util.List;
  */
 public class GameHandler extends Thread {
 	
-	private NetworkPlayer[] players;
+	private List<NetworkPlayer> players;
 	private int aiTime;
 	private NetworkGame game;
 	
 	
 	public GameHandler(List<NetworkPlayer> newPlayers) {
-		players = newPlayers.toArray(new NetworkPlayer[newPlayers.size()]);
+		players = newPlayers;
 	}
 
 	
@@ -27,7 +27,8 @@ public class GameHandler extends Thread {
 
 	
 	public void playGame() {
-		game = new NetworkGame(players.length, players, aiTime, this);
+		NetworkPlayer[] playing = players.toArray(new NetworkPlayer[players.size()]);
+		game = new NetworkGame(players.size(), playing, aiTime, this);
 		new Thread(game).start();
 	}
 	
@@ -36,5 +37,9 @@ public class GameHandler extends Thread {
 		for (NetworkPlayer p: players) {
 			p.sendCommand(message);
 		}
+	}
+	
+	public void kick(int playerID) {
+		players.removeIf(p -> p.getID() == playerID);
 	}
 }
