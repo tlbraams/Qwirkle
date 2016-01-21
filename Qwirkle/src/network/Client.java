@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import exceptions.InvalidMoveException;
 import model.*;
 import view.TUI;
 
@@ -122,6 +123,8 @@ public class Client extends Thread {
 					handleEndGame(line);
 					view.printScore(board);
 					playing = false;
+				} else {
+					print(line);
 				}
 				lineScan.close();
 			} catch (IOException e) {
@@ -221,10 +224,22 @@ public class Client extends Thread {
 	 * This String is made according to the protocol and given to sendCommand().
 	 */
 	public void findMove() {
-		Move[] move = this.player.determineMove(board);
+		Move[] move = player.determineMove(board);
+		boolean valid = true;
+		while (!valid) {
+			try {
+				valid = board.validMove(move, player);
+				for (int i = 0; i < move.length; i++) {
+					player.remove(move[i].getPiece());
+				}
+			} catch (InvalidMoveException e) {
+				print(e.getInfo());
+				move = player.determineMove(board);
+			}
+		}
 		String result = "";
 		if (move[0] instanceof Place) {
-			result = "PLACE";
+			result = "MOVE";
 			for (int i = 0; i < move.length; i++) {
 				result += move[i].toString();
 			}
@@ -234,6 +249,7 @@ public class Client extends Thread {
 				result += move[i].toString();
 			}
 		}
+		print(result);
 		sendCommand(result);
 	}
 	
@@ -242,6 +258,7 @@ public class Client extends Thread {
 	 * @param line
 	 */
 	public void receiveTiles(String line) {
+		print(line);
 		Scanner scanLine = new Scanner(line);
 		scanLine.next();
 		while (scanLine.hasNext()) {
@@ -261,6 +278,7 @@ public class Client extends Thread {
 	 * @param line the given String
 	 */
 	public void makeMove(String line) {
+		print(line);
 		Scanner scanLine = new Scanner(line);
 		scanLine.next();
 		String firstElement = scanLine.next();
