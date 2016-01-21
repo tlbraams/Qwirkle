@@ -66,11 +66,13 @@ public class HumanPlayer extends LocalPlayer {
 				if (input.equals("Done")) {
 					cont = false;
 				} else {
+					boolean found = false;
 					for (Piece p: hand) {
-						if (p.toString().equals(input)) {
+						if (p.toString().equals(input) && !found) {
 							int row = requestRow();
 							int column = requestColumn();
-							result.add(new Place(p, row, column));
+							result.add(new Place(p, row, column));							
+							found = true;
 						}
 					}
 				}
@@ -89,9 +91,11 @@ public class HumanPlayer extends LocalPlayer {
 				if (input.equals("Done")) {
 					cont = false;
 				} else {
+					boolean found = false;
 					for (Piece p : hand) {
-						if (p.toString().equals(input)) {
+						if (p.toString().equals(input) && !found) {
 							result.add(new Trade(p));
+							found = true;
 						}
 					}
 				}
