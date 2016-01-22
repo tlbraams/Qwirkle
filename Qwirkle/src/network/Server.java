@@ -9,7 +9,7 @@ import java.util.List;
 @SuppressWarnings("resource")
 public class Server {
 
-	private static final String USAGE = "usage: " + Server.class.getName() + " <port>";
+	private static final String USAGE = "When starting the Server '" + Server.class.getName() + "', please declare the <port>.";
 	
 	public static void main(String[] args) {
 		if (args.length != 1) {

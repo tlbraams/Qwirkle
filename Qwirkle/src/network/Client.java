@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import exceptions.InvalidMoveException;
@@ -17,7 +18,7 @@ import view.TUI;
 
 public class Client extends Thread {
 
-	private static final String USAGE = "usage java network.Client <address> <port>";
+	private static final String USAGE = "When starting the Client, please declare two arguments: <address> <port> .";
 	
 	public static void main(String[] args) {
 		if (args.length != 2) {
@@ -31,14 +32,14 @@ public class Client extends Thread {
 		try {
 			host = InetAddress.getByName(args[0]);
 		} catch (UnknownHostException e) {
-			print("ERROR: no valid hostname!");
+			print("ERROR: Not a valid hostname!");
 			System.exit(0);
 		}
 		
 		try {
 			port = Integer.parseInt(args[1]);
 		} catch (NumberFormatException e) {
-			print("ERROR: not a valid portnumber!");
+			print("ERROR: Not a valid portnumber!");
 			System.exit(0);
 		}
 		
@@ -46,7 +47,7 @@ public class Client extends Thread {
 			Client client = new Client(host, port);
 			client.start();
 		} catch (IOException e) {
-			print("ERROR: couldn't construct a client object!");
+			print("ERROR: Could not construct a Client object.");
 		}
 			
 	}
@@ -55,9 +56,7 @@ public class Client extends Thread {
 		System.out.println(msg);
 	}
 	
-	// ----------------------------
-	
-	// Instance variables
+	// ----- Instance Variables -----
 	private String clientName;
 	private Socket sock;
 	private Player player;
@@ -69,7 +68,7 @@ public class Client extends Thread {
 	private BufferedWriter out;
 	private BufferedReader playerInput;
 	
-	
+	// ----- Constructor -----
 	/**
 	 * Creates a new Client with a connection to the given parameters.
 	 * @param host the adress of the server
@@ -186,13 +185,58 @@ public class Client extends Thread {
 				scanner.next();
 				clientName = scanner.next();
 				int playerNumber = scanner.nextInt();
-				player = new HumanPlayer(clientName, playerNumber);
+				displayPlayerMenu(clientName, playerNumber);
 				waiting = false;
 				scanner.close();
 			}
 		}
 		return waiting;
 		
+	}
+	
+	/**
+	 * Asks the user if he wants to play himself or let the computer play. 
+	 * It constructs an appropriate Player object (ComputerPlayer or HumanPlayer). 
+	 */
+	public void displayPlayerMenu(/*@ NonNull */String clientName, /*@ NonNull */ int playerNumber) {
+		System.out.println("What kind of player would you like to register?");
+		System.out.println("Human player ...... ............. 1");
+		System.out.println("Computer player ................. 2");
+		Boolean running = true;
+		Scanner line = new Scanner(System.in);
+		while (running) {
+			String kindOfPlayer = line.nextLine();
+			if (kindOfPlayer.equals("1")) {
+				player = new HumanPlayer(clientName, playerNumber);
+				running = false;
+			}
+			if (kindOfPlayer.equals("2")) {
+				int aiTimeToThink = requestAITimeToThink();
+				player = new RandomComputerPlayer(clientName, playerNumber, aiTimeToThink);
+				running = false;
+			}
+		}
+	}
+	
+	/**
+	 * Requests the user how many miliseconds he wants the ComputerPlayer to think. 
+	 * If the user input is not of type int, then the AITimeToThink is set at 1000 miliseconds. 
+	 */
+	public /*@ NonNull */int requestAITimeToThink() {
+		int result = 1000;
+		System.out.println("What is the maximum amount of time (in miliseconds) that you allow the ComputerPlayer to think.");
+		Boolean running = true;
+		Scanner line = new Scanner(System.in);
+		while (running) {
+			try {
+				result = line.nextInt();
+				running = false;
+			} catch (InputMismatchException e) {
+				System.out.println("You did not type an integer. The maximum time that the AI is allowed to think is now set at 1 second.");
+				running = false;
+			}
+		}
+		return result;
 	}
 	
 	/**
