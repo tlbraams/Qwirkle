@@ -356,7 +356,11 @@ public class Board {
 		return result;
 	}
 	
-	
+	/**
+	 * Calculates the score knowing the places are placed on the same Row.
+	 * @param places the places for which the score is calculated
+	 * @return the score
+	 */
 	/*
 	 *@ requires	1 < place.length && place.length < 7;
 	 *@ ensures		0 <= \result;
@@ -379,6 +383,11 @@ public class Board {
 		return result;
 	}
 	
+	/**
+	 * Calculates the score knowing the places are placed in the same Column.
+	 * @param places the places for which the score is calculated
+	 * @return the score
+	 */
 	/*
 	 *@ requires	1 < place.length && place.length < 7;
 	 *@ ensures		0 <= \result;
@@ -707,6 +716,16 @@ public class Board {
 		} 
 	}
 	
+	/**
+	 * Checks if the given places fit in the columns. It is to be called knowing the places
+	 * are all on the same row so it checks the places individually.
+	 * @param places the places to check
+	 * @throws InvalidMoveException if it finds a piece that does not fit in a column
+	 */
+	/*
+	 * @requires	\forall places p, r; places.contains(p) && places.contains(r)
+	 * 					&& !p.equals(r);  p.getRow() == r.getRow();
+	 */
 	public void piecesFitInColumns(Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			ArrayList<Piece> wholeRow = new ArrayList<>();
@@ -789,6 +808,16 @@ public class Board {
 		} 
 	}
 	
+	/**
+	 * Checks if the given places fit in the rows. It is to be called knowing all places are
+	 * in the same Column so it checks the places individually.
+	 * @param places the places to check
+	 * @throws InvalidMoveException if it finds a piece that does not fit in a row.
+	 */
+	/*
+	 * @requires	\forall places p, r; places.contains(p) && places.contains(r)
+	 * 					&& !p.equals(r);  p.getColumn() == r.getColumn();
+	 */
 	public void piecesFitInRows(Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			ArrayList<Piece> wholeRow = new ArrayList<>();

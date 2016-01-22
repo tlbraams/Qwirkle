@@ -20,7 +20,7 @@ public class NetworkPlayer implements Player, Runnable {
 	 * It stores the local data needed for a player connected to the server
 	 * and a member of the game this client is playing.
 	 */
-	
+	// ---- Instance variables: ----
 	private HashSet<Piece> hand;
 	private Server server;
 	private Socket sock;
@@ -29,7 +29,14 @@ public class NetworkPlayer implements Player, Runnable {
 	private BufferedReader in;
 	private BufferedWriter out;
 	
-
+	// ---- Constructor: ----
+	/**
+	 * Creates a new NetworkPlayer with the given Server on the given socket.
+	 * Starts a Reader and Writer on the in/output of the socket.
+	 * @param server the given server
+	 * @param sock the given socket
+	 * @throws IOException
+	 */
 	public NetworkPlayer(Server server, Socket sock) throws IOException {
 		this.server = server;
 		this.sock = sock;
@@ -38,6 +45,32 @@ public class NetworkPlayer implements Player, Runnable {
 		hand = new HashSet<>(MAX_HAND);
 	}
 	
+	// ---- Queries: ----
+	/**
+	 * Returns the name of this NetworkPlayer.
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * Returns the ID of this NetworkPlayer.
+	 */
+	public int getID() {
+		return id;
+	}
+	
+	/**
+	 * Returns the hand of this NetworkPlayer.
+	 */
+	public HashSet<Piece> getHand() {
+		return hand;
+	}	
+	
+	// ---- Commands: ----
+	/**
+	 * Starts the setName command to find the name the player will use.
+	 */
 	public void run() {
 		try {
 			setName();
@@ -47,7 +80,8 @@ public class NetworkPlayer implements Player, Runnable {
 	}
 	
 	/**
-	 * Reads a name and sets it if valid. 
+	 * Reads a name from the socket and sets it if valid.
+	 * Sends an acknowledgement to the socket. 
 	 * @throws IOException
 	 */
 	public void setName() throws IOException {
@@ -69,6 +103,9 @@ public class NetworkPlayer implements Player, Runnable {
 		}
 	}
 	
+	/**
+	 * Closes the socket.
+	 */
 	public void shutDown() {
 		try {
 			sock.close();
@@ -77,6 +114,10 @@ public class NetworkPlayer implements Player, Runnable {
 		}
 	}
 
+	/**
+	 * Sends a given String to the output of the socket.
+	 * @param msg the given String
+	 */
 	public void sendCommand(String msg) {
 		try {
 			out.write(msg);
@@ -86,19 +127,22 @@ public class NetworkPlayer implements Player, Runnable {
 			System.err.println(e.getMessage());
 		}
 	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public int getID() {
-		return id;
-	}
 
+	/**
+	 * Adds the given Piece to the hand of this player.
+	 * @param piece the given Piece.
+	 */
 	public void receive(Piece piece) {
 		hand.add(piece);
 	}
 
+	/**
+	 * Asks the Player what kind of move he would like to make.
+	 * If they chose a place they are asked what piece's they would like to place
+	 * and where on the board.
+	 * if they chose a trade they are asked what piece's they would like to trade.
+	 * "Done" entered instead of a Piece marks the end of the user input.
+	 */
 	public Move[] determineMove(Board board) {
 		String line;
 		Move[] move = null;
@@ -158,15 +202,17 @@ public class NetworkPlayer implements Player, Runnable {
 		
 	}
 	
+	/**
+	 * Method from interface, not used.
+	 */
 	public Move[] determineFirstMove(Board board) {
 		return null;
 	}
 	
-
-	public HashSet<Piece> getHand() {
-		return hand;
-	}
-	
+	/**
+	 * Removes the given Piece from the hand of this NetworkPlayer.
+	 * @param piece the given Psiece to remove
+	 */
 	public void remove(Piece piece) {
 		hand.remove(piece);
 	}

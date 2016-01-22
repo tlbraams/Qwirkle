@@ -325,12 +325,10 @@ public class Game implements Runnable {
 	public int isWinner() {
 		int result = -1;
 		int maxScore = 0;
-		if (endGame()) {
-			for (Player p: players) {
-				if (board.getScore(p.getID()) > maxScore) {
-					result = p.getID();
-					maxScore = board.getScore(result);
-				}
+		for (Player p: players) {
+			if (board.getScore(p.getID()) > maxScore) {
+				result = p.getID();
+				maxScore = board.getScore(result);
 			}
 		}
 		return result;

@@ -132,10 +132,13 @@ public class NetworkGame implements Runnable {
 	
 	/**
 	 * Starts and ends Game. At the beginning it fills all Hands,
-	 * and then finds the players that is allowed
-	 * to make a Move first. It prints the board on the System.Out and executes the first Move.
+	 * and then finds the players that is allowed to make a Move first.
 	 * During the Game it lets the Players makes Moves,
 	 * checks them for validity and keeps the scores.
+	 * Notifies the other players using broadcast from handler.
+	 * After a player makes a move, it sends a command to that player with the pieces
+	 * to replace the pieces it just used.
+	 * If no Move or an incorrect Move is given, the player is kicked.
 	 * When the Game has finished it stops the Game and displays the winner and scores. 
 	 */
 	public void playGame() {
@@ -163,7 +166,7 @@ public class NetworkGame implements Runnable {
 				try {
 					valid = board.validMove(moves, players[currentPlayerID]);
 				} catch (InvalidMoveException e) {
-					players[currentPlayerID].sendCommand(e.getInfo());
+					kick(currentPlayerID, e.getInfo());
 				}
 				if (valid) {
 					moveCounter++;
@@ -205,14 +208,15 @@ public class NetworkGame implements Runnable {
 	}
 	
 	/**
-	 * Displays the winner and scores of other players to the Player. 
+	 * Broadcasts the Winner of the game. 
 	 */
 	public void ending() {
 		handler.broadcast("WINNER " + isWinner());
 	}
 
 	/**
-	 * Welcomes the players and starts the game. 
+	 * Notifies all players of the names and IDs of the participating Players.
+	 * Then starts the game. 
 	 */
 	public void run() {
 		String welcome = "NAMES";
@@ -354,7 +358,8 @@ public class NetworkGame implements Runnable {
 	
 
 	/**
-	 * Kicks a player when he send an invalid command or move. 
+	 * Kicks a player when he send an invalid command or move.
+	 * Notifies all other players of the Kick.
 	 */
 	public void kick(int playerID, String reason) {
 		int tiles = returnPieces(playerID);

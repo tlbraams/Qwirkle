@@ -33,7 +33,7 @@ public class RandomComputerPlayer extends ComputerPlayer {
 					result[0] = new Place(piece, row, column);
 					try {
 						if (board.validMove(result, this)) {
-						return result;
+							return result;
 						}
 					} catch (InvalidMoveException e) {
 						System.out.println(e.getInfo());

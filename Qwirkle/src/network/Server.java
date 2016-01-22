@@ -10,7 +10,11 @@ import java.util.List;
 public class Server {
 
 	private static final String USAGE = "usage: " + Server.class.getName() + " <port>";
-	
+	/**
+	 * Runs the server, using the argument given on startup as the port the server will use.
+	 * Prints a standard message if an error occurs
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		if (args.length != 1) {
 			System.out.println(USAGE);
@@ -27,12 +31,23 @@ public class Server {
 	private List<NetworkPlayer> readyPlayers;
 	private List<GameHandler> threads;
 	
+	// ---- Constructor: ----
+	/**
+	 * Creates a new Server with the given port.
+	 * @param portArg the port the server will listen to
+	 */
 	public Server(int portArg) {
 		port = portArg;
 		threads = new ArrayList<>();
 		readyPlayers = new ArrayList<>();
 	}
 	
+	// ---- Commands: ----
+	/**
+	 * Creates the ServerSocket and waits for connections.
+	 * If a connection is established, a new NetworkPlayer is made to handle the connection.
+	 * This Player is started as a new Thread.
+	 */
 	public void run() {
 		try {
 			ServerSocket ssock = new ServerSocket(port);
@@ -48,6 +63,12 @@ public class Server {
 		}
 	}
 
+	/**
+	 * Adds the given player to the list of ready Players waiting for a game.
+	 * If the amount of readyPlayers reaches 4, a new GameHandler is started and the list 
+	 * of ready Players is cleared.
+	 * @param player the player to add.
+	 */
 	public void setReady(NetworkPlayer player) {
 		readyPlayers.add(player);
 		if (readyPlayers.size() == 4) {
@@ -59,7 +80,12 @@ public class Server {
 		}
 	}
 	
-
+	/**
+	 * Checks if a given name statisfies the standard requirements.
+	 * Returns the ID given to the player if the name is valid, else -1.
+	 * @param name the name to check
+	 * @return -1 or the ID.
+	 */
 	public int validName(String name) {
 		int result = -1;
 		if (!name.contains(" ") && name.length() < 17 && name.length() >= 1
@@ -69,7 +95,10 @@ public class Server {
 		return result;
 	}
 	
-	
+	/**
+	 * Prints the given message on the standard output.
+	 * @param message the message to print
+	 */
 	public void print(String message) {
 		System.out.println(message);
 	}
