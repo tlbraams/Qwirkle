@@ -20,7 +20,6 @@ public class TestRandomAI {
 	private Board board;
 	private TUI tui;
 	private RandomComputerPlayer player;
-	private int playerCount;
 	private Piece pieceGreenDiamond;
 	private Piece pieceGreenSpade;
 	private Piece pieceGreenCircle;
@@ -29,7 +28,6 @@ public class TestRandomAI {
 	
 	@Before
 	public void setUp() {
-		playerCount = 2;
 		aiThinkTime = 9999;
 		player = new RandomComputerPlayer("AI", 1, aiThinkTime);
 		players = new Player[] {new HumanPlayer("Jeroen", 0), player}; 
@@ -45,7 +43,7 @@ public class TestRandomAI {
 	@Test
 	public void simpleTest() {
 		for (int j = 0; j < 6; j++) {
-			Piece piece = board.draw();
+			piece = board.draw();
 			player.receive(piece);
 		}	
 		board.setPiece(91, 91, pieceGreenDiamond);
@@ -56,7 +54,8 @@ public class TestRandomAI {
 		System.out.println(player.getHand().toString());
 		for (Move move: moves) {
 			if (move instanceof Place) {
-				board.setPiece(((Place) move).getRow(), ((Place) move).getColumn(), move.getPiece());
+				board.setPiece(((Place) move).getRow(),
+								((Place) move).getColumn(), move.getPiece());
 			}
 		}
 		tui.update();

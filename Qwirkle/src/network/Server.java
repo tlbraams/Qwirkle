@@ -9,7 +9,8 @@ import java.util.List;
 @SuppressWarnings("resource")
 public class Server {
 
-	private static final String USAGE = "When starting the Server '" + Server.class.getName() + "', please declare the <port>.";
+	private static final String USAGE = "When starting the Server '"
+							+ Server.class.getName() + "', please declare the <port>.";
 	/**
 	 * Runs the server, using the argument given on startup as the port the server will use.
 	 * Prints a standard message if an error occurs
