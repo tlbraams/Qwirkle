@@ -17,6 +17,8 @@ import exceptions.InvalidNameException;
 import model.*;
 import view.TUI;
 
+
+@SuppressWarnings("resource")
 public class Client extends Thread {
 
 	private static final String USAGE = "When starting the Client,"
@@ -163,13 +165,12 @@ public class Client extends Thread {
 	 */
 	public void findName() {
 		System.out.println("What is your name"
-				+ " (can only contain letters with maximum length of 16)?");
+						+ " (can only contain letters with maximum length of 16)?");
 		Boolean running = true;
-		Scanner playerInput = new Scanner(System.in);
 		String line;
 		while (running) {
-			line = playerInput.nextLine();
 			try {
+				line = playerInput.readLine();
 				isRightLength(line);
 				hasOnlyLetters(line);
 				

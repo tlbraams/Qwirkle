@@ -77,8 +77,9 @@ public class Menu {
 	
 	public void displayRegistrationOptions() {
 		System.out.println("What kind of player would you like to register?");
-		System.out.println("Human player ...... ............. 7");
+		System.out.println("Human player .................... 7");
 		System.out.println("Computer player ................. 8");
+		System.out.println("Smarter Computer player ......... 9");
 	}
 	
 	public void registerNewPlayer() {
@@ -93,6 +94,10 @@ public class Menu {
 			}
 			if (kindOfPlayer.equals("8")) {
 				registerComputerPlayer();
+				running = false;
+			}
+			if (kindOfPlayer.equals("9")) {
+				registerSmarterComputerPlayer();
 				running = false;
 			}
 		}
@@ -135,6 +140,30 @@ public class Menu {
 				hasOnlyLetters(name);
 				
 				players[playerCount] = new RandomComputerPlayer(name, playerCount, aiTime);
+				playerCount++;
+				running = false;
+			} catch (InvalidNameException e) {
+				e.getInfo();
+			}
+			if (playerCount == 4) {
+				new Game(playerCount, players, aiTime).run();
+				playerCount = 0;
+				players = new Player[4];
+			}
+		}
+	}
+	
+	public void registerSmarterComputerPlayer() {
+		System.out.println("What name do you want the Computer Player to have?"
+						+ " (can only contain letters with maximum length of 16)");
+		Boolean running = true;
+		Scanner line = new Scanner(System.in);
+		while (running) {
+			String name = line.nextLine();
+			try {
+				isRightLength(name);
+				hasOnlyLetters(name);
+				players[playerCount] = new RandomComputerPlayerWithScore(name, playerCount, aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {
