@@ -21,7 +21,7 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	 */
 	
 	public /*@ NonNull */Move[] determineMove(/*@ NonNull */Board board) {
-		startTime = System.nanoTime();
+		startTime = System.currentTimeMillis();
 		Move[] result = new Move[1];
 		// Try to make a Place.
 		outerloop:

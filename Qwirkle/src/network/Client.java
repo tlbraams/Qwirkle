@@ -18,7 +18,8 @@ import view.TUI;
 
 public class Client extends Thread {
 
-	private static final String USAGE = "When starting the Client, please declare two arguments: <address> <port> .";
+	private static final String USAGE = "When starting the Client,"
+					+ " please declare two arguments: <address> <port> .";
 	
 	public static void main(String[] args) {
 		if (args.length != 2) {
@@ -58,6 +59,7 @@ public class Client extends Thread {
 	
 	// ----- Instance Variables -----
 	private String clientName;
+	private Boolean firstTurn;
 	private Socket sock;
 	private Player player;
 	private Board board;
@@ -79,6 +81,7 @@ public class Client extends Thread {
 		in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 		out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
 		playerInput = new BufferedReader(new InputStreamReader(System.in));
+		firstTurn = true;
 	}
 	
 	/**
@@ -111,11 +114,16 @@ public class Client extends Thread {
 					lineScan.next();
 					int playerID = lineScan.nextInt();
 					if (this.player.getID() == playerID) {
-						findMove();
+						if (firstTurn) {
+							findFirstMove();
+						} else {
+							findMove();
+						}
 					}
 				} else if (line.startsWith("NEW")) {
 					receiveTiles(line);
 				} else if (line.startsWith("TURN")) {
+					firstTurn = false;
 					makeMove(line);
 				} else if (line.startsWith("KICK")) {
 					lineScan.next();
@@ -198,7 +206,8 @@ public class Client extends Thread {
 	 * Asks the user if he wants to play himself or let the computer play. 
 	 * It constructs an appropriate Player object (ComputerPlayer or HumanPlayer). 
 	 */
-	public void displayPlayerMenu(/*@ NonNull */String clientName, /*@ NonNull */ int playerNumber) {
+	public void displayPlayerMenu(/*@ NonNull */String nameOfClient,
+				/*@ NonNull */ int playerNumber) {
 		System.out.println("What kind of player would you like to register?");
 		System.out.println("Human player ...... ............. 1");
 		System.out.println("Computer player ................. 2");
@@ -207,12 +216,12 @@ public class Client extends Thread {
 		while (running) {
 			String kindOfPlayer = line.nextLine();
 			if (kindOfPlayer.equals("1")) {
-				player = new HumanPlayer(clientName, playerNumber);
+				player = new HumanPlayer(nameOfClient, playerNumber);
 				running = false;
 			}
 			if (kindOfPlayer.equals("2")) {
 				int aiTimeToThink = requestAITimeToThink();
-				player = new RandomComputerPlayer(clientName, playerNumber, aiTimeToThink);
+				player = new RandomComputerPlayer(nameOfClient, playerNumber, aiTimeToThink);
 				running = false;
 			}
 		}
@@ -224,7 +233,8 @@ public class Client extends Thread {
 	 */
 	public /*@ NonNull */int requestAITimeToThink() {
 		int result = 1000;
-		System.out.println("What is the maximum amount of time (in miliseconds) that you allow the ComputerPlayer to think.");
+		System.out.println("What is the maximum amount of time (in miliseconds)"
+						+ " that you allow the ComputerPlayer to think.");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
 		while (running) {
@@ -232,7 +242,8 @@ public class Client extends Thread {
 				result = line.nextInt();
 				running = false;
 			} catch (InputMismatchException e) {
-				System.out.println("You did not type an integer. The maximum time that the AI is allowed to think is now set at 1 second.");
+				System.out.println("You did not type an integer. The maximum time that the AI"
+								+ " is allowed to think is now set at 1 second.");
 				running = false;
 			}
 		}
@@ -245,7 +256,6 @@ public class Client extends Thread {
 	public void startGame(String line) {
 		System.out.println(line);
 		board = new Board();
-		
 		players = new ArrayList<>();
 		tilesInStack = 108;
 		Scanner scanLine = new Scanner(line);
@@ -266,8 +276,7 @@ public class Client extends Thread {
 	
 	/**
 	 * Asks the player associated with this Client to make a move.
-	 * Once it has this move it translates it to a String.
-	 * This String is made according to the protocol and given to sendCommand().
+	 * If the move is valid it is given to translateMove to send over the socket.
 	 */
 	public void findMove() {
 		Move[] move = player.determineMove(board);
@@ -284,6 +293,36 @@ public class Client extends Thread {
 				move = player.determineMove(board);
 			}
 		}
+		translateMove(move);
+	}
+	
+	/**
+	 * Asks the player associated with this Client to make the first move.
+	 * If the move is valid it is given to translateMove to send over the socket.
+	 */
+	public void findFirstMove() {
+		Move[] move = player.determineFirstMove(board);
+		boolean valid = false;
+		while (!valid) {
+			try {
+				valid = board.validMove(move, player);
+				for (int i = 0; i < move.length; i++) {
+					player.remove(move[i].getPiece());
+					print(i + " " + move[i].getPiece().toString());
+				}
+			} catch (InvalidMoveException e) {
+				print(e.getInfo());
+				move = player.determineFirstMove(board);
+			}
+		}
+		translateMove(move);
+	}
+	
+	/**
+	 * Transslate the given move according to the Protocol to send if out using sendCommand().
+	 * @param move the move to translate
+	 */
+	public void translateMove(Move[] move) {
 		String result = "";
 		if (move[0] instanceof Place) {
 			result = "MOVE";
@@ -296,7 +335,6 @@ public class Client extends Thread {
 				result += move[i].toString();
 			}
 		}
-		print(result);
 		sendCommand(result);
 	}
 	
