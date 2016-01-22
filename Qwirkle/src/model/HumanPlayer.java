@@ -49,7 +49,8 @@ public class HumanPlayer extends LocalPlayer {
 				moves = trade();
 			}
 		} else if (type == 7) {
-			//moves = pass();
+			moves = new ArrayList<Move>();
+			moves.add(new Trade(null));
 		}
 		Move[] result = moves.toArray(new Move[moves.size()]);
 		return result;

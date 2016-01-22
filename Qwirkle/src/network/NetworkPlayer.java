@@ -179,18 +179,22 @@ public class NetworkPlayer implements Player, Runnable {
 				while (scanLine.hasNext()) {
 					String pieceName = scanLine.next();
 					Piece piece = null;
-					boolean found = false;
-					for (Piece p: hand) {
-						if (p.toString().equals(pieceName) && !found) {
-							piece = p;
-							found = true;
-						}
-					}
-					if (found) {
+					if (pieceName.equals("empty")) {
 						trades.add(new Trade(piece));
-						
 					} else {
-						sendCommand("Error: " + pieceName + " is not a piece in your hand.");
+						boolean found = false;
+						for (Piece p: hand) {
+							if (p.toString().equals(pieceName) && !found) {
+								piece = p;
+								found = true;
+							}
+						}
+						if (found) {
+							trades.add(new Trade(piece));
+							
+						} else {
+							sendCommand("Error: " + pieceName + " is not a piece in your hand.");
+						}
 					}
 				}
 				move = trades.toArray(new Move[trades.size()]);

@@ -335,8 +335,12 @@ public class Client extends Thread {
 			}
 		} else if (move[0] instanceof Trade) {
 			result = "TRADE";
-			for (int i = 0; i < move.length; i++) {
-				result += move[i].toString();
+			if (move[0].getPiece() == null) {
+				result += " empty";
+			} else {
+				for (int i = 0; i < move.length; i++) {
+					result += move[i].toString();
+				}
 			}
 		}
 		sendCommand(result);

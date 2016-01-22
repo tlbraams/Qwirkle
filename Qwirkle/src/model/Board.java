@@ -460,8 +460,12 @@ public class Board {
 			}
 			
 			if (moves[0] instanceof Trade) {
-				allTradeMoves(moves);
-				playerHasPiece(moves, player);
+				if (moves.length == 1 && moves[0].getPiece() == null) {
+					result = true;
+				} else {
+					allTradeMoves(moves);
+					playerHasPiece(moves, player);
+				}
 			}
 		}
 		return result;
