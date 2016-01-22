@@ -551,7 +551,7 @@ public class Board {
 			int maxColumnPlace = minColumnPlace;
 			for (int i = 1; i < places.length; i++) {
 				if (places[0].getRow() != places[i].getRow()) {
-					throw new InvalidMoveException("You are trying to place Pieces"
+					throw new InvalidMoveException("You are trying to place tiles"
 							+ " on seperate rows.");
 				}
 				if (places[i].getColumn() < minColumnPlace) {
@@ -587,7 +587,7 @@ public class Board {
 			int maxRowPlace = minRowPlace;
 			for (int i = 1; i < places.length; i++) {
 				if (places[0].getColumn() != places[i].getColumn()) {
-					throw new InvalidMoveException("You are trying to place Pieces"
+					throw new InvalidMoveException("You are trying to place tiles"
 							+ " on seperate columns.");
 				}
 				if (places[i].getRow() < minRowPlace) {
@@ -623,7 +623,7 @@ public class Board {
 			fixedShape = fixedShape && wholeRow.get(i).getShape() == piece.getShape();
 		}
 		if (!(fixedColor || fixedShape)) {
-			throw new InvalidMoveException("The piece: " + piece.toString()
+			throw new InvalidMoveException(piece.toString()
 					+ ", does not fit in the row.");
 		} else if (fixedColor) {
 			hasUniqueShape(piece, wholeRow);
@@ -639,8 +639,8 @@ public class Board {
 			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getColor() == piece.getColor()) {
-				throw new InvalidMoveException("You try to place a row with tiles"
-						+ " of the same color.");
+				throw new InvalidMoveException(piece.toString() + " does not have a unique color"
+						+ "in the row that you try to add to.");
 			}
 		}
 	}
@@ -652,8 +652,8 @@ public class Board {
 			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getShape() == piece.getShape()) {
-				throw new InvalidMoveException("You try to place a row with tiles"
-						+ " of the same shape.");
+				throw new InvalidMoveException(piece.toString() + " does not hav a unique shape"
+						+ "in the row that you try to add to.");
 			}
 		}
 	}	
