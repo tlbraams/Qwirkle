@@ -35,7 +35,7 @@ public class RandomComputerPlayer extends ComputerPlayer {
 					try {
 						
 						if (board.validMove(result, this)) {
-						return result;
+							return result;
 						}
 					} catch (InvalidMoveException e) {
 						//System.out.println(e.getInfo());

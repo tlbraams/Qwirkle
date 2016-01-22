@@ -102,7 +102,7 @@ public class Menu {
 	
 	public void registerHumanPlayer() {
 		System.out.println("What is your name?"
-					+ " (can only contain letters with maximum length of 16)");
+						+ " (can only contain letters with maximum length of 16)");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
 		while (running) {
@@ -127,7 +127,7 @@ public class Menu {
 	
 	public void registerComputerPlayer() {
 		System.out.println("What name do you want the Computer Player to have?"
-				+ " (can only contain letters with maximum length of 16)");
+						+ " (can only contain letters with maximum length of 16)");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
 		while (running) {
