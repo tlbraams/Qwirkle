@@ -31,8 +31,6 @@ public class HumanPlayer extends LocalPlayer {
 	/**
 	 * Asks the player which <code>Piece</code>'s from his hand to place where on the given board,
 	 * or which <code>Piece</code>'s he wants to trade with the stack.
-	 * If the player wants to place tiles,
-	 * it is checked whether the given cells exist and are empty. 
 	 * @param board the given board.
 	 * @return An array of the chosen Moves, either all place moves or swap moves.
 	 */
@@ -42,7 +40,7 @@ public class HumanPlayer extends LocalPlayer {
 	public /*@ NonNull */Move[] determineMove(/*@ NonNull */Board board) {
 		showHand();
 		ArrayList<Move> moves = new ArrayList<Move>();
-		int type = showOptions();
+		int type = showOptions(board);
 		if (type == 5) {
 			moves = place(); 
 		} else if (type == 6) {
@@ -50,6 +48,8 @@ public class HumanPlayer extends LocalPlayer {
 			while (cont) {
 				moves = trade();
 			}
+		} else if (type == 7) {
+			//moves = pass();
 		}
 		Move[] result = moves.toArray(new Move[moves.size()]);
 		return result;
@@ -160,10 +160,18 @@ public class HumanPlayer extends LocalPlayer {
 		System.out.println(result);
 	}
 	
-	public int showOptions() {
+	public int showOptions(Board board) {
 		System.out.println(this.getName() + ": What would you like to do?");
 		System.out.println("Place tiles ................... 5");
-		System.out.println("Trade tiles ................... 6");
+		if (board.getStack().size() == 0) {
+			System.out.println("Pass ................... 7");
+		} else {
+			System.out.println("Trade tiles ................... 6");
+			if (board.getStack().size() < 6) {
+				System.out.println("Maximum amount of tradeble pieces: "
+								+ board.getStack().size());
+			}
+		}
 		int result = 0;
 		boolean intRead = false;
 		Scanner line = new Scanner(System.in);
@@ -171,7 +179,7 @@ public class HumanPlayer extends LocalPlayer {
 			try (Scanner scannerLine = new Scanner(line.next())) {
 				if (scannerLine.hasNextInt()) {
 					result = scannerLine.nextInt();
-					if (result == 5 || result == 6) {
+					if (result == 5 || result == 6 || result == 7) {
 						intRead = true;
 					} else {
 						System.out.println("Please make a valid choice. (5/6)");
@@ -228,7 +236,5 @@ public class HumanPlayer extends LocalPlayer {
 		return column;
 	}
 	
-	/**
-	 * How to handle kick/exit??.
-	 */
+	
 }

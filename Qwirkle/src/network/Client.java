@@ -265,15 +265,19 @@ public class Client extends Thread {
 			String name = scanLine.next();
 			int playerID = scanLine.nextInt();
 			players.add(playerID, name);
-			tilesInStack = tilesInStack - 6;
+			removeFromStack(6);
 			if (scanLine.hasNextInt()) {
 				notAI = false;
-			}
+				if (player instanceof ComputerPlayer) {
+					((ComputerPlayer) player).setAITime(scanLine.nextInt());
+				}
+			}	
 		}
 		view = new TUI(board, players.size());
 		scanLine.close();
 	}
 	
+
 	/**
 	 * Asks the player associated with this Client to make a move.
 	 * If the move is valid it is given to translateMove to send over the socket.
@@ -377,7 +381,7 @@ public class Client extends Thread {
 				Piece piece = new Piece(Piece.charToColor(pieceString.charAt(0)),
 								Piece.chatToShape(pieceString.charAt(1)));
 				if (tilesInStack != 0) {
-					tilesInStack--;
+					removeFromStack(1);
 				}
 				board.setPiece(row, column, piece);
 				places.add(new Place(piece, row, column));
@@ -386,6 +390,7 @@ public class Client extends Thread {
 			int score = board.getScore(places.toArray(new Move[places.size()]));
 			board.addScore(playerID, score);
 		}
+		print(tilesInStack + " " + board.getStack().size());
 	}
 	
 	/**
@@ -396,7 +401,7 @@ public class Client extends Thread {
 		scanLine.next();
 		int playerID = scanLine.nextInt();
 		int tiles = scanLine.nextInt();
-		tilesInStack += tiles;
+		addToStack(tiles);
 		String reason = scanLine.nextLine();
 		print(players.get(playerID) + " was kicked.");
 		print(reason);
@@ -418,6 +423,28 @@ public class Client extends Thread {
 	}
 	
 	/**
+	 * Decreases the count of the pieces in the stack by the given amount.
+	 * @param toRemove the amount of pieces to remove
+	 */
+	private void removeFromStack(int toRemove) {
+		tilesInStack = tilesInStack - toRemove;
+		for (int i = 0; i < toRemove; i++) {
+			board.draw();
+		}
+		
+	}
+	
+	/**
+	 * Increases the count of the pieces in the stack by the given amount.
+	 */
+	private void addToStack(int toAdd) {
+		tilesInStack += toAdd;
+		for (int i = 0; i < toAdd; i++) {
+			board.getStack().add(new Piece(Piece.Color.DEFAULT, Piece.Shape.BLOCKED));
+		}
+	}
+	
+	/**
 	 * ShutsDown the Client.
 	 */
 	public void shutDown() {
@@ -432,3 +459,5 @@ public class Client extends Thread {
 		
 	}
 }
+
+	

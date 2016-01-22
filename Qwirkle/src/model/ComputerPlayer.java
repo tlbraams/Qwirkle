@@ -34,4 +34,9 @@ public abstract class ComputerPlayer extends LocalPlayer {
 	 */
 	public abstract /*@ NonNull */Move[] determineMove(/*@ NonNull */Board board);
 	
+	/**
+	 * Sets the Think time of this ComputerPlayer to the given value.
+	 * @param thinkTime the time to think
+	 */
+	public abstract void setAITime(int thinkTime);
 }

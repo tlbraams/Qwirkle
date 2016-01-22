@@ -57,7 +57,6 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	 * Tries to find a possible Move given the board and the Pieces in the hand
 	 * of the ComputerPlayer. It prefers a Place over a Trade. 
 	 */
-	
 	public Move[] determineFirstMove(Board board) {
 		Move[] result = new Move[1];
 		boolean filled = false;
@@ -69,5 +68,13 @@ public class RandomComputerPlayer extends ComputerPlayer {
 		}
 		return result;
 		
+	}
+	
+	/**
+	 * Sets the ai think time to the given value.
+	 * @param aiTime
+	 */
+	public void setAITime(int aiTime) {
+		timeToThink = aiTime;
 	}
 }
