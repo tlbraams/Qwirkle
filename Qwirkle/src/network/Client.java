@@ -13,6 +13,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import exceptions.InvalidMoveException;
+import exceptions.InvalidNameException;
 import model.*;
 import view.TUI;
 
@@ -161,19 +162,63 @@ public class Client extends Thread {
 	 * it waits for an acknowledgement of the name.
 	 */
 	public void findName() {
-		System.out.println("What name would you like to use?");
-		try {
-			String line;
-			boolean waiting = true;
-			while (waiting) {
-				line = playerInput.readLine();
+		System.out.println("What is your name"
+				+ " (can only contain letters with maximum length of 16)?");
+		Boolean running = true;
+		Scanner playerInput = new Scanner(System.in);
+		String line;
+		while (running) {
+			line = playerInput.nextLine();
+			try {
+				isRightLength(line);
+				hasOnlyLetters(line);
+				
 				out.write("HELLO " + line);
 				out.newLine();
 				out.flush();
-				waiting = waitForConfirmation();
+				running = waitForConfirmation();
+			} catch (InvalidNameException e) {
+				e.getInfo();
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
 			}
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Tests if a given name is of the right length.
+	 * @param name
+	 * @throws InvalidNameException
+	 */
+	/*
+	 *@ ensures 	0 < name.length && name.length < 17;
+	 */
+	public void isRightLength(/*@ NonNull */String name) throws InvalidNameException {
+		if (name.length() > 16) {
+			throw new InvalidNameException("Your name must have a maximum length of 16."
+							+ " Please enter a new name.");
+		} else if (name.length() < 1) {
+			throw new InvalidNameException("Your name is too short. Please enter a new name.");	
+		}
+	}
+	
+	/**
+	 * Tests if a given name only contains letters. 
+	 * @param name
+	 * @throws InvalidNameException
+	 */
+	public void hasOnlyLetters(/*@ NonNull */String name) throws InvalidNameException {
+		char[] characters = name.toCharArray();
+		if (name.contains(" ")) {
+			throw new InvalidNameException("Your name cannot contain a space."
+					+ " Please enter a new name.");
+		} 
+		for (char character: characters) {
+			int ascii = (int) character;
+			if (!((64 < ascii && ascii < 91) || (96 < ascii && ascii < 123))) {
+				throw new InvalidNameException("Your name contains characters other than letters."
+						+ " Please enter a new name.");
+			} 
 		}
 	}
 	
@@ -218,13 +263,15 @@ public class Client extends Thread {
 			if (kindOfPlayer.equals("1")) {
 				player = new HumanPlayer(nameOfClient, playerNumber);
 				running = false;
+				System.out.println(nameOfClient + " was added to the game.");
 			}
 			if (kindOfPlayer.equals("2")) {
 				int aiTimeToThink = requestAITimeToThink();
 				player = new RandomComputerPlayer(nameOfClient, playerNumber, aiTimeToThink);
 				running = false;
+				System.out.println("'" + nameOfClient + "' was added to the game.");
 			}
-		}
+		}	
 	}
 	
 	/**
@@ -234,7 +281,7 @@ public class Client extends Thread {
 	public /*@ NonNull */int requestAITimeToThink() {
 		int result = 1000;
 		System.out.println("What is the maximum amount of time (in miliseconds)"
-						+ " that you allow the ComputerPlayer to think.");
+						+ " that you allow the ComputerPlayer to think?");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
 		while (running) {

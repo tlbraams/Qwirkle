@@ -85,7 +85,7 @@ public class HumanPlayer extends LocalPlayer {
 		ArrayList<Move> result = new ArrayList<Move>();
 		boolean cont = true;
 		while (cont) {
-			System.out.println("Please enter the piece you would like to trade.");
+			System.out.println("Please enter the piece you would like to trade:");
 			Scanner line = new Scanner(System.in);
 			try (Scanner scLine = new Scanner(line.next())) {
 				String input = scLine.next();

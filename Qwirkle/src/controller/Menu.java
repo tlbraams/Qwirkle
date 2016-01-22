@@ -6,17 +6,15 @@ import exceptions.InvalidGameException;
 import exceptions.InvalidNameException;
 import model.*;
 
+/**
+ * Asks the player to register. Once enough players have gathered or they
+ * start manually a new game is started. This Game is player locally. 
+ */
+
 @SuppressWarnings("resource")
 public class Menu {
-
-	/**
-	 * 3 commando's: exit, aanmelden, start. 
-	 */
 	
-	/**
-	 * Asks the player to register. Once enough players have gathered or they
-	 * start manually a new game is started.
-	 */
+	// ----- Instance Variables -----
 	private Player[] players;
 	int playerCount;
 	int aiTime;
@@ -101,8 +99,8 @@ public class Menu {
 	}
 	
 	public void registerHumanPlayer() {
-		System.out.println("What is your name?"
-						+ " (can only contain letters with maximum length of 16)");
+		System.out.println("What is your name "
+						+ " (can only contain letters with maximum length of 16)?");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
 		while (running) {
@@ -171,9 +169,6 @@ public class Menu {
 	 * Tests if a given name only contains letters. 
 	 * @param name
 	 * @throws InvalidNameException
-	 */
-	/*
-	 * 
 	 */
 	public void hasOnlyLetters(/*@ NonNull */String name) throws InvalidNameException {
 		char[] characters = name.toCharArray();
