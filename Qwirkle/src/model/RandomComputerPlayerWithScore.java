@@ -1,5 +1,9 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import exceptions.InvalidMoveException;
 
 public class RandomComputerPlayerWithScore extends ComputerPlayer {
@@ -27,8 +31,8 @@ public class RandomComputerPlayerWithScore extends ComputerPlayer {
 		// Try to make a Place.
 		outerloop:
 		for (Piece piece: hand) {
-			for (int row = board.getMinRow(); row < board.getMaxRow(); row++) {
-				for (int column = board.getMinColumn(); column < board.getMaxColumn(); column++) {
+			for (int row = board.getMinRow(); row <= board.getMaxRow(); row++) {
+				for (int column = board.getMinColumn(); column <= board.getMaxColumn(); column++) {
 					if ((System.nanoTime() - startTime) < timeToThink) {
 						break outerloop;
 					}
@@ -36,7 +40,9 @@ public class RandomComputerPlayerWithScore extends ComputerPlayer {
 					temp[0] = new Place(piece, row, column);
 					try {
 						if (board.validMove(temp, this)) {
-							if (board.getScore(temp) > maxScore) {
+							Board scoreBoard = board.deepCopy();
+							scoreBoard.setPiece(row, column, piece);
+							if (scoreBoard.getScore(temp) > maxScore) {
 								maxScore = board.getScore(temp);
 								result[0] = temp[0];
 							}
@@ -60,16 +66,46 @@ public class RandomComputerPlayerWithScore extends ComputerPlayer {
 	}
 	
 	/**
-	 * Tries to find a possible Move given the board and the Pieces in the hand
-	 * of the ComputerPlayer. It prefers a Place over a Trade. 
+	 * Finds the longest row of pieces in the hand.
 	 */
 	public Move[] determineFirstMove(Board board) {
-		Move[] result = new Move[1];
-		boolean filled = false;
-		for (Piece piece: hand) {
-			if (!filled) {
-				result[0] = new Place(piece, 91, 91);
-				filled = true;
+		Move[] result = null;
+		int max = 0;
+		for (Piece p : hand) {
+			ArrayList<Piece> colorPieces = new ArrayList<>();
+			ArrayList<Piece> shapePieces = new ArrayList<>();
+			colorPieces.add(p);
+			shapePieces.add(p);
+			Set<Piece> restHand = new HashSet<>(hand);
+			restHand.remove(p);
+			int color = 1;
+			int shape = 1;
+			
+			// Check if either the color or the shape of each rp matches that of p.
+			// If so, add to color or shape. 
+			for (Piece rp : restHand) {
+				if (rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
+					color++;
+					colorPieces.add(rp);
+				} else if (!rp.getColor().equals(p.getColor())
+								&& rp.getShape().equals(p.getShape())) {
+					shape++;
+					shapePieces.add(rp);
+				}
+			}
+			if (color > max) {
+				max = color;
+				result = new Move[colorPieces.size()];
+				for (int i = 0; i < colorPieces.size(); i++) {
+					result[i] = new Place(colorPieces.get(i), 91, 91 + i);
+				}
+			}
+			if (shape > max) {
+				max = shape;
+				result = new Move[shapePieces.size()];
+				for (int i = 0; i < shapePieces.size(); i++) {
+					result[i] = new Place(shapePieces.get(i), 91, 91 + i);
+				}
 			}
 		}
 		return result;

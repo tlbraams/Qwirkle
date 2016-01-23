@@ -165,7 +165,7 @@ public class HumanPlayer extends LocalPlayer {
 		System.out.println(this.getName() + ": What would you like to do?");
 		System.out.println("Place tiles ................... 5");
 		if (board.getStack().size() == 0) {
-			System.out.println("Pass ................... 7");
+			System.out.println("Pass ......................... 7");
 		} else {
 			System.out.println("Trade tiles ................... 6");
 			if (board.getStack().size() < 6) {

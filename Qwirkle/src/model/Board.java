@@ -353,6 +353,9 @@ public class Board {
 				result += column;
 			}
 		}
+		if (column == 1 && row == 1) {
+			result = 1;
+		}
 		return result;
 	}
 	
