@@ -157,15 +157,8 @@ public class NetworkPlayer implements Player, Runnable {
 					String pieceName = scanLine.next();
 					int row = scanLine.nextInt();
 					int column = scanLine.nextInt();
-					Piece piece = null;
-					boolean found = false;
-					for (Piece p: hand) {
-						if (p.toString().equals(pieceName) && !found) {
-							piece = p;
-							found = true;
-						}
-					}
-					if (found) {
+					Piece piece = findPiece(pieceName);
+					if (piece != null) {
 						System.out.println(piece.toString());
 						places.add(new Place(piece, row, column));
 					} else {
@@ -178,17 +171,9 @@ public class NetworkPlayer implements Player, Runnable {
 				ArrayList<Trade> trades = new ArrayList<>();
 				while (scanLine.hasNext()) {
 					String pieceName = scanLine.next();
-					Piece piece = null;
-					boolean found = false;
-					for (Piece p: hand) {
-						if (p.toString().equals(pieceName) && !found) {
-							piece = p;
-							found = true;
-						}
-					}
-					if (found) {
+					Piece piece = findPiece(pieceName);
+					if (piece != null) { 
 						trades.add(new Trade(piece));
-						
 					} else {
 						sendCommand("Error: " + pieceName + " is not a piece in your hand.");
 					}
@@ -200,6 +185,24 @@ public class NetworkPlayer implements Player, Runnable {
 		}
 		return move;
 		
+	}
+	
+	/**
+	 * Finds and returns the Piece in the NetworkPlayer's hand that is the same as 
+	 * the pieceName. 
+	 * @param pieceName the name of the Piece that is needed.
+	 * @return the Piece object that has the same name as pieceName. 
+	 */
+	public /*@ NonNull */Piece findPiece(/*@ NonNull */String pieceName) {
+		Piece result = null;
+		boolean found = false;
+		for (Piece p: hand) {
+			if (p.toString().equals(pieceName) && !found) {
+				result = p;
+				found = true;
+			}
+		}
+		return result;
 	}
 	
 	/**

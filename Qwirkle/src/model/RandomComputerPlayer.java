@@ -2,6 +2,13 @@ package model;
 
 import exceptions.InvalidMoveException;
 
+/**
+ * This class models a ComputerPlayer that can only make one Place every turn. 
+ * @author Tycho Braams & Jeroen Mulder
+ * @version $1.1
+ *
+ */
+
 public class RandomComputerPlayer extends ComputerPlayer {
 
 	// ----- Instance Variables -----
@@ -15,6 +22,10 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	}
 
 	// ----- Queries -----
+	
+	
+	
+	// ----- Commands -----
 	/**
 	 * Tries to find a possible Move for as long as the AI is allowed to think. 
 	 * It first tries to find a Place. If no Place was found the whole hand is traded. 
@@ -22,6 +33,11 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	
 	public /*@ NonNull */Move[] determineMove(/*@ NonNull */Board board) {
 		startTime = System.currentTimeMillis();
+		boolean validPlace = false;
+		Piece highestScoringPiece = null;
+		int highestScore = 0;
+		int highestScoringRow = 0;
+		int highestScoringColumn = 0;
 		Move[] result = new Move[1];
 		// Try to make a Place.
 		outerloop:
@@ -33,16 +49,28 @@ public class RandomComputerPlayer extends ComputerPlayer {
 					}
 					result[0] = new Place(piece, row, column);
 					try {
-						
 						if (board.validMove(result, this)) {
-							return result;
+							int score = board.getScore(result);
+							if (highestScore < score) {
+								highestScore = score;
+								highestScoringPiece = piece;
+								highestScoringRow = row;
+								highestScoringColumn = column;
+								validPlace = true;
+							}
 						}
 					} catch (InvalidMoveException e) {
-						//System.out.println(e.getInfo());
+						// System.out.println(e.getInfo());
 					}
+					
 				}
 			}
 		}
+		if (validPlace) {
+			result[0] = new Place(highestScoringPiece, highestScoringRow, highestScoringColumn);
+			return result;
+		}
+		
 		// Trade the whole hand. 
 		result = new Move[hand.size()];
 		int i = 0;
@@ -54,8 +82,7 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	}
 	
 	/**
-	 * Tries to find a possible Move given the board and the Pieces in the hand
-	 * of the ComputerPlayer. It prefers a Place over a Trade. 
+	 * Make a Move by placing one Piece (the first in the hand) at (91,91). 
 	 */
 	public Move[] determineFirstMove(Board board) {
 		Move[] result = new Move[1];
