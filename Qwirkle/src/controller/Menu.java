@@ -139,7 +139,7 @@ public class Menu {
 				isRightLength(name);
 				hasOnlyLetters(name);
 				
-				players[playerCount] = new RandomComputerPlayer(name, playerCount, aiTime);
+				players[playerCount] = new ComputerPlayer(name, playerCount, "Random", aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {
@@ -163,7 +163,8 @@ public class Menu {
 			try {
 				isRightLength(name);
 				hasOnlyLetters(name);
-				players[playerCount] = new RandomComputerPlayerWithScore(name, playerCount, aiTime);
+				players[playerCount] = new ComputerPlayer(name, playerCount,
+																"RandomWithScore", aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {

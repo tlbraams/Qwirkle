@@ -188,7 +188,6 @@ public class HumanPlayer extends LocalPlayer {
 						intRead = true;
 					} else if (result == 8) {
 						printHint(board);
-						result = showOptions(board);
 					} else {
 						System.out.println("Please make a valid choice. (5/6/8)");
 					}
@@ -254,6 +253,7 @@ public class HumanPlayer extends LocalPlayer {
 				System.out.println(m.getPiece() + " " + m.getRow() + " " + m.getColumn());
 			}
 		}
+		System.out.println("Please make a new choice.");
 	}
 	
 	
