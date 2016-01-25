@@ -22,11 +22,16 @@ public class Server {
 			System.exit(0);
 		}
 		
-		Server server = new Server(Integer.parseInt(args[0]));
+		Server server = null;
+		try {
+			server = new Server(Integer.parseInt(args[0]));
+		} catch (NumberFormatException e) {
+			System.out.println("This is not a valid port number. Please only use numbers.");
+		}
 		server.run();
 	}
 	
-	// ------------
+	// ----- Instance Variables -----
 	
 	private int port;
 	private List<NetworkPlayer> readyPlayers;
