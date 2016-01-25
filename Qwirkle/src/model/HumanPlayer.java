@@ -13,6 +13,8 @@ public class HumanPlayer extends LocalPlayer {
 	 */
 	public static final int MAX_HAND = 6;
 	
+	private Strategy hints;
+	
 	
 	/**
 	 * Creates a new <code>HumanPlayer</code> with the given name and age and an empty hand
@@ -24,6 +26,7 @@ public class HumanPlayer extends LocalPlayer {
 		this.id = number;
 		this.name = name;
 		hand = new HashSet<Piece>(MAX_HAND);
+		hints = new RandomWithScoreStrategy(this, 1000);
 	}
 	
 	// ----------- Queries -------------------
@@ -174,6 +177,7 @@ public class HumanPlayer extends LocalPlayer {
 								+ board.getStack().size());
 			}
 		}
+		System.out.println("Receive a hint ................ 8");
 		int result = 0;
 		boolean intRead = false;
 		Scanner line = new Scanner(System.in);
@@ -183,11 +187,14 @@ public class HumanPlayer extends LocalPlayer {
 					result = scannerLine.nextInt();
 					if (result == 5 || result == 6 || result == 7) {
 						intRead = true;
+					} else if (result == 8) {
+						printHint(board);
+						result = showOptions(board);
 					} else {
-						System.out.println("Please make a valid choice. (5/6)");
+						System.out.println("Please make a valid choice. (5/6/8)");
 					}
 				} else {
-					System.out.println("Please make a valid choice. (5/6)");
+					System.out.println("Please make a valid choice. (5/6/8)");
 				}
 			}
 		}
@@ -236,6 +243,18 @@ public class HumanPlayer extends LocalPlayer {
 			}
 		}
 		return column;
+	}
+	
+	public void printHint(Board board) {
+		Place[] hint = hints.findMove(hand, board);
+		if (hint[0] == null) {
+			System.out.println("No hint possible at this time.");
+		} else {
+			System.out.println("The following hint has been provided: ");
+			for (Place m: hint) {
+				System.out.println(m.getPiece() + " " + m.getRow() + " " + m.getColumn());
+			}
+		}
 	}
 	
 	

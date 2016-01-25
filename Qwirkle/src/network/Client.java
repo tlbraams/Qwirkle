@@ -299,7 +299,7 @@ public class Client extends Thread {
 			}
 			if (kindOfPlayer.equals("2")) {
 				int aiTimeToThink = requestAITimeToThink();
-				player = new RandomComputerPlayer(nameOfClient, playerNumber, aiTimeToThink);
+				player = new  ComputerPlayer(nameOfClient, playerNumber, "Random", aiTimeToThink);
 				running = false;
 				System.out.println("'" + nameOfClient + "' was added to the game.");
 			}
