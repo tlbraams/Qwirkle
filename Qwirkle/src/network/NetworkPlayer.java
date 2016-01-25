@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
+import exceptions.InvalidMoveException;
 import model.*;
 
 @SuppressWarnings("resource")
@@ -158,14 +159,12 @@ public class NetworkPlayer implements Player, Runnable {
 					int row = scanLine.nextInt();
 					int column = scanLine.nextInt();
 					Piece piece = null;
-					boolean found = false;
-					for (Piece p: hand) {
-						if (p.toString().equals(pieceName) && !found) {
-							piece = p;
-							found = true;
-						}
+					try {
+						piece = findPiece(pieceName);
+					} catch (InvalidMoveException e) {
+						System.out.println(e.getInfo());
 					}
-					if (found) {
+					if (piece != null) {
 						System.out.println(piece.toString());
 						places.add(new Place(piece, row, column));
 					} else {
@@ -182,18 +181,10 @@ public class NetworkPlayer implements Player, Runnable {
 					if (pieceName.equals("empty")) {
 						trades.add(new Trade(piece));
 					} else {
-						boolean found = false;
-						for (Piece p: hand) {
-							if (p.toString().equals(pieceName) && !found) {
-								piece = p;
-								found = true;
-							}
-						}
-						if (found) {
-							trades.add(new Trade(piece));
-							
-						} else {
-							sendCommand("Error: " + pieceName + " is not a piece in your hand.");
+						try {
+							piece = findPiece(pieceName);
+						} catch (InvalidMoveException e) {
+							System.out.println(e.getInfo());
 						}
 					}
 				}
@@ -206,6 +197,27 @@ public class NetworkPlayer implements Player, Runnable {
 		
 	}
 	
+	/**
+	 * Finds and returns the Piece in the NetworkPlayer's hand that is the same as 
+	 * the pieceName. 
+	 * @param pieceName the name of the Piece that is needed.
+	 * @return the Piece object that has the same name as pieceName. 
+	 */
+	public /*@ NonNull */Piece findPiece(/*@ NonNull */String pieceName) throws InvalidMoveException {
+		Piece result = null;
+		boolean found = false;
+		for (Piece p: hand) {
+			if (p.toString().equals(pieceName) && !found) {
+				result = p;
+				found = true;
+			}
+		}
+		if (!found) {
+			throw new InvalidMoveException("The tile is not in your hand.");
+		}
+		return result;
+	}
+
 	/**
 	 * Method from interface, not used.
 	 */

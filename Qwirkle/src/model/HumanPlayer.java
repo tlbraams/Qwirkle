@@ -50,6 +50,7 @@ public class HumanPlayer extends LocalPlayer {
 			boolean cont = true;
 			while (cont) {
 				moves = trade();
+				cont = false;
 			}
 		} else if (type == 7) {
 			moves = new ArrayList<Move>();
