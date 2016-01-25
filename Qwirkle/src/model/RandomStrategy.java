@@ -1,17 +1,20 @@
 package model;
 
+import java.util.HashSet;
+
 import exceptions.InvalidMoveException;
 
-public class RandomComputerPlayer extends ComputerPlayer {
+public class RandomStrategy implements Strategy {
 
 	// ----- Instance Variables -----
-	private int timeToThink;
-	long startTime;       
+	private long timeToThink;
+	private Player player;
+      
 	
 	// ----- Constructor -----
-	public RandomComputerPlayer(String name, int id, int timeToThink) {
-		super(name, id);
+	public RandomStrategy(Player player, long timeToThink) {
 		this.timeToThink = timeToThink;
+		this.player = player;
 	}
 
 	// ----- Queries -----
@@ -20,9 +23,10 @@ public class RandomComputerPlayer extends ComputerPlayer {
 	 * It first tries to find a Place. If no Place was found the whole hand is traded. 
 	 */
 	
-	public /*@ NonNull */Move[] determineMove(/*@ NonNull */Board board) {
-		startTime = System.currentTimeMillis();
-		Move[] result = new Move[1];
+	public /*@ NonNull */Place[] findMove(/*@ NonNull */HashSet<Piece> hand,
+						/*@ NonNull */Board board) {
+		long startTime = System.currentTimeMillis();
+		Place[] result = new Place[1];
 		// Try to make a Place.
 		outerloop:
 		for (Piece piece: hand) {
@@ -33,42 +37,17 @@ public class RandomComputerPlayer extends ComputerPlayer {
 					}
 					result[0] = new Place(piece, row, column);
 					try {
-						
-						if (board.validMove(result, this)) {
+						if (board.validMove(result, player)) {
 							return result;
 						}
 					} catch (InvalidMoveException e) {
-						//System.out.println(e.getInfo());
 					}
 				}
 			}
 		}
-		// Trade the whole hand. 
-		result = new Move[hand.size()];
-		int i = 0;
-		for (Piece piece: hand) {
-			result[i] = new Trade(piece);
-			i++;
-		}
 		return result;
 	}
 	
-	/**
-	 * Tries to find a possible Move given the board and the Pieces in the hand
-	 * of the ComputerPlayer. It prefers a Place over a Trade. 
-	 */
-	public Move[] determineFirstMove(Board board) {
-		Move[] result = new Move[1];
-		boolean filled = false;
-		for (Piece piece: hand) {
-			if (!filled) {
-				result[0] = new Place(piece, 91, 91);
-				filled = true;
-			}
-		}
-		return result;
-		
-	}
 	
 	/**
 	 * Sets the ai think time to the given value.
