@@ -17,36 +17,14 @@ import exceptions.InvalidNameException;
 import model.*;
 import view.TUI;
 
+
+@SuppressWarnings("resource")
 public class Client extends Thread {
 
-	private static final String USAGE = "When starting the Client,"
-					+ " please declare two arguments: <address> <port> .";
-	
 	public static void main(String[] args) {
-		if (args.length != 2) {
-			System.out.println(USAGE);
-			System.exit(0);
-		}
-		
-		InetAddress host = null;
-		int port = 0;
 		
 		try {
-			host = InetAddress.getByName(args[0]);
-		} catch (UnknownHostException e) {
-			print("ERROR: Not a valid hostname!");
-			System.exit(0);
-		}
-		
-		try {
-			port = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e) {
-			print("ERROR: Not a valid portnumber!");
-			System.exit(0);
-		}
-		
-		try {
-			Client client = new Client(host, port);
+			Client client = new Client();
 			client.start();
 		} catch (IOException e) {
 			print("ERROR: Could not construct a Client object.");
@@ -70,6 +48,8 @@ public class Client extends Thread {
 	private BufferedReader in;
 	private BufferedWriter out;
 	private BufferedReader playerInput;
+	private InetAddress host;
+	private int port;
 	
 	// ----- Constructor -----
 	/**
@@ -77,21 +57,74 @@ public class Client extends Thread {
 	 * @param host the adress of the server
 	 * @param port the port of the server
 	 */
-	public Client(InetAddress host, int port) throws IOException {
-		sock = new Socket(host, port);
-		in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-		out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+	public Client() throws IOException {
 		playerInput = new BufferedReader(new InputStreamReader(System.in));
 		firstTurn = true;
 	}
 	
 	/**
-	 * Finds the name and reads commands from the socket.
+	 * Finds the name, port number and IP address and reads commands from the socket.
 	 */
 	public void run() {
+		host = requestIP();
+		port = requestPort();
+		try { 
+			sock = new Socket(host, port);
+			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
+		} catch (IOException e) { 
+			System.out.println(e.getMessage()); 
+		} 
+		
 		findName();
 		readCommands();
 	}
+	
+	/**
+	 * Requests the user to enter a port number. 
+	 */
+	public int requestPort() {
+		int result = 0;
+		System.out.println("Please enter a port number.");
+		Boolean running = true;
+		String line;
+		while (running) {
+			try {
+				line = playerInput.readLine();
+				result = Integer.parseInt(line);
+				running = false;
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			} catch (NumberFormatException e) {
+				System.out.println("Please enter a valid port number.");
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Requests the user to enter an IP address.
+	 */
+	public InetAddress requestIP() {
+		InetAddress result = null;
+		System.out.println("Please enter an IP address.");
+		Boolean running = true;
+		String line;
+		while (running) {
+			try {
+				line = playerInput.readLine();
+				result = InetAddress.getByName(line);
+				running = false;
+			} catch (UnknownHostException e) {
+				System.out.println("The given IP address is unknown. Please enter a new one.");
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			} 
+		}
+		return result;
+	}
+
+
 	
 	/**
 	 * Tries read commands from the socket input.
@@ -163,13 +196,12 @@ public class Client extends Thread {
 	 */
 	public void findName() {
 		System.out.println("What is your name"
-				+ " (can only contain letters with maximum length of 16)?");
+						+ " (can only contain letters with maximum length of 16)?");
 		Boolean running = true;
-		Scanner playerInput = new Scanner(System.in);
 		String line;
 		while (running) {
-			line = playerInput.nextLine();
 			try {
+				line = playerInput.readLine();
 				isRightLength(line);
 				hasOnlyLetters(line);
 				
@@ -382,8 +414,12 @@ public class Client extends Thread {
 			}
 		} else if (move[0] instanceof Trade) {
 			result = "TRADE";
-			for (int i = 0; i < move.length; i++) {
-				result += move[i].toString();
+			if (move[0].getPiece() == null) {
+				result += " empty";
+			} else {
+				for (int i = 0; i < move.length; i++) {
+					result += move[i].toString();
+				}
 			}
 		}
 		sendCommand(result);

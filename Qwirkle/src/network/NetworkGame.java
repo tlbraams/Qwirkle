@@ -180,7 +180,9 @@ public class NetworkGame implements Runnable {
 						board.addScore(currentPlayerID, score);
 						System.out.println(board.getStack().size());
 					} else if (moves[0] instanceof Trade) {
-						newPieces += tradePieces(moves, players[currentPlayerID]);
+						if (moves[0].getPiece() != null) {
+							newPieces += tradePieces(moves, players[currentPlayerID]);
+						}
 						move += " empty";
 					}
 					players[currentPlayerID].sendCommand(newPieces);

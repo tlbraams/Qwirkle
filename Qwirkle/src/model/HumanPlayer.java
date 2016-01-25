@@ -50,7 +50,8 @@ public class HumanPlayer extends LocalPlayer {
 				cont = false;
 			}
 		} else if (type == 7) {
-			//moves = pass();
+			moves = new ArrayList<Move>();
+			moves.add(new Trade(null));
 		}
 		Move[] result = moves.toArray(new Move[moves.size()]);
 		return result;
@@ -165,7 +166,7 @@ public class HumanPlayer extends LocalPlayer {
 		System.out.println(this.getName() + ": What would you like to do?");
 		System.out.println("Place tiles ................... 5");
 		if (board.getStack().size() == 0) {
-			System.out.println("Pass ................... 7");
+			System.out.println("Pass ......................... 7");
 		} else {
 			System.out.println("Trade tiles ................... 6");
 			if (board.getStack().size() < 6) {

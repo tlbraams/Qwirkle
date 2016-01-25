@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
+import exceptions.InvalidMoveException;
 import model.*;
 
 @SuppressWarnings("resource")
@@ -157,7 +158,12 @@ public class NetworkPlayer implements Player, Runnable {
 					String pieceName = scanLine.next();
 					int row = scanLine.nextInt();
 					int column = scanLine.nextInt();
-					Piece piece = findPiece(pieceName);
+					Piece piece = null;
+					try {
+						piece = findPiece(pieceName);
+					} catch (InvalidMoveException e) {
+						System.out.println(e.getInfo());
+					}
 					if (piece != null) {
 						System.out.println(piece.toString());
 						places.add(new Place(piece, row, column));
@@ -171,11 +177,15 @@ public class NetworkPlayer implements Player, Runnable {
 				ArrayList<Trade> trades = new ArrayList<>();
 				while (scanLine.hasNext()) {
 					String pieceName = scanLine.next();
-					Piece piece = findPiece(pieceName);
-					if (piece != null) { 
+					Piece piece = null;
+					if (pieceName.equals("empty")) {
 						trades.add(new Trade(piece));
 					} else {
-						sendCommand("Error: " + pieceName + " is not a piece in your hand.");
+						try {
+							piece = findPiece(pieceName);
+						} catch (InvalidMoveException e) {
+							System.out.println(e.getInfo());
+						}
 					}
 				}
 				move = trades.toArray(new Move[trades.size()]);
@@ -193,7 +203,7 @@ public class NetworkPlayer implements Player, Runnable {
 	 * @param pieceName the name of the Piece that is needed.
 	 * @return the Piece object that has the same name as pieceName. 
 	 */
-	public /*@ NonNull */Piece findPiece(/*@ NonNull */String pieceName) {
+	public /*@ NonNull */Piece findPiece(/*@ NonNull */String pieceName) throws InvalidMoveException {
 		Piece result = null;
 		boolean found = false;
 		for (Piece p: hand) {
@@ -202,9 +212,12 @@ public class NetworkPlayer implements Player, Runnable {
 				found = true;
 			}
 		}
+		if (!found) {
+			throw new InvalidMoveException("The tile is not in your hand.");
+		}
 		return result;
 	}
-	
+
 	/**
 	 * Method from interface, not used.
 	 */

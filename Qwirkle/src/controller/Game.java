@@ -160,7 +160,7 @@ public class Game implements Runnable {
 			try {
 				valid = board.validMove(moves, players[currentPlayerID]);
 			} catch (InvalidMoveException e) {
-				System.out.print(e.getInfo());
+				System.out.println(e.getInfo());
 			}
 			if (valid) {
 				moveCounter++;
@@ -168,7 +168,7 @@ public class Game implements Runnable {
 					place(moves, players[currentPlayerID]);
 					int score = board.getScore(moves);
 					board.addScore(currentPlayerID, score);
-				} else if (moves[0] instanceof Trade) {
+				} else if (moves[0] instanceof Trade && moves[0].getPiece() != null) {
 					tradePieces(moves, players[currentPlayerID]);
 				}
 			}			
