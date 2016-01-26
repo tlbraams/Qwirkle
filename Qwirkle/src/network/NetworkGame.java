@@ -175,7 +175,6 @@ public class NetworkGame implements Runnable {
 						move += result[1];
 						int score = board.getScore(moves);
 						board.addScore(currentPlayerID, score);
-						System.out.println(board.getStack().size());
 					} else if (moves[0] instanceof Trade) {
 						if (moves[0].getPiece() != null) {
 							newPieces += tradePieces(moves, players[currentPlayerID]);

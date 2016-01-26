@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @SuppressWarnings("resource")
 public class Server {
@@ -36,6 +38,9 @@ public class Server {
 	private int port;
 	private List<NetworkPlayer> readyPlayers;
 	private List<GameHandler> threads;
+	private boolean waiting;
+	private Timer waitingForPlayers;
+	
 	
 	// ---- Constructor: ----
 	/**
@@ -77,13 +82,24 @@ public class Server {
 	 */
 	public void setReady(NetworkPlayer player) {
 		readyPlayers.add(player);
-		if (readyPlayers.size() == 4) {
-			GameHandler game = new GameHandler(readyPlayers);
-			game.start();
-			threads.add(game);
-			print("Created new game");
-			readyPlayers = new ArrayList<>();
+		if (readyPlayers.size() > 1 && !waiting) {
+			waiting = true;
+			waitingForPlayers = new Timer();
+			waitingForPlayers.schedule(new StartGameTask(this), 20000);
 		}
+		if (readyPlayers.size() == 4) {
+			createGame();
+			waitingForPlayers.cancel();
+		}
+	}
+	
+	public void createGame() {
+		GameHandler game = new GameHandler(readyPlayers);
+		game.start();
+		threads.add(game);
+		print("Created new game");
+		readyPlayers = new ArrayList<>();
+		waiting = false;
 	}
 	
 	/**
@@ -107,5 +123,18 @@ public class Server {
 	 */
 	public void print(String message) {
 		System.out.println(message);
+	}
+	
+	class StartGameTask extends TimerTask {
+		
+		private Server server;
+		
+		public StartGameTask(Server s) {
+			server = s;
+		}
+		
+		public void run() {
+			server.createGame();
+		}
 	}
 }
