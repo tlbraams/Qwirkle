@@ -1,18 +1,19 @@
 package view;
 
-
 import model.*;
 import controller.*;
 
+/**
+ * The TUI class is used as the textual user interface.
+ */
 public class TUI {
 
-	/**
-	 * The TUI class is used as the textual user interface.
-	 */
+	// ----- Instance Variables -----
 	private Game control;
 	private Board board;
 	int playerCount;
 	
+	// ----- Constructor -----
 	public TUI(Game game) {
 		control = game;
 		board = control.getBoard();
@@ -26,8 +27,7 @@ public class TUI {
 	}
 	
 	
-	
-	// ------------ Commands ------------------------
+	// ----- Commands -----
 	
 	public void update() {
 		printBoard(board);

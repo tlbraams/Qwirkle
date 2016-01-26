@@ -16,6 +16,9 @@ public class RandomWithScoreStrategy implements Strategy {
 	}
 
 	// ----- Queries -----
+	
+	
+	// ----- Commands -----
 	/**
 	 * Tries to find a possible Move for as long as the AI is allowed to think. 
 	 * It first tries to find a Place. If no Place was found the whole hand is traded. 

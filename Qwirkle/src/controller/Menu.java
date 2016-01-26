@@ -2,7 +2,6 @@ package controller;
 
 import java.util.Scanner;
 
-import exceptions.InvalidGameException;
 import exceptions.InvalidNameException;
 import model.*;
 
@@ -20,15 +19,10 @@ public class Menu {
 	int aiTime;
 	
 	public static void main(String[] args) {
-		try {
-			new Menu().run();
-		} catch (InvalidGameException e) {
-			System.out.println(e.getInfo());
-		}
-		
+		new Menu().run();
 	}
 	
-	public void run() throws InvalidGameException {
+	public void run() {
 		players = new Player[4];
 		Scanner in = new Scanner(System.in);
 		Boolean running = true;
@@ -139,7 +133,7 @@ public class Menu {
 				isRightLength(name);
 				hasOnlyLetters(name);
 				
-				players[playerCount] = new RandomComputerPlayer(name, playerCount, aiTime);
+				players[playerCount] = new ComputerPlayer(name, playerCount, "RandomWithScore", aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {
@@ -163,7 +157,7 @@ public class Menu {
 			try {
 				isRightLength(name);
 				hasOnlyLetters(name);
-				players[playerCount] = new RandomComputerPlayerWithScore(name, playerCount, aiTime);
+				players[playerCount] = new ComputerPlayer(name, playerCount, "RandomWithScore", aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {

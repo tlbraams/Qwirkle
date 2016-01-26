@@ -60,7 +60,7 @@ public class Piece {
 		return result;
 	}
 	
-	public static Shape chatToShape(char shape) {
+	public static Shape charToShape(char shape) {
 		Shape result = Shape.BLOCKED;
 		if (shape == 'o') {
 			result = Shape.CIRCLE;
