@@ -144,7 +144,6 @@ public class Client extends Thread {
 				} else if (line.startsWith("NAMES")) {
 					startGame(line);
 				} else if (line.startsWith("NEXT")) {
-					view.update();
 					lineScan.next();
 					int playerID = lineScan.nextInt();
 					if (this.player.getID() == playerID) {
@@ -288,6 +287,7 @@ public class Client extends Thread {
 		System.out.println("What kind of player would you like to register?");
 		System.out.println("Human player ...... ............. 1");
 		System.out.println("Computer player ................. 2");
+		System.out.println("Smarter Computer player ......... 3");
 		Boolean running = true;
 		Scanner line = new Scanner(System.in);
 		while (running) {
@@ -300,6 +300,13 @@ public class Client extends Thread {
 			if (kindOfPlayer.equals("2")) {
 				int aiTimeToThink = requestAITimeToThink();
 				player = new  ComputerPlayer(nameOfClient, playerNumber, "Random", aiTimeToThink);
+				running = false;
+				System.out.println("'" + nameOfClient + "' was added to the game.");
+			}
+			if (kindOfPlayer.equals("3")) {
+				int aiTimeToThink = requestAITimeToThink();
+				player = new ComputerPlayer(nameOfClient, playerNumber,
+													"RandomWithScore", aiTimeToThink);
 				running = false;
 				System.out.println("'" + nameOfClient + "' was added to the game.");
 			}
@@ -470,6 +477,7 @@ public class Client extends Thread {
 				places.add(new Place(piece, row, column));
 			}
 			scanLine.close();
+			board.notifyObservers();
 			int score = board.getScore(places.toArray(new Move[places.size()]));
 			board.addScore(playerID, score);
 		}

@@ -68,13 +68,30 @@ public class ComputerPlayer extends LocalPlayer {
 			int shape = 1;
 			
 			for (Piece rp: restHand) {
-				if (rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
+				boolean fitsColor = true;
+				for (Piece cp: colorPieces) {
+					if (rp.getColor().equals(cp.getColor())
+									&& !rp.getShape().equals(cp.getShape())) {
+						fitsColor = fitsColor && true;
+					} else {
+						fitsColor = false;
+					}
+				}
+				boolean fitsShape = true;
+				for (Piece sp: shapePieces) {
+					if (!rp.getColor().equals(sp.getColor())
+									&& rp.getShape().equals(sp.getShape())) {
+						fitsShape = fitsShape && true;
+					} else {
+						fitsShape = false;
+					}
+				}
+				if (fitsColor) {
 					color++;
 					colorPieces.add(rp);
-				} else if (!rp.getColor().equals(p.getColor())
-							 && rp.getShape().equals(p.getShape())) {
+				} else if (fitsShape) {
 					shape++;
-					shapePieces.add(p);
+					shapePieces.add(rp);
 				}
 			}
 			if (color > max) {
@@ -92,6 +109,10 @@ public class ComputerPlayer extends LocalPlayer {
 					result[i] = new Place(shapePieces.get(i), 91, 91 + i);
 				}
 
+			}
+			System.out.println("Piece: " + p.toString());
+			for (Move m: result) {
+				System.out.println("Move Piece: " + m.getPiece().toString());
 			}
 		}
 		return result;

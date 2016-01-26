@@ -4,13 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-import model.Board;
-import model.HumanPlayer;
-import model.Move;
-import model.Piece;
-import model.Place;
-import model.Player;
-import model.RandomComputerPlayer;
+import model.*;
 import view.TUI;
 
 public class TestRandomAI {
@@ -19,7 +13,7 @@ public class TestRandomAI {
 	private Player[] players;
 	private Board board;
 	private TUI tui;
-	private RandomComputerPlayer player;
+	private ComputerPlayer player;
 	private Piece pieceGreenDiamond;
 	private Piece pieceGreenSpade;
 	private Piece pieceGreenCircle;
@@ -29,7 +23,7 @@ public class TestRandomAI {
 	@Before
 	public void setUp() {
 		aiThinkTime = 9999;
-		player = new RandomComputerPlayer("AI", 1, aiThinkTime);
+		player = new ComputerPlayer("AI", 1, "Random", aiThinkTime);
 		players = new Player[] {new HumanPlayer("Jeroen", 0), player}; 
 		board = new Board();
 		piece = new Piece(Piece.Color.ORANGE, Piece.Shape.CIRCLE);
@@ -58,7 +52,7 @@ public class TestRandomAI {
 								((Place) move).getColumn(), move.getPiece());
 			}
 		}
-		tui.update();
+		tui.printBoard(board);
 		
 	}
 

@@ -132,8 +132,8 @@ public class Menu {
 			try {
 				isRightLength(name);
 				hasOnlyLetters(name);
-				
-				players[playerCount] = new ComputerPlayer(name, playerCount, "RandomWithScore", aiTime);
+			
+				players[playerCount] = new ComputerPlayer(name, playerCount, "Random", aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {

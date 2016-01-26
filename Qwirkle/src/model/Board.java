@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Observable;
 import java.util.Set;
 
 import exceptions.InvalidMoveException;
@@ -15,7 +16,7 @@ import exceptions.InvalidMoveException;
  * @author Tycho Braams & Jeroen Mulder
  * @version $1.0
  */
-public class Board {
+public class Board extends Observable {
 
 	// ----- Constants -----
 	public static final int DIM = 183;
@@ -232,15 +233,24 @@ public class Board {
 	public void setPiece(int row, int column, Piece piece) {
 		board[row][column] = piece;
 		if (row <= minRow) {
-			minRow = row - 5;
+			if (row - 5 > 1) {
+				minRow = row - 5;
+			} else {
+				minRow = 1;
+			}
 		} else if (row >= maxRow) {
 			maxRow = row + 5;
 		}
 		if (column <= minColumn) {
-			minColumn = column - 5;
+			if (column - 5 > 1) {
+				minColumn = column - 5;
+			} else {
+				minColumn = 1;
+			}
 		} else if (column >= maxColumn) {
 			maxColumn = column + 5;
 		}
+		setChanged();
 	}
 	
 	public void setLastMadeMove(int moveCount) {
@@ -647,7 +657,7 @@ public class Board {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getColor() == piece.getColor()) {
 				throw new InvalidMoveException(piece.toString() + " does not have a unique color"
-						+ "in the row that you try to add to.");
+						+ " in the row that you try to add to.");
 			}
 		}
 	}
@@ -659,8 +669,8 @@ public class Board {
 			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getShape() == piece.getShape()) {
-				throw new InvalidMoveException(piece.toString() + " does not hav a unique shape"
-						+ "in the row that you try to add to.");
+				throw new InvalidMoveException(piece.toString() + " does not have a unique shape"
+						+ " in the row that you try to add to.");
 			}
 		}
 	}	
