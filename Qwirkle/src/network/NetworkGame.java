@@ -156,7 +156,9 @@ public class NetworkGame implements Runnable {
 		while (!endGame()) {
 			handler.broadcast("NEXT " + currentPlayerID);
 			Move[] moves = players[currentPlayerID].determineMove(board);
-			if (moves == null || moves.length == 0) {
+			if (board.emptyStack() && moves[0].getPiece() == null) {
+				handler.broadcast("Turn " + currentPlayerID + " empty");
+			} else if (moves == null || moves.length == 0) {
 				kick(currentPlayerID, "No move given");
 			} else {
 				boolean valid = false;
@@ -176,9 +178,7 @@ public class NetworkGame implements Runnable {
 						int score = board.getScore(moves);
 						board.addScore(currentPlayerID, score);
 					} else if (moves[0] instanceof Trade) {
-						if (moves[0].getPiece() != null) {
-							newPieces += tradePieces(moves, players[currentPlayerID]);
-						}
+						newPieces += tradePieces(moves, players[currentPlayerID]);
 						move += " empty";
 					}
 					players[currentPlayerID].sendCommand(newPieces);
@@ -351,7 +351,7 @@ public class NetworkGame implements Runnable {
 				}
 			}
 		}
-		return (board.emptyStack() && emptyHand) ||
+		return (playerCount < 2) || (board.emptyStack() && emptyHand) ||
 						(board.getLastMadeMove() < moveCounter - (2 * playerCount)); 
 	}
 	
@@ -367,6 +367,9 @@ public class NetworkGame implements Runnable {
 		kickOccured = true;
 		handler.kick(playerID);
 		handler.broadcast("KICK " + playerID + " " + tiles + " " + reason);
+		if (playerCount < 2) {
+			handler.broadcast("Not enough Players to continue.");
+		}
 	}
 	
 	/**

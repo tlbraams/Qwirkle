@@ -360,6 +360,7 @@ public class Client extends Thread {
 			}	
 		}
 		view = new TUI(board, players.size());
+		view.printBoard(board);
 		scanLine.close();
 	}
 	
@@ -373,10 +374,14 @@ public class Client extends Thread {
 		boolean valid = false;
 		while (!valid) {
 			try {
-				valid = board.validMove(move, player);
-				for (int i = 0; i < move.length; i++) {
-					player.remove(move[i].getPiece());
-					print(i + " " + move[i].getPiece().toString());
+				if (move[0].getPiece() == null) {
+					valid = true;
+				} else {
+					valid = board.validMove(move, player);
+					for (int i = 0; i < move.length; i++) {
+						player.remove(move[i].getPiece());
+						print(i + " " + move[i].getPiece().toString());
+					}
 				}
 			} catch (InvalidMoveException e) {
 				print(e.getInfo());
@@ -416,17 +421,17 @@ public class Client extends Thread {
 		String result = "";
 		if (move[0] instanceof Place) {
 			result = "MOVE";
-			for (int i = 0; i < move.length; i++) {
-				result += move[i].toString();
-			}
-		} else if (move[0] instanceof Trade) {
-			result = "TRADE";
 			if (move[0].getPiece() == null) {
 				result += " empty";
 			} else {
 				for (int i = 0; i < move.length; i++) {
 					result += move[i].toString();
 				}
+			}
+		} else if (move[0] instanceof Trade) {
+			result = "SWAP";
+			for (int i = 0; i < move.length; i++) {
+				result += move[i].toString();
 			}
 		}
 		sendCommand(result);
@@ -457,15 +462,16 @@ public class Client extends Thread {
 	 * @param line the given String
 	 */
 	public void makeMove(String line) {
+		boolean moveMade = false;
 		print(line);
 		Scanner scanLine = new Scanner(line);
 		scanLine.next();
 		String firstElement = scanLine.next();
-		if (!firstElement.equals("empty")) {
-			int playerID = Integer.parseInt(firstElement);
-			ArrayList<Place> places = new ArrayList<>();
-			while (scanLine.hasNext()) {
-				String pieceString = scanLine.next();
+		int playerID = Integer.parseInt(firstElement);
+		ArrayList<Place> places = new ArrayList<>();
+		while (scanLine.hasNext()) {
+			String pieceString = scanLine.next();
+			if (!pieceString.equals("empty")) {
 				int row = scanLine.nextInt();
 				int column = scanLine.nextInt();
 				Piece piece = new Piece(Piece.charToColor(pieceString.charAt(0)),
@@ -475,8 +481,11 @@ public class Client extends Thread {
 				}
 				board.setPiece(row, column, piece);
 				places.add(new Place(piece, row, column));
+				moveMade = true;
 			}
-			scanLine.close();
+		}
+		scanLine.close();
+		if (moveMade) {
 			board.notifyObservers();
 			int score = board.getScore(places.toArray(new Move[places.size()]));
 			board.addScore(playerID, score);
@@ -494,8 +503,7 @@ public class Client extends Thread {
 		int tiles = scanLine.nextInt();
 		addToStack(tiles);
 		String reason = scanLine.nextLine();
-		print(players.get(playerID) + " was kicked.");
-		print(reason);
+		print(players.get(playerID) + " was kicked." + reason);
 		scanLine.close();
 	}
 	

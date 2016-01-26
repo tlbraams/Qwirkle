@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 import exceptions.InvalidMoveException;
+import exceptions.InvalidNameException;
 import model.*;
 
 @SuppressWarnings("resource")
@@ -92,12 +93,12 @@ public class NetworkPlayer implements Player, Runnable {
 			Scanner scanLine = new Scanner(line);
 			scanLine.next();
 			name = scanLine.next();
-			id = server.validName(name);
-			if (id != -1) {
+			try {
+				id = server.validName(name);
 				System.out.println("WELCOME " + name + " " + id);
 				sendCommand("WELCOME " + name + " " + id);
 				server.setReady(this);
-			} else {
+			} catch (InvalidNameException e) {
 				sendCommand("INVALID");
 				this.shutDown();
 			}
@@ -149,26 +150,31 @@ public class NetworkPlayer implements Player, Runnable {
 		Move[] move = null;
 		try {
 			line = in.readLine();
+			System.out.println(line);
 			Scanner scanLine = new Scanner(line);
 			if (line.startsWith("MOVE")) {
 				scanLine.next();
 				ArrayList<Place> places = new ArrayList<>();
 				while (scanLine.hasNext()) {
 					String pieceName = scanLine.next();
-					int row = scanLine.nextInt();
-					int column = scanLine.nextInt();
-					Piece piece = null;
-					try {
-						piece = findPiece(pieceName);
-					} catch (InvalidMoveException e) {
-						System.out.println(e.getInfo());
-					}
-					if (piece != null) {
-						places.add(new Place(piece, row, column));
+					if (pieceName.equals("empty")) {
+						places.add(new Place(null, 91, 91));
 					} else {
-						sendCommand("Error: " + pieceName + " is not a piece in your hand.");
+						int row = scanLine.nextInt();
+						int column = scanLine.nextInt();
+						Piece piece = null;
+						try {
+							piece = findPiece(pieceName);
+						} catch (InvalidMoveException e) {
+							System.out.println(e.getInfo());
+						}
+						if (piece != null) {
+							places.add(new Place(piece, row, column));
+						} else {
+							sendCommand("Error: " + pieceName + " is not a piece in your hand.");
+						}
+						move = places.toArray(new Move[places.size()]);
 					}
-					move = places.toArray(new Move[places.size()]);
 				}
 			} else if (line.startsWith("SWAP")) {
 				scanLine.next();
@@ -176,14 +182,11 @@ public class NetworkPlayer implements Player, Runnable {
 				while (scanLine.hasNext()) {
 					String pieceName = scanLine.next();
 					Piece piece = null;
-					if (pieceName.equals("empty")) {
+					try {
+						piece = findPiece(pieceName);
 						trades.add(new Trade(piece));
-					} else {
-						try {
-							piece = findPiece(pieceName);
-						} catch (InvalidMoveException e) {
-							System.out.println(e.getInfo());
-						}
+					} catch (InvalidMoveException e) {
+						System.out.println(e.getInfo());
 					}
 				}
 				move = trades.toArray(new Move[trades.size()]);

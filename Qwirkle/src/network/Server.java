@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import exceptions.InvalidNameException;
+
 @SuppressWarnings("resource")
 public class Server {
 
@@ -108,11 +110,14 @@ public class Server {
 	 * @param name the name to check
 	 * @return -1 or the ID.
 	 */
-	public int validName(String name) {
+	public int validName(String name) throws InvalidNameException {
 		int result = -1;
 		if (!name.contains(" ") && name.length() < 17 && name.length() >= 1
 						&& name.matches("[a-zA-Z]+")) {
 			result = readyPlayers.size();
+		}
+		if (result == -1) {
+			throw new InvalidNameException("The given name is not valid.");
 		}
 		return result;
 	}

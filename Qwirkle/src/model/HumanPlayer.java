@@ -54,7 +54,7 @@ public class HumanPlayer extends LocalPlayer {
 			}
 		} else if (type == 7) {
 			moves = new ArrayList<Move>();
-			moves.add(new Trade(null));
+			moves.add(new Place(null, 91, 91));
 		}
 		Move[] result = moves.toArray(new Move[moves.size()]);
 		return result;
