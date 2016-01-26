@@ -446,7 +446,7 @@ public class Client extends Thread {
 				char color = chars.charAt(0);
 				char shape = chars.charAt(1);
 				player.receive(new Piece(Piece.charToColor(color),
-								Piece.chatToShape(shape)));
+								Piece.charToShape(shape)));
 			}
 		}
 		scanLine.close();
@@ -469,7 +469,7 @@ public class Client extends Thread {
 				int row = scanLine.nextInt();
 				int column = scanLine.nextInt();
 				Piece piece = new Piece(Piece.charToColor(pieceString.charAt(0)),
-								Piece.chatToShape(pieceString.charAt(1)));
+								Piece.charToShape(pieceString.charAt(1)));
 				if (tilesInStack != 0) {
 					removeFromStack(1);
 				}

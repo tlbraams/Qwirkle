@@ -1,6 +1,5 @@
 package view;
 
-
 import model.*;
 
 import java.util.Observable;
@@ -8,15 +7,17 @@ import java.util.Observer;
 
 import controller.*;
 
+/**
+ * The TUI class is used as the textual user interface.
+ */
 public class TUI implements Observer {
 
-	/**
-	 * The TUI class is used as the textual user interface.
-	 */
+	// ----- Instance Variables -----
 	private Game control;
 	private Board board;
 	int playerCount;
 	
+	// ----- Constructor -----
 	public TUI(Game game) {
 		control = game;
 		board = control.getBoard();
@@ -32,8 +33,7 @@ public class TUI implements Observer {
 	}
 	
 	
-	
-	// ------------ Commands ------------------------
+	// ----- Commands -----
 	
 	public void update(Observable o, Object arg) {
 		printBoard(board);
