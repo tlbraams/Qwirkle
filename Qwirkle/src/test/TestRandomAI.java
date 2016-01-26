@@ -52,7 +52,7 @@ public class TestRandomAI {
 								((Place) move).getColumn(), move.getPiece());
 			}
 		}
-		tui.update();
+		tui.printBoard(board);
 		
 	}
 

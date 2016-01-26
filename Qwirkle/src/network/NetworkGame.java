@@ -189,7 +189,7 @@ public class NetworkGame implements Runnable {
 					handler.broadcast(move);
 				}
 			}
-			view.update();
+			board.notifyObservers();
 			currentPlayerID = nextPlayer();
 		}
 		// Finishing the Game off. 

@@ -144,7 +144,6 @@ public class Client extends Thread {
 				} else if (line.startsWith("NAMES")) {
 					startGame(line);
 				} else if (line.startsWith("NEXT")) {
-					view.update();
 					lineScan.next();
 					int playerID = lineScan.nextInt();
 					if (this.player.getID() == playerID) {
@@ -478,6 +477,7 @@ public class Client extends Thread {
 				places.add(new Place(piece, row, column));
 			}
 			scanLine.close();
+			board.notifyObservers();
 			int score = board.getScore(places.toArray(new Move[places.size()]));
 			board.addScore(playerID, score);
 		}

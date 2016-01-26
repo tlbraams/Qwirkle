@@ -150,7 +150,7 @@ public class Game implements Runnable {
 		}
 		// Start the Game. 
 		findFirstPlayer();
-		view.update();
+		view.printBoard(board);
 		findFirstMove();
 		
 		// During the Game.
@@ -173,7 +173,7 @@ public class Game implements Runnable {
 				}
 			}			
 			currentPlayerID = nextPlayer();
-			view.update();
+			board.notifyObservers();
 		}
 		// Finishing the Game off. 
 		ending();
@@ -302,7 +302,7 @@ public class Game implements Runnable {
 		try {
 			valid = board.validMove(moves, players[currentPlayerID]);
 		} catch (InvalidMoveException e) {
-			System.out.print(e.getInfo());
+			System.out.println(e.getInfo());
 		}
 		if (valid) {
 			moveCounter++;
@@ -311,7 +311,7 @@ public class Game implements Runnable {
 			board.addScore(currentPlayerID, score);
 		}			
 		currentPlayerID = (currentPlayerID + 1) % playerCount;
-		view.update();
+		board.notifyObservers();
 	}
 	
 	
