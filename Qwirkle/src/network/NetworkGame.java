@@ -6,7 +6,6 @@ import java.util.Set;
 
 import exceptions.InvalidMoveException;
 import model.*;
-import view.TUI;
 
 /**
  * Class for controlling a game ones it has started. It keeps the scores and 
@@ -25,7 +24,6 @@ public class NetworkGame implements Runnable {
 	// ----- Instance Variables -----
 	
 	private Board board;
-	private TUI view;
 	private int playerCount;
 	private NetworkPlayer[] players;
 	private int aiTime;
@@ -63,7 +61,6 @@ public class NetworkGame implements Runnable {
 		for (int i = 0; i < playerCount; i++) {
 			this.players[i] = players[i];
 		}
-		view = new TUI(board, playerCount);
 		aiTime = thinkTime;
 		moveCounter = 0;
 		kickOccured = false;

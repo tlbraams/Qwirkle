@@ -203,7 +203,8 @@ public class NetworkPlayer implements Player, Runnable {
 	 * @param pieceName the name of the Piece that is needed.
 	 * @return the Piece object that has the same name as pieceName. 
 	 */
-	public /*@ NonNull */Piece findPiece(/*@ NonNull */String pieceName) throws InvalidMoveException {
+	public /*@ NonNull */Piece findPiece(/*@ NonNull */String pieceName)
+				throws InvalidMoveException {
 		Piece result = null;
 		boolean found = false;
 		for (Piece p: hand) {
