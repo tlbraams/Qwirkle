@@ -9,6 +9,7 @@ import model.HumanPlayer;
 import model.Piece;
 import model.Place;
 import model.Player;
+import model.Trade;
 
 
 /**
@@ -266,6 +267,40 @@ public class TestValid {
 		exception.expect(InvalidMoveException.class);
 		board.validMove(place, player);
 	}
-
+	
+	@Test
+	public void testValidColumnMove() throws InvalidMoveException {
+		board.setPiece(91, 91, pieceGreenCircle);
+		board.setPiece(91, 92, pieceGreenDiamond);
+		board.setPiece(91, 93, pieceGreenSpade);
+		board.setPiece(91, 94, pieceGreenHeart);
+		board.setPiece(92, 91, pieceRedCircle);
+		board.setPiece(90, 93, pieceOrangeSpade);
+		player.receive(pieceOrangeDiamond);
+		player.receive(pieceRedDiamond);
+		Place[] place = new Place[]{new Place(pieceOrangeDiamond, 90, 92),
+									new Place(pieceRedDiamond, 92, 92)};
+		board.validMove(place, player);
+	}
+	
+	// Test trades
+	@Test
+	public void testValidSwap() throws InvalidMoveException {
+		player.receive(pieceGreenCircle);
+		player.receive(pieceGreenDiamond);
+		Trade[] trade = new Trade[]{new Trade(pieceGreenCircle), 
+									new Trade(pieceGreenDiamond)};
+		board.validMove(trade, player);
+	}
+	
+	@Test
+	public void testNonValidSwap() throws InvalidMoveException {
+		player.receive(pieceGreenCircle);
+		player.receive(pieceGreenDiamond);
+		Trade[] trade = new Trade[]{new Trade(pieceOrangeSpade), 
+									new Trade(pieceOrangeDiamond)};
+		exception.expect(InvalidMoveException.class);
+		board.validMove(trade, player);
+	}
 
 }
