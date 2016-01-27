@@ -70,7 +70,7 @@ public class AnsiTUI implements Observer {
 				System.out.println(ansi().render(edges[2]));
 				System.out.println(ansi().render(edges[3]));
 				System.out.println(ansi().render(row));
-			} else if (i == b.getMaxRow() - 1) {
+			} else if (i == b.getMaxRow()) {
 				System.out.println(ansi().render(edges[4]));
 				System.out.println(ansi().render(row));
 				System.out.println(ansi().render(edges[5]));
