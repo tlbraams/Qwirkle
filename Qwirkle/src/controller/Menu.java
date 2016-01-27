@@ -51,6 +51,9 @@ public class Menu {
 		}
 	}
 	
+	/**
+	 * Displays the different options.
+	 */
 	public void displayOptions() {
 		System.out.println("What would you like to do?");
 		System.out.println("Register new Player ............. 1");
@@ -59,6 +62,9 @@ public class Menu {
 		System.out.println("Exit the application ............ 4");
 	}
 	
+	/**
+	 * Requests the think time for an AI and saves the value.
+	 */
 	public void setAiTime() {
 		System.out.println("How long would you look the computerplayer to think? (ms)");
 		Scanner in = new Scanner(System.in);
@@ -69,6 +75,9 @@ public class Menu {
 		}
 	}
 	
+	/**
+	 * Shows the different options for the type of player to create.
+	 */
 	public void displayRegistrationOptions() {
 		System.out.println("What kind of player would you like to register?");
 		System.out.println("Human player .................... 7");
@@ -76,6 +85,10 @@ public class Menu {
 		System.out.println("Smarter Computer player ......... 9");
 	}
 	
+	/**
+	 * Calls the method corresponding to the option, from displayRegistrationOptions(),
+	 * chosen by the user.
+	 */
 	public void registerNewPlayer() {
 		displayRegistrationOptions();
 		Boolean running = true;
@@ -97,6 +110,9 @@ public class Menu {
 		}
 	}
 	
+	/**
+	 * Asks the user for the name of the humanPlayer to create.
+	 */
 	public void registerHumanPlayer() {
 		System.out.println("What is your name "
 						+ " (can only contain letters with maximum length of 16)?");
@@ -122,6 +138,9 @@ public class Menu {
 		}
 	}
 	
+	/**
+	 * Asks the User for the name of the ComputerPlayer to register.
+	 */
 	public void registerComputerPlayer() {
 		System.out.println("What name do you want the Computer Player to have?"
 						+ " (can only contain letters with maximum length of 16)");
@@ -147,6 +166,9 @@ public class Menu {
 		}
 	}
 	
+	/**
+	 * Asks the User for the Name of the ComputerPlayer, with a smarter strategy.
+	 */
 	public void registerSmarterComputerPlayer() {
 		System.out.println("What name do you want the Computer Player to have?"
 						+ " (can only contain letters with maximum length of 16)");
@@ -157,7 +179,8 @@ public class Menu {
 			try {
 				isRightLength(name);
 				hasOnlyLetters(name);
-				players[playerCount] = new ComputerPlayer(name, playerCount, "RandomWithScore", aiTime);
+				players[playerCount] = new ComputerPlayer(name, playerCount,
+															"RandomWithScore", aiTime);
 				playerCount++;
 				running = false;
 			} catch (InvalidNameException e) {

@@ -35,11 +35,19 @@ public class TUI implements Observer {
 	
 	// ----- Commands -----
 	
+	/**
+	 * Called when the TUI is notified that the class it's observing (board)
+	 * has been changed. Prints the new board and score.
+	 */
 	public void update(Observable o, Object arg) {
 		printBoard(board);
 		printScore(board);
 	}
 	
+	/**
+	 * Prints the board.
+	 * @param b the board to print
+	 */
 	public void printBoard(Board b) {
 		String edges = BoardOutline.getEdges(b);
 		System.out.println(edges);
@@ -64,6 +72,10 @@ public class TUI implements Observer {
 		}
 	}
 	
+	/**
+	 * Prints the score for the board.
+	 * @param b the board for the score to print.
+	 */
 	public void printScore(Board b) {
 		String result = "Scores:";
 		for (int i = 0; i < playerCount; i++) {

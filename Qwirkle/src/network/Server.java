@@ -95,6 +95,10 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * Creates a game with the players from readyPlayers.
+	 * After the game is started, the readyPlayers list is emptied.
+	 */
 	public void createGame() {
 		GameHandler game = new GameHandler(readyPlayers);
 		game.start();
@@ -130,6 +134,11 @@ public class Server {
 		System.out.println(message);
 	}
 	
+	/**
+	 * Class to handle the TimerTask of the server.
+	 * Used when the server is waiting for players and after x seconds a game has not yet
+	 * started.
+	 */
 	class StartGameTask extends TimerTask {
 		
 		private Server server;
@@ -138,6 +147,9 @@ public class Server {
 			server = s;
 		}
 		
+		/**
+		 * Calls the createGame() method to start a new Game.
+		 */
 		public void run() {
 			server.createGame();
 		}

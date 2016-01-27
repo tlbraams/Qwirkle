@@ -33,7 +33,8 @@ public class ComputerPlayer extends LocalPlayer {
 	
 	/**
 	 * Makes a Move[]. Subclasses of ComputerPlayer can have different strategies for 
-	 * determining which Move to make. 
+	 * determining which Move to make. If the strategy doesn't find a move, the entire hand
+	 * will be traded.
 	 */
 	/*
 	 *@ ensure 		(\forall int i = 0; i >= 0 && i < \result.length; \result[i] instanceof Move);
@@ -42,11 +43,19 @@ public class ComputerPlayer extends LocalPlayer {
 		Move[] result = null;
 		Place[] place = strategy.findMove(hand, board);
 		if (place[0] == null) {
-			result = new Move[hand.size()];
+			int toTrade = 0;
+			if (board.getStack().size() < 6) {
+				toTrade = board.getStack().size();
+			} else {
+				toTrade = hand.size();
+			}
+			result = new Move[toTrade];
 			int i = 0;
 			for (Piece piece: hand) {
-				result[i] = new Trade(piece);
-				i++;
+				if (i < toTrade) {
+					result[i] = new Trade(piece);
+					i++;
+				}
 			}
 		} else {
 			result = place;
@@ -54,6 +63,11 @@ public class ComputerPlayer extends LocalPlayer {
 		return result;
 	}
 	
+	/**
+	 * Finds the firstMove for a ComputerPlayer.
+	 * This consists of finding the longest line of pieces in the hand
+	 * and placing them on the board.
+	 */
 	public Move[] determineFirstMove(Board board) {
 		Move[] result = null;
 		int max = 0;
@@ -66,7 +80,6 @@ public class ComputerPlayer extends LocalPlayer {
 			restHand.remove(p);
 			int color = 1;
 			int shape = 1;
-			
 			for (Piece rp: restHand) {
 				boolean fitsColor = true;
 				for (Piece cp: colorPieces) {
@@ -100,7 +113,6 @@ public class ComputerPlayer extends LocalPlayer {
 				for (int i = 0; i < colorPieces.size(); i++) {
 					result[i] = new Place(colorPieces.get(i), 91, 91 + i);
 				}
-
 			}
 			if (shape > max) {
 				max = shape;
@@ -108,7 +120,6 @@ public class ComputerPlayer extends LocalPlayer {
 				for (int i = 0; i < shapePieces.size(); i++) {
 					result[i] = new Place(shapePieces.get(i), 91, 91 + i);
 				}
-
 			}
 			System.out.println("Piece: " + p.toString());
 			for (Move m: result) {
@@ -126,6 +137,11 @@ public class ComputerPlayer extends LocalPlayer {
 		timeToThink = thinkTime;
 	}
 	
+	/**
+	 * Finds and creates a Strategy corresponding to the given String.
+	 * @param strat the String describing the Strategy
+	 * @return the created Strategy
+	 */
 	public Strategy findStrat(String strat) {
 		Strategy result = null;
 		if (strat.equals("RandomWithScore")) {

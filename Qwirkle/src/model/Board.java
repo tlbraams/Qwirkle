@@ -458,16 +458,22 @@ public class Board extends Observable {
 				}
 				
 				boolean isRow;
+				boolean isColumn;
 				
 				// Continue the tests.
-				isRow = deepCopyBoard.isUninterruptedRow(places);
-				deepCopyBoard.isUninterruptedColumn(places);
+				isRow = deepCopyBoard.isRow(places);
+				isColumn = deepCopyBoard.isColumn(places);
 				if (isRow) {
+					deepCopyBoard.isUninterruptedRow(places);
 					deepCopyBoard.pieceIsConnectedRowAndUnique(places);
 					deepCopyBoard.piecesFitInColumns(places);
-				} else {
+				} else if (isColumn) {
+					deepCopyBoard.isUninterruptedColumn(places);
 					deepCopyBoard.pieceIsConnectedColumnAndUnique(places);
 					deepCopyBoard.piecesFitInRows(places);
+				} else {
+					throw new InvalidMoveException("You are trying to place tiles"
+								+ " on seperate rows and columns.");
 				}
 				playerHasPiece(moves, player);
 			}
@@ -552,25 +558,44 @@ public class Board extends Observable {
 	}
 	
 	/**
+	 * Tests if the places are on one row.
+	 * @param places the places to test
+	 * @return true if all places are on the same row
+	 */
+	public boolean isRow(/*@NonNull*/ Place[] places) {
+		boolean isRow = true;
+		for (int i = 0; i < places.length; i++) {
+			isRow = isRow && places[i].getRow() == places[0].getRow();
+		}
+		
+		return isRow;
+	}
+	
+	/**
+	 * Tests if the places are on one column.
+	 * @param places the places to test
+	 * @return true if all the places are on the same column
+	 */
+	public boolean isColumn(/*@NonNull*/ Place[] places) {
+		boolean isColumn = true;
+		for (int i = 0; i < places.length; i++) {
+			isColumn = isColumn && places[i].getColumn() == places[0].getColumn();
+		}
+		return isColumn;
+	}
+	
+	/**
 	 * Tests if the Places are in 1 straight line (row) and if there are no gaps. 
 	 * @param moves the Places to be placed on Board b. 
 	 * @param b the Board on which the Places are put. 
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 * @throws InvalidMoveException
 	 */
-	public boolean isUninterruptedRow(/* @NunNull */Place[] places) throws InvalidMoveException {
-		boolean isRow = true;
-		for (int i = 0; i < places.length; i++) {
-			isRow = isRow && places[i].getRow() == places[0].getRow();
-		}
-		if (places.length != 1 && isRow) {
+	public void isUninterruptedRow(/* @NonNull */Place[] places) throws InvalidMoveException {	
+		if (places.length != 1) {
 			int minColumnPlace = places[0].getColumn();
 			int maxColumnPlace = minColumnPlace;
 			for (int i = 1; i < places.length; i++) {
-				if (places[0].getRow() != places[i].getRow()) {
-					throw new InvalidMoveException("You are trying to place tiles"
-							+ " on seperate rows.");
-				}
 				if (places[i].getColumn() < minColumnPlace) {
 					minColumnPlace = places[i].getColumn();
 				} else if (places[i].getColumn() > maxColumnPlace) {
@@ -585,7 +610,6 @@ public class Board extends Observable {
 				}
 			}
 		}
-		return isRow;
 	}
 	
 	/**
@@ -595,18 +619,10 @@ public class Board extends Observable {
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 */
 	public void isUninterruptedColumn(/* @NunNull */Place[] places) throws InvalidMoveException {
-		boolean isColumn = true;
-		for (int i = 0; i < places.length; i++) {
-			isColumn = isColumn && places[i].getColumn() == places[0].getColumn();
-		}
-		if (places.length != 1 && isColumn) {
+		if (places.length != 1) {
 			int minRowPlace = places[0].getRow();
 			int maxRowPlace = minRowPlace;
 			for (int i = 1; i < places.length; i++) {
-				if (places[0].getColumn() != places[i].getColumn()) {
-					throw new InvalidMoveException("You are trying to place tiles"
-							+ " on seperate columns.");
-				}
 				if (places[i].getRow() < minRowPlace) {
 					minRowPlace = places[i].getRow();
 				} else if (places[i].getRow() > maxRowPlace) {

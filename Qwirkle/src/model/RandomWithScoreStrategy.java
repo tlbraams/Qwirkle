@@ -19,11 +19,12 @@ public class RandomWithScoreStrategy implements Strategy {
 	
 	
 	// ----- Commands -----
+	
 	/**
 	 * Tries to find a possible Move for as long as the AI is allowed to think. 
-	 * It first tries to find a Place. If no Place was found the whole hand is traded. 
+	 * Until the time has passed, the method will look for the move (of placing 1 piece)
+	 * that obtains the highest Score.
 	 */
-	
 	public /*@ NonNull */Place[] findMove(/*@ NonNull */ HashSet<Piece> hand,
 						/*@ NonNull */Board board) {
 		long startTime = System.currentTimeMillis();
