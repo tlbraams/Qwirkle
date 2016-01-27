@@ -29,7 +29,7 @@ public class BoardOutlineAnsi {
 		String top = "   " + (char) TOP_LEFT_CORNER;
 		String border = "   " + (char) LEFT_CROSS;
 		String bottem = "   " + (char) BOTTEM_LEFT_CORNER;
-		for (int i = 0; i < b.getSize(); i++) {
+		for (int i = b.getMinColumn(); i < b.getMaxColumn(); i++) {
 			if (i < 10) {
 				topIndex0 += "  ";
 				topIndex10 += "  ";

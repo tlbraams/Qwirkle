@@ -193,10 +193,10 @@ public class AnsiHumanPlayer extends LocalPlayer {
 			System.out.println("No more pieces in the stack.");
 		}
 		String result = "Your hand:";
-		String ansi = "In symbols:";
+		String ansi = "In symbol:";
 		for (Piece p : hand) {
 			result += " | " + p.toString();
-			ansi += " | " + p.getAnsiCode();
+			ansi += " | " + p.getAnsiCode() + " ";
 		}
 		System.out.println(result);
 		System.out.println(ansi().render(ansi));
