@@ -41,7 +41,7 @@ public class TUI implements Observer {
 	}
 	
 	public void printBoard(Board b) {
-		String edges = BoardOutline.getEdges(b);
+		String edges = getEdges(b);
 		System.out.println(edges);
 		for (int i = b.getMinRow(); i <= b.getMaxRow(); i++) {
 			String row = "";
@@ -70,5 +70,24 @@ public class TUI implements Observer {
 			result += " player" + i + ": " + b.getScore(i);
 		}
 		System.out.println(result);
+	}
+	
+	/**
+	 * Returns a String with the indexes atop the board.
+	 */
+	public static String getEdges(Board b) {
+		String topIndex = "   ";
+		for (int i = b.getMinColumn(); i <= b.getMaxColumn(); i++) {
+			if (i < 10) {
+				topIndex += "   " + i;
+
+			} else if (i < 100) {
+				topIndex += "  " + i;
+
+			} else {
+				topIndex += " " + i;
+			}
+		}
+		return topIndex;
 	}
 }

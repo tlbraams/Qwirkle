@@ -11,10 +11,15 @@ import exceptions.InvalidMoveException;
 
 /**
  * Class for modelling the board and the stack used by the Qwirkle game.
- * The board will be stored as a Piece[][] of 183x183 with the starting point being 91,91.
- * 
  * @author Tycho Braams & Jeroen Mulder
  * @version $1.0
+ */
+/*
+ *@ invariant	0 <= getStack().size() && getStack().size() <= 108;
+ *			 	0 <= getMinRow() && getMinRow() <= 86;
+ *				97 <= getMaxRow() && getMaxRow() <= 183;
+ *				0 <= getMinColumn() && getMinColumn() <= 85;
+ *				97 <= getMaxColumn() && getMaxColumn() <= 183;
  */
 public class Board extends Observable {
 
@@ -41,11 +46,12 @@ public class Board extends Observable {
 	 * Creates a new Board object of default size (183 x 183).
 	 */
 	/*
-	 *@ ensures		this.getSize == DIM;
-	 *				this.getMinRow == 86;
-	 *				this.getMaxRow == 97;
-	 *				this.getMinColumn == 85;
-	 *				this.getMaxColumn == 97;
+	 *@ ensures		getSize() == DIM;
+	 *				getMinRow() == 86;
+	 *				getMaxRow() == 97;
+	 *				getMinColumn() == 85;
+	 *				getMaxColumn() == 97;
+	 *				getStack().size() == 108;
 	 */
 	public Board() {
 		size = DIM;
@@ -73,10 +79,10 @@ public class Board extends Observable {
 	 * @return piece the Piece in the given cell. 
 	 */
 	/*
-	 *@ requires 	row >= minRow && row <= maxRow;
-	 * 				column >= minColumn && column <= maxColumn;
+	 *@ requires 	0 <= row && 183 < row;
+	 *				0 <= column && column <= 183;
 	 */
-	/*@ pure */public Piece getCell(/*@ NonNull */int row, /*@ NonNull */int column) {
+	/*@ pure */public /*@ NonNull */Piece getCell(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return board[row][column];
 	}
 	
@@ -85,7 +91,7 @@ public class Board extends Observable {
 	 * @return the size of a Board.
 	 */
 	/*
-	 *@ ensures 	\result == maxRow;
+	 *@ ensures 	\result == 183;
 	 */
 	/*@ pure */public /*@ NonNullable */int getSize() {
 		return size;
@@ -97,6 +103,12 @@ public class Board extends Observable {
 	 * @param column the column of the cell.
 	 * @return true if the cell is empty, false when occupied. 
 	 */
+	/*
+	 *@ requires	0 <= row && 183 < row;
+	 *				0 <= column && column <= 183;
+	 *@ ensures		isEmpty(row, column) ==> board[row][column] == null;
+	 *				!(isEmpty(row, column) ==> board[row][column] != null;
+	 */
 	/*@pure*/public /*@ NonNull */boolean isEmpty(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return board[row][column] == null;
 	}
@@ -106,15 +118,21 @@ public class Board extends Observable {
 	 * @return true if the row and column refer to a valid cell on the board, false otherwise.
 	 */
 	/*
-	 *@ ensures 	\result == (0 <= row && row < size && 0 <= column && column < size);
+	 *@ ensures 	0 <= row && row < 183 && 0 <= column && column <= 183
+	 *					==> isField(row, column) == true;
+	 *				row < 0 && 183 < row && column < 0 && 183 < column 
+	 *					==> isField(row, column) == false;
 	 */
 	/*@pure*/public /*@ NonNull */boolean isField(/*@ NonNull */int row, /*@ NonNull */int column) {
 		return 0 <= row && row < size && 0 <= column && column < size;
 	}
 	
 	/**
-	 * Returns when the last made Move was made. 
+	 * Returns when the last Move was made. 
 	 * @return the last made Move. 
+	 */
+	/*
+	 *@ ensures 	0 <= \result; 
 	 */
 	/*@ pure */public /*@ NonNull */int getLastMadeMove() {
 		return lastMadeMove;
@@ -153,15 +171,25 @@ public class Board extends Observable {
 	}
 	
 	/**
-	 * Determines how long a row is given a certain cell, given by row and column. 
-	 * 
-	 *@return the length of a row.
+	 * Returns the stack. 
+	 * @return the stack.
 	 */
 	/*
-	 *@ requires 	0 <= row && row < size && 0 <= column && column < size;
-	 *@ ensures 	1 <= \result && 7 > \result;
+	 *@ ensures 	\result == stack;
 	 */
-	/*@ pure */public /*@ NonNull */int getRowLength(int row, int column) {
+	/*@ pure */public /*@ NonNull */ ArrayList<Piece> getStack() {
+		return stack;
+	}
+	
+	/**
+	 * Determines the length of a row given a certain cell.
+	 * @return the length of a row.
+	 */
+	/*
+	 *@ requires 	isField(row, column);
+	 *@ ensures 	0 <= \result && 7 > \result;
+	 */
+	/*@ pure */public /*@ NonNull */int getRowLength(/*@ NonNull */int row, /*@ NonNull */int column) {
 		int result = 0;
 		Boolean isRow = true;
 		for (int i = column; isRow; i--) {
@@ -182,7 +210,15 @@ public class Board extends Observable {
 		return result;
 	}
 	
-	/*@ pure */public /*@ NonNull */int getColumnLength(int row, int column) {
+	/**
+	 * Determines the length of a column given a certain cell.
+	 * @return the length of a row.
+	 */
+	/*
+	 *@ requires 	isField(row, column);
+	 *@ ensures 	0 <= \result && 7 > \result;
+	 */
+	/*@ pure */public /*@ NonNull */int getColumnLength(/*@ NonNull */int row, /*@ NonNull */int column) {
 		int result = 0;
 		Boolean isColumn = true;
 		for (int i = row; isColumn; i--) {
@@ -203,16 +239,28 @@ public class Board extends Observable {
 		return result;
 	}
 	
+	/**
+	 * Returns the score of player with the given playerID. 
+	 * @param playerID the ID of the Player whose score is asked.
+	 */
+	/*
+	 *@ requires	0 <= playerID && playerID <= 3;
+	 *@ ensures 	0 <= \result;
+	 */
 	/*@ pure */public /*@ NonNull */int getScore(int playerID) {
 		return scores[playerID];
 	}
 	
+	/**
+	 * Indicates if the stack is empty. 
+	 * @return true when the size of the stack is 0 and false otherwise.
+	 */
+	/*
+	 *@ ensures		stack.size() == 0 ==> \result == true;
+	 *				stack.size() > 0 ==> \result == false;
+	 */
 	/*@ pure */public /*@ NonNull */boolean emptyStack() {
 		return stack.size() == 0;
-	}
-	
-	/*@ pure */public /*@ NonNull */ ArrayList<Piece> getStack() {
-		return stack;
 	}
 	
 	// ----- Commands -----
@@ -226,11 +274,29 @@ public class Board extends Observable {
 	 *@ requires 	score >= 0;
 	 *				getScore(playerID) == \old(getScore(playerID)) + score;
 	 */
-	public void addScore(int playerID, int score) {
+	public void addScore(/*@ NonNull */int playerID, /*@ NonNull */int score) {
 		this.scores[playerID] += score;
 	}
 	
-	public void setPiece(int row, int column, Piece piece) {
+	/**
+	 * Places the given piece in the right cell, and then adjusts values of 
+	 * minRow, maxRow, minColumn and maxColumn so that the relevent parts of 
+	 * the board can be printed by the TUI. 
+	 * @param row the row in which piece is to be placed.
+	 * @param column the column in which piece is to be placed. 
+	 * @param piece the piece that is to be placed.
+	 */
+	/*
+	 *@ requires 	isField(row, column);
+	 *@ ensures		getCell(row, column) == piece;
+	 *				row <= minRow && row - 5 > 1 ==> minRow == row - 5;
+	 *				row <= minRow && row -5 <= 1 ==> minRow == 1;
+	 *				row >= maxRox ==> maxRow == row + 5;
+	 *				column <= minColumn && column - 5 > 1 ==> minColumn == column - 5;
+	 *				column <= minColumn && column -5 <= 1 ==> minColumn == 1;
+	 *				column >= maxColumn ==> maxColumn == row + 5;
+	 */
+	public void setPiece(/*@ NonNull */int row, /*@ NonNull */int column, /*@ NonNull */Piece piece) {
 		board[row][column] = piece;
 		if (row <= minRow) {
 			if (row - 5 > 1) {
@@ -253,10 +319,25 @@ public class Board extends Observable {
 		setChanged();
 	}
 	
-	public void setLastMadeMove(int moveCount) {
+	/**
+	 * Sets the lastMadeMove to moveCount when a place or trade has been made. 
+	 * @param moveCount the number of turns that have been take so far in the game.
+	 */
+	/*
+	 *@ requires 	0 <= moveCount;
+	 *@ ensures		lastMadeMove == moveCount;
+	 */
+	public void setLastMadeMove(/*@ NonNull */int moveCount) {
 		lastMadeMove = moveCount;
 	}
 	
+	/**
+	 * Empties the whole board.
+	 */
+	/*
+	 *@ ensures		(\forall int i, j; 0 <= i, 0 <= j, i <= j, 0 j <= 183;
+	 *					getCell(i, j) == null);
+	 */
 	public void reset() {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -265,7 +346,15 @@ public class Board extends Observable {
 		}
 	}
 	
-	public Board deepCopy() {
+	/**
+	 * Creates a new Board that exactly copies the occupation of this Board.
+	 * @return a Board.
+	 */
+	/*
+	 *@ ensures 	(\forall int i, j; 0 <= i, 0 <= j, i <= j, 0 j <= 183;
+	 *					\result.getCell(i, j) == board.getCell(i, j));
+	 */
+	public /*@ NonNull */Board deepCopy() {
 		Board result = new Board();
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -277,6 +366,9 @@ public class Board extends Observable {
 	
 	/**
 	 * Fills the stack with the pieces needed for the game and shuffles it.
+	 */
+	/*
+	 *@ ensures 	stack.size() == \old(stack.size()) + 108;
 	 */
 	public void fillStack() {
 		Set<Piece.Color> colors = EnumSet.complementOf(EnumSet.of(Piece.Color.DEFAULT));
@@ -295,6 +387,10 @@ public class Board extends Observable {
 	 * Draws one piece from the stack.
 	 * @return the piece drawn
 	 */
+	/*
+	 *@ requires 	!(isEmpty());
+	 *@ ensures		stack.size() == \old(stack.size()) - 1;
+	 */
 	public Piece draw() {
 		return stack.remove(0);
 	}
@@ -303,7 +399,10 @@ public class Board extends Observable {
 	 * Places the pieces received from a player in a trade back in the stack and shuffles the stack.
 	 * @param pieces the pieces received from a player.
 	 */
-	public void tradeReturn(Piece[] pieces) {
+	/*
+	 *@ ensures		stack.size() == \old(stack.size()) + pieces.length;
+	 */
+	public void tradeReturn(/*@ NonNull */Piece[] pieces) {
 		for (int i = 0; i < pieces.length; i++) {
 			stack.add(pieces[i]);
 		}
@@ -315,7 +414,11 @@ public class Board extends Observable {
 	 * @param moves the moves to be made. 
 	 * @return the score of the given moves. 
 	 */
-	public int getScore(/* @NonNull */ Move[] moves) {
+	/*
+	 *@ requires 	moves <= 0;
+	 *@ ensures		0 < \result;
+	 */
+	public /* @NonNull */int getScore(/* @NonNull */ Move[] moves) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		int result = 0;
 		
@@ -341,7 +444,7 @@ public class Board extends Observable {
 	/**
 	 * Determines the score of a place with only one Piece.
 	 * @param places the Place that is being made. 
-	 * @return
+	 * @return the score of the given place. 
 	 */
 	/*
 	 *@ requires	places.length == 1;
@@ -371,8 +474,8 @@ public class Board extends Observable {
 	
 	/**
 	 * Calculates the score knowing the places are placed on the same Row.
-	 * @param places the places for which the score is calculated
-	 * @return the score
+	 * @param places the places for which the score is calculated.
+	 * @return the score.
 	 */
 	/*
 	 *@ requires	1 < place.length && place.length < 7;
@@ -435,7 +538,7 @@ public class Board extends Observable {
 	 * @return true if the Moves are valid, false when invalid. 
 	 */
 	/*
-	 * @requires 	moves.length < player.getHand().size();
+	 *@ requires 	moves.length < player.getHand().size();
 	 */
 	public /* @NonNull*/boolean validMove(/* @NonNull*/Move[] moves, /* @NonNull*/Player player)
 			throws InvalidMoveException {
@@ -490,9 +593,9 @@ public class Board extends Observable {
 	 * @throws InvalidMoveException
 	 */
 	/*
-	 *@ requires	moves[0] instanceof Place;
+	 *@ requires	(\forall int i; i <= 0, moves.length < i; moves[i] instanceof Place);
 	 */
-	public void allPlaceMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
+	/*@ pure */public void allPlaceMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
 		for (int i = 1; i < moves.length; i++) {
 			if (!(moves[i] instanceof Place)) {
 				throw new InvalidMoveException("You are trying to place tiles and trade"
@@ -509,9 +612,9 @@ public class Board extends Observable {
 	 * @throws InvalidMoveException
 	 */
 	/*
-	 *@ requires	moves[0] instanceof Trade;
+	 *@ requires	(\forall int i; i <= 0, moves.length < i; moves[i] instanceof Place);
 	 */
-	public void allTradeMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
+	/*@ pure */public void allTradeMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
 		for (int i = 1; i < moves.length; i++) {
 			if (!(moves[i] instanceof Trade)) {
 				throw new InvalidMoveException("You are trying to place tiles and trade"
@@ -525,10 +628,7 @@ public class Board extends Observable {
 	 * @param moves the moves that the Player wants to make.
 	 * @throws InvalidMoveException 
 	 */
-	/*
-	 *@ requires	
-	 */
-	public void cellsAreAvailable(/*@ NonNull */Place[] places) throws InvalidMoveException {
+	/*@ pure */public void cellsAreAvailable(/*@ NonNull */Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			if (!isEmpty(place.getRow(), place.getColumn())) {
 				throw new InvalidMoveException("You are trying to place a tile"
@@ -543,7 +643,7 @@ public class Board extends Observable {
 	 * @param board the Board that the Player wants to make the Move on. 
 	 * @throws InvalidMoveException
 	 */
-	public void cellsAreValid(/*@ NonNull */Place[] places) throws InvalidMoveException {
+	/*@ pure */public void cellsAreValid(/*@ NonNull */Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			if (!isField(place.getRow(), place.getColumn())) {
 				throw new InvalidMoveException("You are trying to place a tile outside the board.");
@@ -558,7 +658,7 @@ public class Board extends Observable {
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 * @throws InvalidMoveException
 	 */
-	public boolean isUninterruptedRow(/* @NunNull */Place[] places) throws InvalidMoveException {
+	/*@ pure */public boolean isUninterruptedRow(/* @NunNull */Place[] places) throws InvalidMoveException {
 		boolean isRow = true;
 		for (int i = 0; i < places.length; i++) {
 			isRow = isRow && places[i].getRow() == places[0].getRow();
@@ -594,7 +694,7 @@ public class Board extends Observable {
 	 * @param b the Board on which the Places are put. 
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 */
-	public void isUninterruptedColumn(/* @NunNull */Place[] places) throws InvalidMoveException {
+	/*@ pure */public void isUninterruptedColumn(/* @NunNull */Place[] places) throws InvalidMoveException {
 		boolean isColumn = true;
 		for (int i = 0; i < places.length; i++) {
 			isColumn = isColumn && places[i].getColumn() == places[0].getColumn();
@@ -629,7 +729,7 @@ public class Board extends Observable {
 	 * @param wholeRow a set with all the Pieces that are in the row in which the Piece belongs. 
 	 * @throws InvalidMoveException
 	 */
-	public void isUniqueColorOrShape(/* @NonNull */Piece piece,
+	/*@ pure */public void isUniqueColorOrShape(/* @NonNull */Piece piece,
 					/* @NonNull */ArrayList<Piece> wholeRow) throws InvalidMoveException {
 		boolean fixedColor = true;
 		boolean fixedShape = true;
@@ -652,7 +752,7 @@ public class Board extends Observable {
 	/**
 	 * Checks if a Piece added to a set of Places has a unique color. 
 	 */
-	public void hasUniqueColor(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
+	/*@ pure */public void hasUniqueColor(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
 			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getColor() == piece.getColor()) {
@@ -665,7 +765,7 @@ public class Board extends Observable {
 	/**
 	 * Checks if a Piece added to a set of Places has a unique shape. 
 	 */
-	public void hasUniqueShape(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
+	/*@ pure */public void hasUniqueShape(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
 			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getShape() == piece.getShape()) {
@@ -682,10 +782,7 @@ public class Board extends Observable {
 	 * @param b the board on which the Places are made. 
 	 * @return true is the Places are valid, false when not. 
 	 */
-	/*
-	 * @requires	moves.length < 7;
-	 */
-	public void pieceIsConnectedRowAndUnique(/*@ NonNull */Place[] places)
+	/*@ pure */public void pieceIsConnectedRowAndUnique(/*@ NonNull */Place[] places)
 			throws InvalidMoveException {
 		
 		// Create an ArrayList<Piece> of Pieces that are in the row
@@ -743,7 +840,7 @@ public class Board extends Observable {
 	 * @requires	\forall places p, r; places.contains(p) && places.contains(r)
 	 * 					&& !p.equals(r);  p.getRow() == r.getRow();
 	 */
-	public void piecesFitInColumns(Place[] places) throws InvalidMoveException {
+	/*@ pure */public void piecesFitInColumns(/*@ NonNull */Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			ArrayList<Piece> wholeRow = new ArrayList<>();
 			int row = place.getRow();
@@ -779,7 +876,7 @@ public class Board extends Observable {
 	/*
 	 * @requires	moves.length < 7;
 	 */
-	public void pieceIsConnectedColumnAndUnique(/*@ NonNull */Place[] places)
+	/*@ pure */public void pieceIsConnectedColumnAndUnique(/*@ NonNull */Place[] places)
 			throws InvalidMoveException {
 		// Create an ArrayList<Piece> of Pieces that are in the row that is added to,
 		// but not in the Place[].
@@ -835,7 +932,7 @@ public class Board extends Observable {
 	 * @requires	\forall places p, r; places.contains(p) && places.contains(r)
 	 * 					&& !p.equals(r);  p.getColumn() == r.getColumn();
 	 */
-	public void piecesFitInRows(Place[] places) throws InvalidMoveException {
+	/*@ pure */public void piecesFitInRows(/*@ NonNull*/Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			ArrayList<Piece> wholeRow = new ArrayList<>();
 			int row = place.getRow();
@@ -864,7 +961,7 @@ public class Board extends Observable {
 	/**
 	 * Tests if the Player has the given Piece in its Hand.
 	 */
-	public void playerHasPiece(Move[] moves, Player player) throws InvalidMoveException {
+	/*@ pure */public void playerHasPiece(/*@ NonNull */Move[] moves, /*@ NonNull */Player player) throws InvalidMoveException {
 		for (Move move: moves) {
 			if (!(player.getHand().contains(move.getPiece()))) {
 				throw new InvalidMoveException("You are trying to place"
@@ -876,9 +973,6 @@ public class Board extends Observable {
 	/**
 	 * Tests if every Place of places is connected to the another Piece.
 	 * @param places the Places to be made. 
-	 */
-	/*
-	 * @requires 	places.length < 7;
 	 */
 	public void isConnected(/* @NonNull */Place[] places) throws InvalidMoveException {
 		if (!this.isEmpty(91, 91)) {
