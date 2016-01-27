@@ -57,11 +57,11 @@ public class NetworkGame implements Runnable {
 	 * 				handler == gameHandler;
 	 * 				(\forall int i; 0 <= i, i <= playerCount; this.players[i] == players [i]);
 	 */
-	public NetworkGame(int playerCount, /*@ non_null */NetworkPlayer[] players, /*@ non_null */ int thinkTime, 
-					/*@ non_null */GameHandler h) {
+	public NetworkGame(int playerCount, /*@ non_null */NetworkPlayer[] players,
+			/*@ non_null */ int thinkTime, /*@ non_null */GameHandler gameHandler) {
 		board = new Board();
 		this.playerCount = playerCount;
-		players = new NetworkPlayer[this.playerCount];
+		this.players = new NetworkPlayer[this.playerCount];
 		handler = gameHandler;
 		for (int i = 0; i < playerCount; i++) {
 			this.players[i] = players[i];
@@ -206,7 +206,7 @@ public class NetworkGame implements Runnable {
 	/*
 	 *@ ensures 	0 <= \result && \result < getPlayerCount();
 	 */
-	public /*@ NonNull */int nextPlayer() {
+	public /*@ non_null */int nextPlayer() {
 		int nextPlayerID = 0;
 		if (kickOccured) {
 			nextPlayerID = players[currentPlayerID % playerCount].getID();
@@ -288,7 +288,7 @@ public class NetworkGame implements Runnable {
 	 *@ ensures		player.getHand().size() == \old(player.getHand().size());
 	 *				board.getStack().size() == \old(board.getStack().size());
 	 */
-	public /*@ NonNull */String tradePieces(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
+	public /*@ non_null */String tradePieces(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Piece[] pieces = new Piece[moves.length];
 		String result = "";
 		for (int i = 0; i < moves.length; i++) {
