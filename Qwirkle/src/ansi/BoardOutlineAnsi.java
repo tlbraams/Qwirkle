@@ -1,4 +1,4 @@
-package view;
+package ansi;
 
 import model.Board;
 

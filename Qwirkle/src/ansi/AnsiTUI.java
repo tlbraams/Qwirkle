@@ -1,28 +1,46 @@
-package view;
+package ansi;
 
 import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.*;
+
+import java.util.Observable;
+import java.util.Observer;
+
 import model.*;
 import controller.*;
 
-public class AnsiTUI {
+public class AnsiTUI implements Observer {
 
 	private static final int VERTICAL_LINE = 179;
 	/**
 	 * The TUI class is used as the textual user interface.
 	 */
 	private Game control;
+	private Board board;
+	int playerCount;
 	
 	public AnsiTUI(Game game) {
 		control = game;
+		board = game.getBoard();
+		playerCount = control.getPlayerCount();
+		board.addObserver(this);
 	}
+	
+	public AnsiTUI(Board board, int players) {
+		control = null;
+		this.board = board;
+		playerCount = players;
+		board.addObserver(this);
+	}
+	
 	
 	
 	
 	// ------------ Commands ------------------------
 	
-	public void update() {
-		printBoard(control.getBoard());
+	public void update(Observable o, Object arg) {
+		printBoard(board);
+		printScore(board);
 	}
 	
 	public void printBoard(Board b) {
@@ -61,5 +79,17 @@ public class AnsiTUI {
 				System.out.println(ansi().render(row));
 			}
 		}
+	}
+	
+	/**
+	 * Prints the score for the board.
+	 * @param b the board for the score to print.
+	 */
+	public void printScore(Board b) {
+		String result = "Scores:";
+		for (int i = 0; i < playerCount; i++) {
+			result += " player" + i + ": " + b.getScore(i);
+		}
+		System.out.println(result);
 	}
 }
