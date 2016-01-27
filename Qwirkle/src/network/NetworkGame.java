@@ -19,6 +19,12 @@ import model.*;
 
 public class NetworkGame implements Runnable {
 
+	/*
+	 *@ invariant	2 <= playerCount && playerCount <= 4;
+	 *@ invariant	0 <= moveCounter;
+	 *@ invariant	0 <= currentPlayerID() && currentPlayerID() < playerCount;
+	 */
+	
 	// ----- Instance Variables -----
 	
 	private Board board;
@@ -36,7 +42,6 @@ public class NetworkGame implements Runnable {
 	
 	/**
 	 * Creates a new Game object with a board of a default size (183 x 183).
-	 * 
 	 * @param playerCount	the amount of players participating in this Game. 
 	 * @param players 		the array with all players participating in this Game.
 	 * @param thinkTime 	the time in milliseconds that a computer player can take
@@ -45,17 +50,19 @@ public class NetworkGame implements Runnable {
 	/*
 	 * @requires 	playerCount < 5 && playerCount > 1;
 	 * 				players.length() < 5 && players.length() > 1;
-	 * 				thinkTime > 0;
 	 * @ensures		this.playerCount = playerCount;
-	 * 				// All players in players are now in players. 
-	 * 				this.thinkTime = aiTime;
+	 * 				moveCounter == 0;
+	 * 				aiTime = thinkTime;
+	 * 				kickOccured == false;
+	 * 				handler == gameHandler;
+	 * 				(\forall int i; 0 <= i, i <= playerCount; this.players[i] == players [i]);
 	 */
-	public NetworkGame(int playerCount, /*@ non_null */NetworkPlayer[] players, int thinkTime, 
-					GameHandler h) {
+	public NetworkGame(int playerCount, /*@ non_null */NetworkPlayer[] players, /*@ non_null */ int thinkTime, 
+					/*@ non_null */GameHandler h) {
 		board = new Board();
 		this.playerCount = playerCount;
-		this.players = new NetworkPlayer[this.playerCount];
-		handler = h;
+		players = new NetworkPlayer[this.playerCount];
+		handler = gameHandler;
 		for (int i = 0; i < playerCount; i++) {
 			this.players[i] = players[i];
 		}
@@ -70,7 +77,7 @@ public class NetworkGame implements Runnable {
 	 * Returns the Board object of this Game.
 	 * @return the Board object.
 	 */
-	/* @pure */public /*@ non_null*/ Board getBoard() {
+	/*@ pure */public /*@ non_null*/ Board getBoard() {
 		return board;
 	}
 	
@@ -79,7 +86,7 @@ public class NetworkGame implements Runnable {
 	 * Returns the amount of players that participate in this Game. 
 	 * @return the amount of players in the game. 
 	 */
-	/* @pure */public /*@ non_null*/ int getPlayerCount() {
+	/*@ pure */public /*@ non_null*/ int getPlayerCount() {
 		return playerCount;
 	}
 	
@@ -87,14 +94,13 @@ public class NetworkGame implements Runnable {
 	 * Returns the maximum amount of points of a given hand. 
 	 * This method is called for each Player at the beginning of this Game to 
 	 * determine which player is allowed to start the game. 
-	 * @param hand the Hand a player holds. 
-	 * @return the maximum amount of points one can get with the given Hand. 
+	 * @param hand the hand a player holds. 
+	 * @return the maximum amount of points one can get with the given hand. 
 	 */
 	/* 
-	 * @requires	hand.size() == 6;
-	 * @ensures		\result <= 0 && \result < 7;
+	 * @ensures		\result <= 0 && \result <= hand.size();
 	 */
-	/* @pure */public /*@ non_null*/ int findMaxScore(HashSet<Piece> hand) {
+	/*@ pure */public /*@ non_null*/ int findMaxScore(HashSet<Piece> hand) {
 		int max = 0;
 		for (Piece p : hand) {
 			Set<Piece> restHand = new HashSet<>(hand);
@@ -103,7 +109,7 @@ public class NetworkGame implements Runnable {
 			int shape = 1;
 			
 			// Check if either the color or the shape of each rp matches that of p.
-			//				If so, add to color or shape. 
+			// If so, add to color or shape. 
 			for (Piece rp : restHand) {
 				if (rp.getColor().equals(p.getColor()) && !rp.getShape().equals(p.getShape())) {
 					color++;
@@ -135,6 +141,9 @@ public class NetworkGame implements Runnable {
 	 * to replace the pieces it just used.
 	 * If no Move or an incorrect Move is given, the player is kicked.
 	 * When the Game has finished it stops the Game and displays the winner and scores. 
+	 */
+	/*
+	 *@ ensures 	endGame();
 	 */
 	public void playGame() {
 		// Fills the Hands of each Player with 6 Pieces. 
@@ -192,9 +201,12 @@ public class NetworkGame implements Runnable {
 	
 	/**
 	 * Determines which Player is next. 
-	 * @return
+	 * @return the ID of the player who is next. 
 	 */
-	public int nextPlayer() {
+	/*
+	 *@ ensures 	0 <= \result && \result < getPlayerCount();
+	 */
+	public /*@ NonNull */int nextPlayer() {
 		int nextPlayerID = 0;
 		if (kickOccured) {
 			nextPlayerID = players[currentPlayerID % playerCount].getID();
@@ -207,7 +219,7 @@ public class NetworkGame implements Runnable {
 	/**
 	 * Broadcasts the Winner of the game. 
 	 */
-	public void ending() {
+	/*@ pure */public void ending() {
 		handler.broadcast("WINNER " + isWinner());
 	}
 
@@ -233,10 +245,13 @@ public class NetworkGame implements Runnable {
 	 * @param player the Player who wants to make the Moves.
 	 */
 	/*
-	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
-	 *  			myArray[i] instanceof Place)          
+	 *@ requires	(\forall int i = 0; 0 <= i && i < moves.length;
+	 *  			moves[i] instanceof Place);    
+	 *  			moves.length <= player.getHand.size();      
+	 *@ ensures		moves.length <= board.getStack().size() ==> 
+	 *					\old(player.getHand().size()) == player.getHand().size();
 	 */
-	public String[] place(/*@ non_null */Move[] moves, /*@ non_null*/Player player) {
+	public /*@ non_null */String[] place(/*@ non_null */Move[] moves, /*@ non_null*/Player player) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		String[] result = new String[2];
 		String newPieces = "";
@@ -268,10 +283,12 @@ public class NetworkGame implements Runnable {
 	 * @param player the Player who wants to make the Moves.
 	 */
 	/*
-	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
-	 *  			myArray[i] instanceof Trade)
+	 *@ requires	(\forall int i = 0; 0 <= i && i < moves.length;
+	 *  			moves[i] instanceof Trade);
+	 *@ ensures		player.getHand().size() == \old(player.getHand().size());
+	 *				board.getStack().size() == \old(board.getStack().size());
 	 */
-	public String tradePieces(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
+	public /*@ NonNull */String tradePieces(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
 		Piece[] pieces = new Piece[moves.length];
 		String result = "";
 		for (int i = 0; i < moves.length; i++) {
@@ -291,11 +308,7 @@ public class NetworkGame implements Runnable {
 	 * at the beginning of the Game. When 2 players have the same maximum possible score, 
 	 * the Player who joined the Game the earliest is given the turn. 
 	 */
-	/*
-	 * @ensure		currentPlayerID < this.playerCount();
-	 * 				currentPlayerID > 0;
-	 */
-	public void findFirstPlayer() {
+	/*@ pure */public void findFirstPlayer() {
 		int maxScore = 0;
 		int playerNumber = 0;
 		for (int i = 0; i < playerCount; i++) {

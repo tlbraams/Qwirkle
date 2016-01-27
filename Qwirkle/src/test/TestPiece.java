@@ -43,7 +43,6 @@ public class TestPiece {
 	}
 	
 	// ----- Constructor Assignment -----
-	
 
 	@Test
 	public void testConstructor() {
@@ -56,4 +55,17 @@ public class TestPiece {
 		assertTrue(pieceYellowCircle.getShape() == Piece.Shape.CIRCLE);
 	}
 	
+	// ----- Conversion to Shape -----
+	@Test
+	public void testCharToShape() {
+		assertTrue(Piece.Shape.CIRCLE == Piece.charToShape('o'));
+		assertTrue(Piece.Shape.DIAMOND == Piece.charToShape('d'));
+	}
+	
+	// ----- Conversion to Color -----
+	@Test
+	public void testCharToColor() {
+		assertTrue(Piece.Color.RED == Piece.charToColor('R'));
+		assertTrue(Piece.Color.GREEN == Piece.charToColor('G'));
+	}
 }
