@@ -16,6 +16,9 @@ public class Trade implements Move {
 		return piece;
 	}
 	
+	/**
+	 * Returns a textual representation of this Trade.
+	 */
 	public String toString() {
 		return " " + piece;
 	}

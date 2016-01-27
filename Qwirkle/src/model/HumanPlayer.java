@@ -60,6 +60,13 @@ public class HumanPlayer extends LocalPlayer {
 		return result;
 	}
 	
+	/**
+	 * Asks the user for the Piece(s) it would like to place.
+	 * If the player has such a piece in its hand, the user will be asked
+	 * where on the board they would like to place it.
+	 * This is repeated until "Done" is entered.
+	 * @return The ArrayList<Move> with the decided placements
+	 */
 	public /*@ NonNull */ArrayList<Move> place() {
 		ArrayList<Move> result = new ArrayList<Move>();
 		boolean cont = true;
@@ -82,9 +89,16 @@ public class HumanPlayer extends LocalPlayer {
 					}
 				}
 			}		
-		} return result;
+		}
+		return result;
 	}
 	
+	/**
+	 * Asks the User which pieces it would like to trade.
+	 * If the player owns the piece, it is added and the player can enter a new piece,
+	 * or "Done" to signal the end of his turn.
+	 * @return the ArrayList<Move> with the decided trades
+	 */
 	public /*@NonNull */ArrayList<Move> trade() {
 		ArrayList<Move> result = new ArrayList<Move>();
 		boolean cont = true;
@@ -109,6 +123,11 @@ public class HumanPlayer extends LocalPlayer {
 		return result;
 	}
 	
+	/**
+	 * Finds the first move. For the first Piece it will be automatically placed on 91, 91.
+	 * After that the the player can chose where to place them. (Respecting the rules)
+	 * It is not possible to trade on the first Move.
+	 */
 	public Move[] determineFirstMove(Board board) {
 		showHand();
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -153,7 +172,9 @@ public class HumanPlayer extends LocalPlayer {
 		return result;
 	}
 	
-	
+	/**
+	 * Prints a textual representation of the different Pieces owned by the player.
+	 */
 	public void showHand() {
 		if (hand.size() < 6) {
 			System.out.println("No more pieces in the stack.");
@@ -165,6 +186,13 @@ public class HumanPlayer extends LocalPlayer {
 		System.out.println(result);
 	}
 	
+	/**
+	 * Shows the different options for making a move.
+	 * These are: Place, Trade, (Pass if no longer able to trade) and Hint.
+	 * After a Hint the player will have to chose again.
+	 * @param board the board the move will be made on.
+	 * @return the chosen option.
+	 */
 	public int showOptions(Board board) {
 		System.out.println(this.getName() + ": What would you like to do?");
 		System.out.println("Place tiles ................... 5");
@@ -244,6 +272,10 @@ public class HumanPlayer extends LocalPlayer {
 		return column;
 	}
 	
+	/**
+	 * Prints the hint found by the hint Strategy associated with this class.
+	 * @param board the board for which a hint is found.
+	 */
 	public void printHint(Board board) {
 		Place[] hint = hints.findMove(hand, board);
 		if (hint[0] == null) {

@@ -33,15 +33,25 @@ public class Piece {
 		this.shape = shape;
 	}
 	
+	/**
+	 * Returns the color of this piece.
+	 */
 	/*@ pure */ public Color getColor() {
 		return color;
 	}
 	
+	/**
+	 * Returns the shape of this piece.
+	 */
 	/*@ pure */ public Shape getShape() {
 		return shape;
 	}
 	
-	
+	/**
+	 * Finds the color associated with the given character.
+	 * @param color the char for which a Color needs to be found.
+	 * @return the found Color.
+	 */
 	public static Color charToColor(char color) {
 		Color result = Color.DEFAULT;
 		if (color == 'R') {
@@ -60,6 +70,11 @@ public class Piece {
 		return result;
 	}
 	
+	/**
+	 * Finds the shape associated with the given character.
+	 * @param shape the char for which a Shape needs to be found.
+	 * @return the found Shape.
+	 */
 	public static Shape charToShape(char shape) {
 		Shape result = Shape.BLOCKED;
 		if (shape == 'o') {
@@ -130,6 +145,10 @@ public class Piece {
 		return result;
 	}
 	
+	/**
+	 * Finds the AnsiCode for this Piece, to be Used with AnsiTui.
+	 * @return
+	 */
 	/*@ pure */ public String getAnsiCode() {
 		String result = "";
 		switch (shape) {

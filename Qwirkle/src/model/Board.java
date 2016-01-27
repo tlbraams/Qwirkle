@@ -652,6 +652,32 @@ public class Board extends Observable {
 	}
 	
 	/**
+	 * Tests if the places are on one row.
+	 * @param places the places to test
+	 * @return true if all places are on the same row
+	 */
+	public /*@ NonNull */boolean isRow(/*@ NonNull */ Place[] places) {
+		boolean isRow = true;
+		for (int i = 0; i < places.length; i++) {
+			isRow = isRow && places[i].getRow() == places[0].getRow();
+		}
+		return isRow;
+	}
+	
+	/**
+	 * Tests if the places are on one column.
+	 * @param places the places to test
+	 * @return true if all the places are on the same column
+	 */
+	public /*@ NonNull */boolean isColumn(/*@ NonNull */ Place[] places) {
+		boolean isColumn = true;
+		for (int i = 0; i < places.length; i++) {
+			isColumn = isColumn && places[i].getColumn() == places[0].getColumn();
+		}
+		return isColumn;
+	}
+	
+	/**
 	 * Tests if the Places are in 1 straight line (row) and if there are no gaps. 
 	 * @param moves the Places to be placed on Board b. 
 	 * @param b the Board on which the Places are put. 
@@ -659,11 +685,7 @@ public class Board extends Observable {
 	 * @throws InvalidMoveException
 	 */
 	/*@ pure */public boolean isUninterruptedRow(/* @NunNull */Place[] places) throws InvalidMoveException {
-		boolean isRow = true;
-		for (int i = 0; i < places.length; i++) {
-			isRow = isRow && places[i].getRow() == places[0].getRow();
-		}
-		if (places.length != 1 && isRow) {
+		if (places.length != 1 && isRow(places)) {
 			int minColumnPlace = places[0].getColumn();
 			int maxColumnPlace = minColumnPlace;
 			for (int i = 1; i < places.length; i++) {
@@ -685,7 +707,7 @@ public class Board extends Observable {
 				}
 			}
 		}
-		return isRow;
+		return isRow(places);
 	}
 	
 	/**

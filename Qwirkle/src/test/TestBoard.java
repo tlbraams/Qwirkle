@@ -4,6 +4,7 @@ import org.junit.*;
 
 import model.Board;
 import model.Piece;
+import model.Place;
 
 import static org.junit.Assert.*;
 
@@ -119,5 +120,33 @@ public class TestBoard {
 		// Test if the correct Pieces are place in the correct cells. 
 		assertEquals("Piece in the cell is correct", board.getCell(91, 91), pieceGreenDiamond);
 		assertEquals("Piece in the cell is correct", board.getCell(94, 91), pieceGreenHeart);
+	}
+	
+	@Test
+	public void testGetScoreOnePiece() {
+		board.setPiece(91, 91, pieceGreenDiamond);
+		Place[] places = new Place[]{new Place(pieceGreenCircle, 91, 92)};
+		board.setPiece(91, 92, pieceGreenDiamond);
+		assertTrue("Score equals 2", board.getScore(places) == 2);
+	}
+	
+	@Test
+	public void testGetScoreRow() {
+		board.setPiece(91, 91, pieceGreenDiamond);
+		Place[] places = new Place[]{new Place(pieceGreenCircle, 91, 92),
+										new Place(pieceGreenSpade, 91, 93)};
+		board.setPiece(91, 92, pieceGreenDiamond);
+		board.setPiece(91, 93, pieceGreenSpade);
+		assertTrue("Score equals 3", board.getScore(places) == 3);
+	}
+	
+	@Test
+	public void testGetScoreColumn() {
+		board.setPiece(91, 91, pieceGreenDiamond);
+		Place[] places = new Place[]{new Place(pieceGreenCircle, 91, 92),
+										new Place(pieceGreenSpade, 92, 92)};
+		board.setPiece(91, 92, pieceGreenDiamond);
+		board.setPiece(92, 92, pieceGreenSpade);
+		assertTrue("Score equals 4", board.getScore(places) == 4);
 	}
 }

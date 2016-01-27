@@ -27,6 +27,9 @@ public class Place implements Move {
 		return column;
 	}
 	
+	/**
+	 * Gives a textual representation of this Place.
+	 */
 	public String toString() {
 		return " " + piece.toString() + " " + row + " " + column;
 	}
