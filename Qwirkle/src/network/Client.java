@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -169,6 +170,10 @@ public class Client extends Thread {
 					print(line);
 				}
 				lineScan.close();
+			} catch (SocketException e) {
+				System.err.println("Server closed.");
+				playing = false;
+				shutDown();
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
 			}

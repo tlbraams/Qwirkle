@@ -20,6 +20,7 @@ public class GameHandler extends Thread {
 	 */
 	public GameHandler(List<NetworkPlayer> newPlayers) {
 		players = newPlayers;
+		aiTime = 10000;
 	}
 
 	

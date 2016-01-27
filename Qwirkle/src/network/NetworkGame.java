@@ -269,6 +269,9 @@ public class NetworkGame implements Runnable {
 			}
 			moveString += m.toString();
 		}
+		if (newPieces.equals("")) {
+			newPieces = " empty";
+		}
 		result[0] = newPieces;
 		result[1] = moveString;
 		board.setLastMadeMove(moveCounter);
@@ -297,6 +300,9 @@ public class NetworkGame implements Runnable {
 			Piece newPiece = board.draw();
 			player.receive(newPiece);
 			result += " " + newPiece.toString();
+		}
+		if (result.equals("")) {
+			result = " empty";
 		}
 		board.tradeReturn(pieces);
 		return result;

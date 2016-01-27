@@ -193,8 +193,6 @@ public class NetworkPlayer implements Player, Runnable {
 						}
 						if (piece != null) {
 							places.add(new Place(piece, row, column));
-						} else {
-							sendCommand("Error: " + pieceName + " is not a piece in your hand.");
 						}
 						move = places.toArray(new Move[places.size()]);
 					}
