@@ -39,7 +39,7 @@ public class ComputerPlayer extends LocalPlayer {
 	/*
 	 *@ ensure 		(\forall int i = 0; i >= 0 && i < \result.length; \result[i] instanceof Move);
 	 */
-	public/*@ NonNull */Move[] determineMove(/*@ NonNull */Board board) {
+	public/*@ non_null */Move[] determineMove(/*@ non_null */Board board) {
 		Move[] result = null;
 		Place[] place = strategy.findMove(hand, board);
 		if (place[0] == null) {

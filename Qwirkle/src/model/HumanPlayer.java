@@ -40,7 +40,7 @@ public class HumanPlayer extends LocalPlayer {
 	/*
 	 *@ ensure 		(\forall int i = 0; i >= 0 && i < \result.length; \result[i] instanceof Move);
 	 */
-	public /*@ NonNull */Move[] determineMove(/*@ NonNull */Board board) {
+	public /*@ non_null */Move[] determineMove(/*@ non_null */Board board) {
 		showHand();
 		ArrayList<Move> moves = new ArrayList<Move>();
 		int type = showOptions(board);
@@ -67,7 +67,7 @@ public class HumanPlayer extends LocalPlayer {
 	 * This is repeated until "Done" is entered.
 	 * @return The ArrayList<Move> with the decided placements
 	 */
-	public /*@ NonNull */ArrayList<Move> place() {
+	public /*@ non_null */ArrayList<Move> place() {
 		ArrayList<Move> result = new ArrayList<Move>();
 		boolean cont = true;
 		while (cont) {
@@ -99,7 +99,7 @@ public class HumanPlayer extends LocalPlayer {
 	 * or "Done" to signal the end of his turn.
 	 * @return the ArrayList<Move> with the decided trades
 	 */
-	public /*@NonNull */ArrayList<Move> trade() {
+	public /*@non_null */ArrayList<Move> trade() {
 		ArrayList<Move> result = new ArrayList<Move>();
 		boolean cont = true;
 		while (cont) {

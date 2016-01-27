@@ -52,7 +52,7 @@ public class Game implements Runnable {
 	 * 				// All players in players are now in players. 
 	 * 				this.thinkTime = aiTime;
 	 */
-	public Game(int playerCount, /*@ NonNull */Player[] players, int thinkTime) {
+	public Game(int playerCount, /*@ non_null */Player[] players, int thinkTime) {
 		board = new Board();
 		this.playerCount = playerCount;
 		this.players = new Player[this.playerCount];
@@ -70,7 +70,7 @@ public class Game implements Runnable {
 	 * Returns the Board object of this Game.
 	 * @return the Board object.
 	 */
-	/* @pure */public /* @NonNull*/ Board getBoard() {
+	/* @pure */public /* @non_null*/ Board getBoard() {
 		return board;
 	}
 	
@@ -78,7 +78,7 @@ public class Game implements Runnable {
 	 * Returns a TUI object that is used to communicate with the player. 
 	 * @return the TUI.
 	 */
-	/* @pure */public /* @NonNull*/ TUI getView() {
+	/* @pure */public /* @non_null*/ TUI getView() {
 		return view;
 	}
 	
@@ -86,7 +86,7 @@ public class Game implements Runnable {
 	 * Returns the amount of players that participate in this Game. 
 	 * @return the amount of players in the game. 
 	 */
-	/* @pure */public /* @NonNull*/ int getPlayerCount() {
+	/* @pure */public /* @non_null*/ int getPlayerCount() {
 		return playerCount;
 	}
 	
@@ -101,7 +101,7 @@ public class Game implements Runnable {
 	 * @requires	hand.size() == 6;
 	 * @ensures		\result <= 0 && \result < 7;
 	 */
-	/* @pure */public /* @NonNull*/ int findMaxScore(HashSet<Piece> hand) {
+	/* @pure */public /* @non_null*/ int findMaxScore(HashSet<Piece> hand) {
 		int max = 0;
 		for (Piece p : hand) {
 			Set<Piece> restHand = new HashSet<>(hand);

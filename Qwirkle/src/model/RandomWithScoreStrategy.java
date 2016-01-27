@@ -25,8 +25,8 @@ public class RandomWithScoreStrategy implements Strategy {
 	 * Until the time has passed, the method will look for the move (of placing 1 piece)
 	 * that obtains the highest Score.
 	 */
-	public /*@ NonNull */Place[] findMove(/*@ NonNull */ HashSet<Piece> hand,
-						/*@ NonNull */Board board) {
+	public /*@ non_null */Place[] findMove(/*@ non_null */ HashSet<Piece> hand,
+						/*@ non_null */Board board) {
 		long startTime = System.currentTimeMillis();
 		Place[] result = new Place[1];
 		int maxScore = 0;

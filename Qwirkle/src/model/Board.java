@@ -64,7 +64,7 @@ public class Board extends Observable {
 	 * Returns the Board of this Game. 
 	 * @return the Board. 
 	 */
-	/*@ pure */public /*@ NonNull */Piece[][] getBoard() {
+	/*@ pure */public /*@ non_null */Piece[][] getBoard() {
 		return board;
 	}
 	
@@ -76,7 +76,7 @@ public class Board extends Observable {
 	 *@ requires 	row >= minRow && row <= maxRow;
 	 * 				column >= minColumn && column <= maxColumn;
 	 */
-	/*@ pure */public Piece getCell(/*@ NonNull */int row, /*@ NonNull */int column) {
+	/*@ pure */public Piece getCell(/*@ non_null */int row, /*@ non_null */int column) {
 		return board[row][column];
 	}
 	
@@ -87,7 +87,7 @@ public class Board extends Observable {
 	/*
 	 *@ ensures 	\result == maxRow;
 	 */
-	/*@ pure */public /*@ NonNullable */int getSize() {
+	/*@ pure */public /*@ non_null */int getSize() {
 		return size;
 	}
 	
@@ -97,7 +97,8 @@ public class Board extends Observable {
 	 * @param column the column of the cell.
 	 * @return true if the cell is empty, false when occupied. 
 	 */
-	/*@pure*/public /*@ NonNull */boolean isEmpty(/*@ NonNull */int row, /*@ NonNull */int column) {
+	/*@pure*/public /*@ non_null */boolean isEmpty(/*@ non_null */int row,
+														/*@ non_null */int column) {
 		return board[row][column] == null;
 	}
 	 
@@ -108,7 +109,8 @@ public class Board extends Observable {
 	/*
 	 *@ ensures 	\result == (0 <= row && row < size && 0 <= column && column < size);
 	 */
-	/*@pure*/public /*@ NonNull */boolean isField(/*@ NonNull */int row, /*@ NonNull */int column) {
+	/*@pure*/public /*@ non_null */boolean isField(/*@ non_null */int row,
+														/*@ non_null */int column) {
 		return 0 <= row && row < size && 0 <= column && column < size;
 	}
 	
@@ -116,7 +118,7 @@ public class Board extends Observable {
 	 * Returns when the last made Move was made. 
 	 * @return the last made Move. 
 	 */
-	/*@ pure */public /*@ NonNull */int getLastMadeMove() {
+	/*@ pure */public /*@ non_null */int getLastMadeMove() {
 		return lastMadeMove;
 	}
 	
@@ -124,7 +126,7 @@ public class Board extends Observable {
 	 * Returns the minimal size of the rows on the Board. 
 	 * @return the minimal row size of the Board. 
 	 */
-	/*@ pure */public /*@ NonNull */int getMinRow() {
+	/*@ pure */public /*@ non_null */int getMinRow() {
 		return minRow;
 	}
 	
@@ -132,7 +134,7 @@ public class Board extends Observable {
 	 * Returns the maximum size of the rows on the Board. 
 	 * @return the maximum row size of the Board. 
 	 */
-	/*@ pure */public /*@ NonNull */int getMaxRow() {
+	/*@ pure */public /*@ non_null */int getMaxRow() {
 		return maxRow;
 	}
 	
@@ -140,7 +142,7 @@ public class Board extends Observable {
 	 * Returns the minimal size of the columns on the Board. 
 	 * @return the minimal column size of the Board. 
 	 */
-	/*@ pure */public /*@ NonNull */int getMinColumn() {
+	/*@ pure */public /*@ non_null */int getMinColumn() {
 		return minColumn;
 	}
 	
@@ -148,7 +150,7 @@ public class Board extends Observable {
 	 * Returns the maximum size of the columns on the Board. 
 	 * @return the maximum column size of the Board. 
 	 */	
-	/*@ pure */public /*@ NonNull */int getMaxColumn() {
+	/*@ pure */public /*@ non_null */int getMaxColumn() {
 		return maxColumn;
 	}
 	
@@ -161,7 +163,7 @@ public class Board extends Observable {
 	 *@ requires 	0 <= row && row < size && 0 <= column && column < size;
 	 *@ ensures 	1 <= \result && 7 > \result;
 	 */
-	/*@ pure */public /*@ NonNull */int getRowLength(int row, int column) {
+	/*@ pure */public /*@ non_null */int getRowLength(int row, int column) {
 		int result = 0;
 		Boolean isRow = true;
 		for (int i = column; isRow; i--) {
@@ -182,7 +184,7 @@ public class Board extends Observable {
 		return result;
 	}
 	
-	/*@ pure */public /*@ NonNull */int getColumnLength(int row, int column) {
+	/*@ pure */public /*@ non_null */int getColumnLength(int row, int column) {
 		int result = 0;
 		Boolean isColumn = true;
 		for (int i = row; isColumn; i--) {
@@ -203,15 +205,15 @@ public class Board extends Observable {
 		return result;
 	}
 	
-	/*@ pure */public /*@ NonNull */int getScore(int playerID) {
+	/*@ pure */public /*@ non_null */int getScore(int playerID) {
 		return scores[playerID];
 	}
 	
-	/*@ pure */public /*@ NonNull */boolean emptyStack() {
+	/*@ pure */public /*@ non_null */boolean emptyStack() {
 		return stack.size() == 0;
 	}
 	
-	/*@ pure */public /*@ NonNull */ ArrayList<Piece> getStack() {
+	/*@ pure */public /*@ non_null */ ArrayList<Piece> getStack() {
 		return stack;
 	}
 	
@@ -315,7 +317,7 @@ public class Board extends Observable {
 	 * @param moves the moves to be made. 
 	 * @return the score of the given moves. 
 	 */
-	public int getScore(/* @NonNull */ Move[] moves) {
+	public int getScore(/* @non_null */ Move[] moves) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		int result = 0;
 		
@@ -347,7 +349,7 @@ public class Board extends Observable {
 	 *@ requires	places.length == 1;
 	 *@ ensures		0 < \result;
 	 */
-	public /*@ NonNull */int getScoreOnePlace(Place[] places) {
+	public /*@ non_null */int getScoreOnePlace(Place[] places) {
 		int result = 0;
 		int row = getRowLength(places[0].getRow(), places[0].getColumn());
 		int column = getColumnLength(places[0].getRow(), places[0].getColumn());
@@ -378,7 +380,7 @@ public class Board extends Observable {
 	 *@ requires	1 < place.length && place.length < 7;
 	 *@ ensures		0 <= \result;
 	 */
-	public /*@ NonNull */int getScoreRowWise(/*@ NonNull */Place[] places) {
+	public /*@ non_null */int getScoreRowWise(/*@ non_null */Place[] places) {
 		int result = 0;
 		result = getRowLength(places[0].getRow(), places[0].getColumn());
 		if (result == 6) {
@@ -405,7 +407,7 @@ public class Board extends Observable {
 	 *@ requires	1 < place.length && place.length < 7;
 	 *@ ensures		0 <= \result;
 	 */
-	public /*@ NonNull */int getScoreColumnWise(/*@ NonNull */Place[] places) {
+	public /* @non_null*/ int getScoreColumnWise(/*@ non_null */Place[] places) {
 		int result = 0;
 		result = getColumnLength(places[0].getRow(), places[0].getColumn());
 		if (result == 6) {
@@ -437,7 +439,7 @@ public class Board extends Observable {
 	/*
 	 * @requires 	moves.length < player.getHand().size();
 	 */
-	public /* @NonNull*/boolean validMove(/* @NonNull*/Move[] moves, /* @NonNull*/Player player)
+	public /* @non_null*/boolean validMove(/* @non_null*/Move[] moves, /* @non_null*/Player player)
 			throws InvalidMoveException {
 		boolean result = true;
 		if (moves.length == 0) {
@@ -498,7 +500,7 @@ public class Board extends Observable {
 	/*
 	 *@ requires	moves[0] instanceof Place;
 	 */
-	public void allPlaceMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
+	public void allPlaceMoves(/*@ non_null */Move[] moves) throws InvalidMoveException {
 		for (int i = 1; i < moves.length; i++) {
 			if (!(moves[i] instanceof Place)) {
 				throw new InvalidMoveException("You are trying to place tiles and trade"
@@ -517,7 +519,7 @@ public class Board extends Observable {
 	/*
 	 *@ requires	moves[0] instanceof Trade;
 	 */
-	public void allTradeMoves(/*@ NonNull */Move[] moves) throws InvalidMoveException {
+	public void allTradeMoves(/*@ non_null */Move[] moves) throws InvalidMoveException {
 		for (int i = 1; i < moves.length; i++) {
 			if (!(moves[i] instanceof Trade)) {
 				throw new InvalidMoveException("You are trying to place tiles and trade"
@@ -534,7 +536,7 @@ public class Board extends Observable {
 	/*
 	 *@ requires	
 	 */
-	public void cellsAreAvailable(/*@ NonNull */Place[] places) throws InvalidMoveException {
+	public void cellsAreAvailable(/*@ non_null */Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			if (!isEmpty(place.getRow(), place.getColumn())) {
 				throw new InvalidMoveException("You are trying to place a tile"
@@ -549,7 +551,7 @@ public class Board extends Observable {
 	 * @param board the Board that the Player wants to make the Move on. 
 	 * @throws InvalidMoveException
 	 */
-	public void cellsAreValid(/*@ NonNull */Place[] places) throws InvalidMoveException {
+	public void cellsAreValid(/*@ non_null */Place[] places) throws InvalidMoveException {
 		for (Place place: places) {
 			if (!isField(place.getRow(), place.getColumn())) {
 				throw new InvalidMoveException("You are trying to place a tile outside the board.");
@@ -562,7 +564,7 @@ public class Board extends Observable {
 	 * @param places the places to test
 	 * @return true if all places are on the same row
 	 */
-	public boolean isRow(/*@NonNull*/ Place[] places) {
+	public boolean isRow(/*@non_null*/ Place[] places) {
 		boolean isRow = true;
 		for (int i = 0; i < places.length; i++) {
 			isRow = isRow && places[i].getRow() == places[0].getRow();
@@ -576,7 +578,7 @@ public class Board extends Observable {
 	 * @param places the places to test
 	 * @return true if all the places are on the same column
 	 */
-	public boolean isColumn(/*@NonNull*/ Place[] places) {
+	public boolean isColumn(/*@non_null*/ Place[] places) {
 		boolean isColumn = true;
 		for (int i = 0; i < places.length; i++) {
 			isColumn = isColumn && places[i].getColumn() == places[0].getColumn();
@@ -591,7 +593,7 @@ public class Board extends Observable {
 	 * @return true when the Places create 1 straight line without gaps, false when otherwise. 
 	 * @throws InvalidMoveException
 	 */
-	public void isUninterruptedRow(/* @NonNull */Place[] places) throws InvalidMoveException {	
+	public void isUninterruptedRow(/* @non_null */Place[] places) throws InvalidMoveException {	
 		if (places.length != 1) {
 			int minColumnPlace = places[0].getColumn();
 			int maxColumnPlace = minColumnPlace;
@@ -645,8 +647,8 @@ public class Board extends Observable {
 	 * @param wholeRow a set with all the Pieces that are in the row in which the Piece belongs. 
 	 * @throws InvalidMoveException
 	 */
-	public void isUniqueColorOrShape(/* @NonNull */Piece piece,
-					/* @NonNull */ArrayList<Piece> wholeRow) throws InvalidMoveException {
+	public void isUniqueColorOrShape(/* @non_null */Piece piece,
+					/* @non_null */ArrayList<Piece> wholeRow) throws InvalidMoveException {
 		boolean fixedColor = true;
 		boolean fixedShape = true;
 		for (int i = 0; i < wholeRow.size(); i++) {
@@ -668,7 +670,7 @@ public class Board extends Observable {
 	/**
 	 * Checks if a Piece added to a set of Places has a unique color. 
 	 */
-	public void hasUniqueColor(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
+	public void hasUniqueColor(/* @non_null */Piece piece, /* @non_null */ArrayList<Piece> wholeRow)
 			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getColor() == piece.getColor()) {
@@ -681,7 +683,7 @@ public class Board extends Observable {
 	/**
 	 * Checks if a Piece added to a set of Places has a unique shape. 
 	 */
-	public void hasUniqueShape(/* @NonNull */Piece piece, /* @NonNull */ArrayList<Piece> wholeRow)
+	public void hasUniqueShape(/* @non_null */Piece piece, /* @non_null */ArrayList<Piece> wholeRow)
 			throws InvalidMoveException {
 		for (Piece wholeRowPiece: wholeRow) {
 			if (wholeRowPiece.getShape() == piece.getShape()) {
@@ -701,7 +703,7 @@ public class Board extends Observable {
 	/*
 	 * @requires	moves.length < 7;
 	 */
-	public void pieceIsConnectedRowAndUnique(/*@ NonNull */Place[] places)
+	public void pieceIsConnectedRowAndUnique(/*@ non_null */Place[] places)
 			throws InvalidMoveException {
 		
 		// Create an ArrayList<Piece> of Pieces that are in the row
@@ -795,7 +797,7 @@ public class Board extends Observable {
 	/*
 	 * @requires	moves.length < 7;
 	 */
-	public void pieceIsConnectedColumnAndUnique(/*@ NonNull */Place[] places)
+	public void pieceIsConnectedColumnAndUnique(/*@ non_null */Place[] places)
 			throws InvalidMoveException {
 		// Create an ArrayList<Piece> of Pieces that are in the row that is added to,
 		// but not in the Place[].
@@ -896,7 +898,7 @@ public class Board extends Observable {
 	/*
 	 * @requires 	places.length < 7;
 	 */
-	public void isConnected(/* @NonNull */Place[] places) throws InvalidMoveException {
+	public void isConnected(/* @non_null */Place[] places) throws InvalidMoveException {
 		if (!this.isEmpty(91, 91)) {
 			boolean result = false;
 			for (Place p: places) {

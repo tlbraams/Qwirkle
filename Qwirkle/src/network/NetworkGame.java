@@ -15,9 +15,7 @@ import model.*;
  * @author Tycho Braams & Jeroen Mulder
  * @version $1.0
  */
-/* 
- * @invariant	
- */
+
 
 public class NetworkGame implements Runnable {
 
@@ -32,7 +30,7 @@ public class NetworkGame implements Runnable {
 	private int currentPlayerID;
 	private int moveCounter;
 	
-	boolean kickOccured;
+	private boolean kickOccured;
 	
 	// ----- Constructor -----
 	
@@ -52,7 +50,7 @@ public class NetworkGame implements Runnable {
 	 * 				// All players in players are now in players. 
 	 * 				this.thinkTime = aiTime;
 	 */
-	public NetworkGame(int playerCount, /* @NonNull */NetworkPlayer[] players, int thinkTime, 
+	public NetworkGame(int playerCount, /*@ non_null */NetworkPlayer[] players, int thinkTime, 
 					GameHandler h) {
 		board = new Board();
 		this.playerCount = playerCount;
@@ -72,7 +70,7 @@ public class NetworkGame implements Runnable {
 	 * Returns the Board object of this Game.
 	 * @return the Board object.
 	 */
-	/* @pure */public /* @NonNull*/ Board getBoard() {
+	/* @pure */public /*@ non_null*/ Board getBoard() {
 		return board;
 	}
 	
@@ -81,7 +79,7 @@ public class NetworkGame implements Runnable {
 	 * Returns the amount of players that participate in this Game. 
 	 * @return the amount of players in the game. 
 	 */
-	/* @pure */public /* @NonNull*/ int getPlayerCount() {
+	/* @pure */public /*@ non_null*/ int getPlayerCount() {
 		return playerCount;
 	}
 	
@@ -96,7 +94,7 @@ public class NetworkGame implements Runnable {
 	 * @requires	hand.size() == 6;
 	 * @ensures		\result <= 0 && \result < 7;
 	 */
-	/* @pure */public /* @NonNull*/ int findMaxScore(HashSet<Piece> hand) {
+	/* @pure */public /*@ non_null*/ int findMaxScore(HashSet<Piece> hand) {
 		int max = 0;
 		for (Piece p : hand) {
 			Set<Piece> restHand = new HashSet<>(hand);
@@ -238,7 +236,7 @@ public class NetworkGame implements Runnable {
 	 * @requires	(\forall int i = 0; 0 <= i && i < moves.length;
 	 *  			myArray[i] instanceof Place)          
 	 */
-	public String[] place(/* @NonNul*/Move[] moves, /* @NonNul*/Player player) {
+	public String[] place(/*@ non_null */Move[] moves, /*@ non_null*/Player player) {
 		Place[] places = Arrays.copyOf(moves, moves.length, Place[].class);
 		String[] result = new String[2];
 		String newPieces = "";

@@ -202,7 +202,7 @@ public class Menu {
 	/*
 	 *@ ensures 	0 < name.length && name.length < 17;
 	 */
-	public void isRightLength(/*@ NonNull */String name) throws InvalidNameException {
+	public void isRightLength(/*@ non_null */String name) throws InvalidNameException {
 		if (name.length() > 16) {
 			throw new InvalidNameException("Your name must have a maximum length of 16."
 							+ " Please enter a new name.");
@@ -216,7 +216,7 @@ public class Menu {
 	 * @param name
 	 * @throws InvalidNameException
 	 */
-	public void hasOnlyLetters(/*@ NonNull */String name) throws InvalidNameException {
+	public void hasOnlyLetters(/*@ non_null */String name) throws InvalidNameException {
 		char[] characters = name.toCharArray();
 		if (name.contains(" ")) {
 			throw new InvalidNameException("Your name cannot contain a space."

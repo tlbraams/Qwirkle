@@ -26,7 +26,7 @@ public class Piece {
 	 * @param shape the given shape
 	 */
 	/*@
-	 * ensures this.color == color && this.shape = shape;
+	  ensures getColor() == color && getShape() == shape;
 	 */
 	public Piece(Color color, Shape shape) {
 		this.color = color;

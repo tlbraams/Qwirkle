@@ -23,8 +23,8 @@ public class RandomStrategy implements Strategy {
 	 * It first tries to find a Place. If no Place was found the whole hand is traded. 
 	 */
 	
-	public /*@ NonNull */Place[] findMove(/*@ NonNull */HashSet<Piece> hand,
-						/*@ NonNull */Board board) {
+	public /*@ non_null */Place[] findMove(/*@ non_null */HashSet<Piece> hand,
+						/*@ non_null */Board board) {
 		long startTime = System.currentTimeMillis();
 		Place[] result = new Place[1];
 		// Try to make a Place.

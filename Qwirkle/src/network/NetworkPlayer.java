@@ -23,13 +23,16 @@ public class NetworkPlayer implements Player, Runnable {
 	 * and a member of the game this client is playing.
 	 */
 	// ---- Instance variables: ----
+	/*@
+	  	public invariant 	getHand().size() <= 6; 
+	 */
 	private HashSet<Piece> hand;
 	private Server server;
 	private Socket sock;
 	private String name;
 	private int id;
-	private BufferedReader in;
-	private BufferedWriter out;
+	private /*@ spec_public */ BufferedReader in;
+	private /*@ spec_public */ BufferedWriter out;
 	
 	// ---- Constructor: ----
 	/**
@@ -38,6 +41,13 @@ public class NetworkPlayer implements Player, Runnable {
 	 * @param server the given server
 	 * @param sock the given socket
 	 * @throws IOException
+	 */
+	/*@
+	 	requires	server != null;
+	 	requires	sock != null;
+	 	ensures		in != null;
+	 	ensures		out != null;
+	 	ensures		getHand() != null;
 	 */
 	public NetworkPlayer(Server server, Socket sock) throws IOException {
 		this.server = server;
@@ -51,27 +61,30 @@ public class NetworkPlayer implements Player, Runnable {
 	/**
 	 * Returns the name of this NetworkPlayer.
 	 */
-	public String getName() {
+	/*@ pure */ public String getName() {
 		return name;
 	}
 	
 	/**
 	 * Returns the ID of this NetworkPlayer.
 	 */
-	public int getID() {
+	/*@ pure */ public int getID() {
 		return id;
 	}
 	
 	/**
 	 * Returns the hand of this NetworkPlayer.
 	 */
-	public HashSet<Piece> getHand() {
+	/*@ pure */ public HashSet<Piece> getHand() {
 		return hand;
 	}	
 	
 	// ---- Commands: ----
 	/**
 	 * Starts the setName command to find the name the player will use.
+	 */
+	/*@
+	 	ensures 	getName() != null;
 	 */
 	public void run() {
 		try {
@@ -85,6 +98,9 @@ public class NetworkPlayer implements Player, Runnable {
 	 * Reads a name from the socket and sets it if valid.
 	 * Sends an acknowledgement to the socket. 
 	 * @throws IOException
+	 */
+	/*@
+	 	ensures		getName() != null;
 	 */
 	public void setName() throws IOException {
 		String line = in.readLine();
@@ -134,6 +150,10 @@ public class NetworkPlayer implements Player, Runnable {
 	 * Adds the given Piece to the hand of this player.
 	 * @param piece the given Piece.
 	 */
+	/*@
+		requires	piece != null;
+		ensures		getHand().contains(piece);
+	 */
 	public void receive(Piece piece) {
 		hand.add(piece);
 	}
@@ -144,6 +164,9 @@ public class NetworkPlayer implements Player, Runnable {
 	 * and where on the board.
 	 * if they chose a trade they are asked what piece's they would like to trade.
 	 * "Done" entered instead of a Piece marks the end of the user input.
+	 */
+	/*@
+	 	requires	board != null;
 	 */
 	public Move[] determineMove(Board board) {
 		String line;
@@ -204,7 +227,11 @@ public class NetworkPlayer implements Player, Runnable {
 	 * @param pieceName the name of the Piece that is needed.
 	 * @return the Piece object that has the same name as pieceName. 
 	 */
-	public /*@ NonNull */Piece findPiece(/*@ NonNull */String pieceName)
+	/*@
+	 	ensures \result != null;
+	 	ensures getHand().contains(\result);
+	 */
+	public /*@ non_null */Piece findPiece(/*@ non_null */String pieceName)
 				throws InvalidMoveException {
 		Piece result = null;
 		boolean found = false;
@@ -230,6 +257,10 @@ public class NetworkPlayer implements Player, Runnable {
 	/**
 	 * Removes the given Piece from the hand of this NetworkPlayer.
 	 * @param piece the given Psiece to remove
+	 */
+	/*@
+	 	requires piece != null;
+	 	ensures !getHand().contains(piece);
 	 */
 	public void remove(Piece piece) {
 		hand.remove(piece);
